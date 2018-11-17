@@ -20,7 +20,7 @@ export default class Game extends React.Component {
   }
 
   setSocketBehavior (idToken) {
-    socket = io.connect('http://10.64.128.209:3000', { reconnect: true })
+    socket = io.connect('http://192.168.0.9:3000', { reconnect: true })
     socket.on('connect', () => {
       socket.emit('authentication', { token: idToken })
       socket.on('authenticated', () => {

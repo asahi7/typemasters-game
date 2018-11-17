@@ -11,22 +11,28 @@ class Room {
     this.textId = 0
     this.startTime = 0
     // TODO(aibek): add players' ids, aliases, common data
-    this.players = []
+    this.players = {}
   }
 
   getFilteredPlayersData () {
-    return _.map(this.players, (player) => {
-      return _.omit(player, ['socket'])
+    return _.map(this.players, (value, key) => {
+      return _.omit({
+        ...value,
+        id: key
+      }, ['socket'])
     })
   }
 
   addPlayer (socket) {
-    this.players.push({
-      socket: socket,
-      id: socket.id,
-      cpm: 0,
-      accuracy: 0
-      // TODO(aibek): add more data about players
+    const uid = _.get(socket, '_serverData.uid')
+    Object.assign(this.players, {
+      [socket.id]:
+        {
+          socket: socket,
+          cpm: 0,
+          uid
+          // TODO(aibek): add more data about players
+        }
     })
   }
 
@@ -42,17 +48,18 @@ class Room {
     this.textId = id
   }
 
-  updatePlayers (update) {
-    // TODO(aibek): later change players into map for faster access
-    _.forEach(this.players, (player) => {
-      const updatedPlayer = _.find(update, ['id', player.id])
-      player.cpm = updatedPlayer.cpm
-      player.accuracy = updatedPlayer.accuracy
-    })
+  updatePlayerCpm (socketId, cpm) {
+    this.players[socketId].cpm = cpm
   }
 
   countPlayers () {
-    return this.players.length
+    return _.size(this.players)
+  }
+
+  closeSockets () {
+    _.forEach(this.players, (player) => {
+      player.socket.disconnect(true)
+    })
   }
 }
 

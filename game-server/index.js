@@ -6,6 +6,7 @@ const AsyncLock = require('async-lock')
 const models = require('../models/models')
 const firebaseAdmin = require('firebase-admin')
 const socketioAuth = require('socketio-auth')
+const _ = require('lodash')
 
 const serviceAccount = require('./firebase/typemasters-cc028-firebase-adminsdk-ft5e2-a8cacca758.json')
 
@@ -113,8 +114,7 @@ function playGame (room) {
     models.sequelize.transaction((t) => {
       return models.Race.create({ textId: room.textId }, { transaction: t }).then((race) => {
         const playerPromises = []
-        for (let i = 0; i < room.players.length; i++) {
-          const player = room.players[i]
+        _.forEach(room.players, (player, key) => {
           // TODO(aibek): consider anonymous users
           playerPromises.push(models.RacePlayer.create({
             // userUid: room.players[i].id, // TODO(aibek): temporarily save socket_id to DB
@@ -122,13 +122,14 @@ function playGame (room) {
             raceId: race.id,
             wpm: player.cpm, // TODO(aibek): change wpm entry in DB to cpm
             points: 0, // TODO(aibek): compute points for current game
-            accuracy: player.accuracy
+            accuracy: 0 // TODO(aibek): compute accuracy
           }, { transaction: t }))
-        }
+        })
         return Promise.all(playerPromises)
       })
     })
     console.log('game ended')
+    room.closeSockets()
     // TODO(aibek): close socket.io
   } else {
     sendGameData(room, 'gamedata')
@@ -148,14 +149,23 @@ function sendGameData (room, call) {
   })
 }
 
+function countCpm (room, chars) {
+  const interval = Date.now() - room.startTime
+  const intervalMinutes = interval / (1000 * 60) // TODO(aibek): check formula
+  return chars / intervalMinutes
+}
+
 io.on('connection', function (socket) {
   console.log('connected')
   socket.on('racedata', function (data) {
     // TODO(aibek): check for authentication, maybe introduce middleware, maybe use socket.io
+    console.log(data)
     const room = startedGames[data.room.uuid]
-    if (room !== null && room.startTime + room.duration >= Date.now()) {
+    if (room && room.startTime + room.duration >= Date.now()) {
       updatingGameDataLock.acquire(room.uuid, function () {
-        room.updatePlayers(data.players)
+        const cpm = countCpm(room, data.chars)
+        console.log(data.chars, cpm)
+        room.updatePlayerCpm(socket.id, cpm)
       }, { skipQueue: true }).catch(function (err) {
         console.log(err.message)
       })
