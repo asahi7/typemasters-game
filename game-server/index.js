@@ -16,6 +16,7 @@ firebaseAdmin.initializeApp({
 socketioAuth(io, {
   // TODO(aibek): consider anonymous players
   authenticate: function (socket, data, callback) {
+    console.log(data)
     const firebaseIdToken = data.token
     return firebaseAdmin.auth().verifyIdToken(firebaseIdToken)
       .then(function (decodedToken) {
@@ -148,6 +149,7 @@ function sendGameData (room, call) {
 }
 
 io.on('connection', function (socket) {
+  console.log('connected')
   socket.on('racedata', function (data) {
     // TODO(aibek): check for authentication, maybe introduce middleware, maybe use socket.io
     const room = startedGames[data.room.uuid]
