@@ -7,10 +7,12 @@ export default class Game extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      text: 'Loading..'
+      text: 'Loading..',
+      input: ''
     }
     this.setSocketBehavior = this.setSocketBehavior.bind(this)
     this.handleSignOut = this.handleSignOut.bind(this)
+    this.handleUserInput = this.handleUserInput.bind(this)
   }
 
   setSocketBehavior (idToken) {
@@ -60,6 +62,24 @@ export default class Game extends React.Component {
     })
   }
 
+  handleUserInput (input) {
+    this.setState({
+      input
+    })
+    if (input.charAt(input.length - 1) !== ' ') {
+      return
+    }
+    input = input.slice(0, input.length - 1)
+    const splitted = this.state.text.split(' ')
+    const word = splitted[0]
+    if (input === word) {
+      this.setState({
+        text: splitted.slice(1).join(' '),
+        input: ''
+      })
+    }
+  }
+
   render () {
     return (
       <View style={styles.container}>
@@ -67,7 +87,10 @@ export default class Game extends React.Component {
         <Text>{this.state.text}</Text>
         <TextInput
           style={{ height: 40 }}
+          autoCapitalize='none'
           placeholder='Start typing here..'
+          onChangeText={this.handleUserInput}
+          value={this.state.input}
         />
         <Button title='Sign out' onPress={this.handleSignOut} />
       </View>
