@@ -1,1 +1,1 @@
-# typemasters-game
+# typemasters
