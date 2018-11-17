@@ -6,28 +6,34 @@ import io from 'socket.io-client'
 export default class Game extends React.Component {
   constructor (props) {
     super(props)
+    this.state = {
+      text: 'Loading..'
+    }
     this.setSocketBehavior = this.setSocketBehavior.bind(this)
     this.handleSignOut = this.handleSignOut.bind(this)
   }
 
   setSocketBehavior (idToken) {
     const socket = io.connect('http://10.64.128.209:3000', { reconnect: true })
-    socket.on('connect', function () {
+    socket.on('connect', () => {
       socket.emit('authentication', { token: idToken })
-      socket.on('authenticated', function () {
+      socket.on('authenticated', () => {
         console.log('Asking for a new game..')
         socket.emit('newgame')
 
-        socket.on('gamestarted', function (data) {
+        socket.on('gamestarted', (data) => {
           console.log(data.msg)
+          this.setState({
+            text: data.text
+          })
           console.log(data)
         })
 
-        socket.on('gamedata', function (data) {
+        socket.on('gamedata', (data) => {
           console.log(data)
         })
 
-        socket.on('gameended', function (msg) {
+        socket.on('gameended', (msg) => {
           console.log('game ended')
           console.log(msg)
         })
@@ -58,11 +64,10 @@ export default class Game extends React.Component {
     return (
       <View style={styles.container}>
         {/* TODO(aibek): fetch text from database */}
-        <Text>Hello</Text>
+        <Text>{this.state.text}</Text>
         <TextInput
           style={{ height: 40 }}
           placeholder='Start typing here..'
-          onChangeText={(text) => this.setState({ text })}
         />
         <Button title='Sign out' onPress={this.handleSignOut} />
       </View>
