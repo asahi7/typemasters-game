@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, View, TextInput, Button } from 'react-native'
+import { StyleSheet, Text, View, TextInput } from 'react-native'
 import firebase from 'firebase'
 import { Badge } from 'react-native-elements'
 import io from 'socket.io-client'
@@ -17,7 +17,6 @@ export default class Game extends React.Component {
       numOfPlayers: 1
     }
     this.setSocketBehavior = this.setSocketBehavior.bind(this)
-    this.handleSignOut = this.handleSignOut.bind(this)
     this.handleUserInput = this.handleUserInput.bind(this)
     this.sendRaceData = this.sendRaceData.bind(this)
   }
@@ -90,14 +89,6 @@ export default class Game extends React.Component {
 
   }
 
-  handleSignOut () {
-    firebase.auth().signOut().then(function () {
-      console.log('Signed out')
-    }, function (error) {
-      console.log(error)
-    })
-  }
-
   handleUserInput (input) {
     this.setState({
       input
@@ -139,7 +130,6 @@ export default class Game extends React.Component {
           onChangeText={this.handleUserInput}
           value={this.state.input}
         />
-        <Button title='Sign out' onPress={this.handleSignOut} />
       </View>
     )
   }

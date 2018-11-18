@@ -5,6 +5,8 @@ import { Icon } from 'react-native-elements'
 import Main from './screens/Main'
 import Game from './screens/Game'
 import Leaderboard from './screens/Leaderboard'
+import SignIn from './screens/SignIn'
+import SignUp from './screens/SignUp'
 import PersonalPage from './screens/PersonalPage'
 import Settings from './screens/Settings'
 import About from './screens/About'
@@ -26,6 +28,27 @@ export const MainStack = StackNavigator({
   }
 }, { initialRouteName: 'Main' })
 
+export const PersonalPageStack = StackNavigator({
+  PersonalPage: {
+    screen: PersonalPage,
+    navigationOptions: ({ navigation }) => ({
+      header: null
+    })
+  },
+  SignUp: {
+    screen: SignUp,
+    navigationOptions: ({ navigation }) => ({
+      header: null
+    })
+  },
+  SignIn: {
+    screen: SignIn,
+    navigationOptions: ({ navigation }) => ({
+      header: null
+    })
+  }
+}, { initialRouteName: 'PersonalPage' })
+
 export const Tabs = createBottomTabNavigator({
   'Main': {
     screen: MainStack,
@@ -44,7 +67,7 @@ export const Tabs = createBottomTabNavigator({
     }
   },
   'Personal Page': {
-    screen: PersonalPage,
+    screen: PersonalPageStack,
     navigationOptions: {
       tabBarLabel: 'Personal Page',
       tabBarIcon: ({ tintColor }) => <Icon name='md-body' type='ionicon' size={tabBarIconSize}
