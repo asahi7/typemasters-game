@@ -1,6 +1,7 @@
 import React from 'react'
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native'
 import firebase from 'firebase'
+import { Badge } from 'react-native-elements'
 import io from 'socket.io-client'
 
 let socket
@@ -11,7 +12,9 @@ export default class Game extends React.Component {
     this.state = {
       text: 'Loading..',
       input: '',
-      chars: 0
+      chars: 0,
+      gameEndMessage: '',
+      numOfPlayers: 1
     }
     this.setSocketBehavior = this.setSocketBehavior.bind(this)
     this.handleSignOut = this.handleSignOut.bind(this)
@@ -31,7 +34,8 @@ export default class Game extends React.Component {
           console.log(data.msg)
           this.setState({
             text: data.text,
-            uuid: data.room
+            uuid: data.room,
+            numOfPlayers: data.players.length
           }, () => {
             const intervalId = setInterval(this.sendRaceData, 500)
             this.setState({
@@ -48,10 +52,14 @@ export default class Game extends React.Component {
         socket.on('gameended', (msg) => {
           console.log('game ended')
           console.log(msg)
+          this.setState({
+            gameEndMessage: 'Game ended'
+          })
           clearInterval(this.state.intervalId)
         })
 
         socket.on('disconnect', () => {
+          console.log('disconnected')
           clearInterval(this.state.intervalId)
         })
       })
@@ -108,6 +116,16 @@ export default class Game extends React.Component {
   render () {
     return (
       <View style={styles.container}>
+        <Badge style={styles.numOfPlayersContainer}>
+          <Text>Players - {this.state.numOfPlayers}</Text>
+        </Badge>
+        {this.state.gameEndMessage === '' ? null
+          : (
+            <Badge style={styles.gameEndContainer}>
+              <Text>{this.state.gameEndMessage}</Text>
+            </Badge>
+          )
+        }
         {/* TODO(aibek): fetch text from database */}
         <Text>{this.state.text}</Text>
         <TextInput
@@ -129,5 +147,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  gameEndContainer: {
+    backgroundColor: 'red',
+    color: 'white',
+    margin: 10
+  },
+  numOfPlayersContainer: {
+    top: 10,
+    color: 'white',
+    backgroundColor: '#000',
+    margin: 10
   }
 })
