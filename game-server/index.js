@@ -120,7 +120,7 @@ function playGame (room) {
             // userUid: room.players[i].id, // TODO(aibek): temporarily save socket_id to DB
             userUid: player.socket._serverData.uid, // TODO(aibek): above! and also now only save all the races to one user
             raceId: race.id,
-            wpm: player.cpm, // TODO(aibek): change wpm entry in DB to cpm
+            cpm: player.cpm,
             points: 0, // TODO(aibek): compute points for current game
             accuracy: 0 // TODO(aibek): compute accuracy
           }, { transaction: t }))

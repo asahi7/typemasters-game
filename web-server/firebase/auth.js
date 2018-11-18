@@ -18,7 +18,9 @@ firebaseAdmin.initializeApp({
 const EXCLUDED_ROUTES_FROM_VERIFICATION = [
   '/users',
   '/users/signin',
-  '/users/signup'
+  '/users/signup',
+  '/statistics/getAverageCpm',
+  '/statistics/getRaceCount'
 ]
 
 /**

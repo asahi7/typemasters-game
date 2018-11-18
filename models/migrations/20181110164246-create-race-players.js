@@ -24,7 +24,7 @@ module.exports = {
         },
         allowNull: false
       },
-      wpm: {
+      cpm: {
         type: Sequelize.INTEGER,
         allowNull: false
       },

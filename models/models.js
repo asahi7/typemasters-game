@@ -81,7 +81,7 @@ const RacePlayer = sequelize.define('racePlayer', {
     type: Sequelize.INTEGER,
     allowNull: false
   },
-  wpm: {
+  cpm: {
     type: Sequelize.INTEGER,
     allowNull: false
   },

@@ -8,6 +8,7 @@ const cors = require('cors')
 const firebase = require('./firebase/auth')
 
 const usersRouter = require('./routes/users')
+const statisticsRouter = require('./routes/statistics')
 
 const app = express()
 
@@ -23,5 +24,6 @@ app.use(firebase.firebaseAuthorizationMiddleware)
 app.use(firebase.firebaseAddUserMiddleware)
 
 app.use('/users', usersRouter)
+app.use('/statistics', statisticsRouter)
 
 module.exports = app
