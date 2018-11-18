@@ -1,8 +1,4 @@
-import { SwitchNavigator } from 'react-navigation'
-import Loading from './screens/Loading'
-import SignUp from './screens/SignUp'
-import SignIn from './screens/SignIn'
-import Game from './screens/Game'
+import { createRootNavigator } from './router'
 import * as firebase from 'firebase'
 
 const config = {
@@ -15,18 +11,4 @@ const config = {
 }
 firebase.initializeApp(config)
 
-console.log('hello')
-
-const App = SwitchNavigator(
-  {
-    Loading,
-    SignUp,
-    SignIn,
-    Game
-  },
-  {
-    initialRouteName: 'Loading'
-  }
-)
-
-export default App
+export default createRootNavigator()

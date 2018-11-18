@@ -75,7 +75,7 @@ export default class Game extends React.Component {
     })
   }
 
-  componentWillMount () {
+  handlePlayGamePressed () {
     const { currentUser } = firebase.auth()
     this.setState({ currentUser })
     currentUser.getIdToken(/* forceRefresh */ true).then((idToken) => {
@@ -84,6 +84,10 @@ export default class Game extends React.Component {
     }).catch(function (error) {
       console.log(error) // TODO(aibek): handle better
     })
+  }
+
+  componentWillMount () {
+
   }
 
   handleSignOut () {
