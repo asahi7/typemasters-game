@@ -138,9 +138,14 @@ function playGame (room) {
 
 function sendGameData (room, call) {
   updatingGameDataLock.acquire(room.uuid, function () {
+    let timeLeft = (room.startTime + room.duration) - Date.now()
+    if(timeLeft < 0) {
+      timeLeft = 0
+    }
     const data = {
       room: room.uuid,
-      players: room.getFilteredPlayersData()
+      players: room.getFilteredPlayersData(),
+      timeLeft
       // TODO(aibek): add more data
     }
     io.to(room.uuid).emit(call, data)

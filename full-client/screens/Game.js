@@ -14,12 +14,14 @@ export default class Game extends React.Component {
       chars: 0,
       gameEndMessage: '',
       numOfPlayers: 1,
-      gamePlaying: false
+      gamePlaying: false,
+      timeLeft: 0
     }
     this.setSocketBehavior = this.setSocketBehavior.bind(this)
     this.handleUserInput = this.handleUserInput.bind(this)
     this.sendRaceData = this.sendRaceData.bind(this)
     this.playButtonPressed = this.playButtonPressed.bind(this)
+    this.handlePlayGamePressed = this.handlePlayGamePressed.bind(this)
   }
 
   setSocketBehavior (idToken) {
@@ -49,14 +51,18 @@ export default class Game extends React.Component {
 
         socket.on('gamedata', (data) => {
           console.log(data)
+          this.setState({
+            timeLeft: data.timeLeft / 1000
+          })
         })
 
-        socket.on('gameended', (msg) => {
+        socket.on('gameended', (data) => {
           console.log('game ended')
-          console.log(msg)
+          console.log(data)
           this.setState({
             gameEndMessage: 'Game ended',
-            gamePlaying: false
+            gamePlaying: false,
+            timeLeft: data.timeLeft / 1000
           })
           clearInterval(this.state.intervalId)
         })
@@ -138,7 +144,7 @@ export default class Game extends React.Component {
             <Button title={this.state.gamePlaying === true ? 'Stop' : 'Play'} onPress={this.playButtonPressed} />
           </View>
           <View style={styles.gameStatusBarItem}><Text>position / {this.state.numOfPlayers}</Text></View>
-          <View style={styles.gameStatusBarItem}><Text>time</Text></View>
+          <View style={styles.gameStatusBarItem}><Text>Time: {Math.round(this.state.timeLeft)}</Text></View>
           <View style={styles.gameStatusBarItem}><Text>cpm</Text></View>
         </View>
         <View style={{ flex: 1, flexDirection: 'column' }}>
