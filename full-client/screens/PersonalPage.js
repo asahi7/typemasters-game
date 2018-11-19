@@ -1,17 +1,18 @@
 import React from 'react'
 import { View, Text, StyleSheet, Button } from 'react-native'
 import firebase from 'firebase'
+import SignIn from './SignIn'
 
 export default class PersonalPage extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      authenticated: null
+      authenticated: false
     }
     this.handleSignOut = this.handleSignOut.bind(this)
   }
 
-  componentWillMount () {
+  componentDidMount () {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         this.setState({
@@ -38,15 +39,15 @@ export default class PersonalPage extends React.Component {
   }
 
   render () {
-    if (this.state.authenticated === true) {
+    if (this.state.authenticated === false) {
+      return <SignIn navigation={this.props.navigation} />
+    } else {
       return (
         <View style={styles.container}>
           <Text>Hello {this.state.user.uid}</Text>
           <Button title='Sign out' onPress={this.handleSignOut} />
         </View>
       )
-    } else {
-      return null
     }
   }
 }
