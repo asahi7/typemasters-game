@@ -1,7 +1,6 @@
 import React from 'react'
-import { StyleSheet, Text, View, TextInput } from 'react-native'
+import { StyleSheet, Text, View, TextInput, Button } from 'react-native'
 import firebase from 'firebase'
-import { Badge } from 'react-native-elements'
 import io from 'socket.io-client'
 
 let socket
@@ -14,21 +13,25 @@ export default class Game extends React.Component {
       input: '',
       chars: 0,
       gameEndMessage: '',
-      numOfPlayers: 1
+      numOfPlayers: 1,
+      gamePlaying: false
     }
     this.setSocketBehavior = this.setSocketBehavior.bind(this)
     this.handleUserInput = this.handleUserInput.bind(this)
     this.sendRaceData = this.sendRaceData.bind(this)
+    this.playButtonPressed = this.playButtonPressed.bind(this)
   }
 
   setSocketBehavior (idToken) {
-    socket = io.connect('http://192.168.0.9:3000', { reconnect: true })
+    socket = io.connect('http://10.64.128.209:3000', { reconnect: true })
     socket.on('connect', () => {
       socket.emit('authentication', { token: idToken })
       socket.on('authenticated', () => {
         console.log('Asking for a new game..')
         socket.emit('newgame')
-
+        this.setState({
+          gamePlaying: true
+        })
         socket.on('gamestarted', (data) => {
           console.log(data.msg)
           this.setState({
@@ -52,13 +55,17 @@ export default class Game extends React.Component {
           console.log('game ended')
           console.log(msg)
           this.setState({
-            gameEndMessage: 'Game ended'
+            gameEndMessage: 'Game ended',
+            gamePlaying: false
           })
           clearInterval(this.state.intervalId)
         })
 
         socket.on('disconnect', () => {
           console.log('disconnected')
+          this.setState({
+            gamePlaying: false
+          })
           clearInterval(this.state.intervalId)
         })
       })
@@ -77,6 +84,7 @@ export default class Game extends React.Component {
   handlePlayGamePressed () {
     const { currentUser } = firebase.auth()
     this.setState({ currentUser })
+    // TODO(aibek): check authentication, otherwise redirect to signin
     currentUser.getIdToken(/* forceRefresh */ true).then((idToken) => {
       console.log(idToken)
       this.setSocketBehavior(idToken)
@@ -108,28 +116,43 @@ export default class Game extends React.Component {
     }
   }
 
+  playButtonPressed () {
+    if (this.state.gamePlaying === true) {
+      socket.disconnect()
+      this.setState({
+        gamePlaying: false
+      })
+    } else {
+      this.setState({
+        gamePlaying: true
+      })
+      this.handlePlayGamePressed()
+    }
+  }
+
   render () {
     return (
       <View style={styles.container}>
-        <Badge style={styles.numOfPlayersContainer}>
-          <Text>Players - {this.state.numOfPlayers}</Text>
-        </Badge>
-        {this.state.gameEndMessage === '' ? null
-          : (
-            <Badge style={styles.gameEndContainer}>
-              <Text>{this.state.gameEndMessage}</Text>
-            </Badge>
-          )
-        }
-        {/* TODO(aibek): fetch text from database */}
-        <Text>{this.state.text}</Text>
-        <TextInput
-          style={{ height: 40 }}
-          autoCapitalize='none'
-          placeholder='Start typing here..'
-          onChangeText={this.handleUserInput}
-          value={this.state.input}
-        />
+        <View style={styles.gameStatusBar}>
+          <View style={styles.gameStatusBarItem}>
+            <Button title={this.state.gamePlaying === true ? 'Stop' : 'Play'} onPress={this.playButtonPressed} />
+          </View>
+          <View style={styles.gameStatusBarItem}><Text>position / {this.state.numOfPlayers}</Text></View>
+          <View style={styles.gameStatusBarItem}><Text>time</Text></View>
+          <View style={styles.gameStatusBarItem}><Text>cpm</Text></View>
+        </View>
+        <View style={{ flex: 1, flexDirection: 'column' }}>
+          <TextInput
+            style={{ height: 40 }}
+            autoCapitalize='none'
+            placeholder='Start typing here..'
+            onChangeText={this.handleUserInput}
+            value={this.state.input}
+          />
+        </View>
+        <View style={{ flex: 3, flexDirection: 'column' }}>
+          <Text>{this.state.text}</Text>
+        </View>
       </View>
     )
   }
@@ -142,15 +165,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
-  gameEndContainer: {
-    backgroundColor: 'red',
-    color: 'white',
-    margin: 10
+  gameStatusBar: {
+    flex: 1,
+    flexDirection: 'row',
+    marginTop: 30
   },
-  numOfPlayersContainer: {
-    top: 10,
-    color: 'white',
-    backgroundColor: '#000',
-    margin: 10
+  gameStatusBarItem: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 })
