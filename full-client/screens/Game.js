@@ -14,6 +14,7 @@ export default class Game extends React.Component {
       input: '',
       chars: 0,
       numOfPlayers: 1,
+      position: 1,
       gamePlaying: false,
       timeLeft: 0,
       cpm: 0
@@ -25,6 +26,8 @@ export default class Game extends React.Component {
     this.handlePlayGamePressed = this.handlePlayGamePressed.bind(this)
     this.findCpmForCurrentUser = this.findCpmForCurrentUser.bind(this)
     this.cleanGameData = this.cleanGameData.bind(this)
+    this.findPlayerPosition = this.findPlayerPosition.bind(this)
+    this.setGameData = this.setGameData.bind(this)
   }
 
   findCpmForCurrentUser (data) {
@@ -60,16 +63,14 @@ export default class Game extends React.Component {
 
         socket.on('gamedata', (data) => {
           console.log(data)
-          this.setState({
-            timeLeft: data.timeLeft / 1000,
-            cpm: this.findCpmForCurrentUser(data)
-          })
+          this.setGameData(data)
         })
 
         socket.on('gameended', (data) => {
           console.log('game ended')
           console.log(data)
-          this.cleanGameData(data)
+          this.cleanGameData()
+          this.setGameData(data)
         })
 
         socket.on('disconnect', () => {
@@ -80,12 +81,25 @@ export default class Game extends React.Component {
     })
   }
 
-  cleanGameData (data) {
+  setGameData (data) {
+    this.setState({
+      timeLeft: data.timeLeft / 1000,
+      cpm: this.findCpmForCurrentUser(data),
+      position: this.findPlayerPosition(data)
+    })
+  }
+
+  cleanGameData () {
     this.setState({
       gamePlaying: false,
       chars: 0
     })
     clearInterval(this.state.intervalId)
+  }
+
+  findPlayerPosition (data) {
+    // TODO(aibek): consider anonymous users too
+    return _.findIndex(_.sortBy(data.players, (player) => { return -player.cpm }), ['uid', this.state.currentUser.uid]) + 1
   }
 
   sendRaceData () {
@@ -152,10 +166,13 @@ export default class Game extends React.Component {
       <View style={styles.container}>
         <View style={styles.gameStatusBar}>
           <View style={styles.gameStatusBarItem}>
-            <Button title={this.state.gamePlaying === true ? 'Stop' : 'Play'} onPress={this.playButtonPressed} />
+            <Button title={this.state.gamePlaying === true ? 'Stop' : 'Play'}
+              onPress={this.playButtonPressed} />
           </View>
-          <View style={styles.gameStatusBarItem}><Text>position / {this.state.numOfPlayers}</Text></View>
-          <View style={styles.gameStatusBarItem}><Text>Time: {Math.round(this.state.timeLeft)}</Text></View>
+          <View
+            style={styles.gameStatusBarItem}><Text>{this.state.position}/{this.state.numOfPlayers}</Text></View>
+          <View
+            style={styles.gameStatusBarItem}><Text>Time: {Math.round(this.state.timeLeft)}</Text></View>
           <View style={styles.gameStatusBarItem}><Text>CPM: {this.state.cpm}</Text></View>
         </View>
         <View style={{ flex: 1, flexDirection: 'column' }}>
