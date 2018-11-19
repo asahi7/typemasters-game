@@ -10,10 +10,9 @@ export default class Game extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      text: 'Loading..',
+      text: 'To start press Play',
       input: '',
       chars: 0,
-      gameEndMessage: '',
       numOfPlayers: 1,
       gamePlaying: false,
       timeLeft: 0,
@@ -25,6 +24,7 @@ export default class Game extends React.Component {
     this.playButtonPressed = this.playButtonPressed.bind(this)
     this.handlePlayGamePressed = this.handlePlayGamePressed.bind(this)
     this.findCpmForCurrentUser = this.findCpmForCurrentUser.bind(this)
+    this.cleanGameData = this.cleanGameData.bind(this)
   }
 
   findCpmForCurrentUser (data) {
@@ -32,21 +32,23 @@ export default class Game extends React.Component {
   }
 
   setSocketBehavior (idToken) {
-    socket = io.connect('http://10.64.128.209:3000', { reconnect: true })
+    socket = io.connect('http://192.168.0.9:3000', { reconnect: true })
     socket.on('connect', () => {
       socket.emit('authentication', { token: idToken })
       socket.on('authenticated', () => {
         console.log('Asking for a new game..')
         socket.emit('newgame')
         this.setState({
-          gamePlaying: true
+          gamePlaying: true,
+          text: 'Loading..'
         })
         socket.on('gamestarted', (data) => {
           console.log(data.msg)
           this.setState({
             text: data.text,
             uuid: data.room,
-            numOfPlayers: data.players.length
+            numOfPlayers: data.players.length,
+            chars: 0
           }, () => {
             const intervalId = setInterval(this.sendRaceData, 500)
             this.setState({
@@ -67,24 +69,23 @@ export default class Game extends React.Component {
         socket.on('gameended', (data) => {
           console.log('game ended')
           console.log(data)
-          this.setState({
-            gameEndMessage: 'Game ended',
-            gamePlaying: false,
-            timeLeft: data.timeLeft / 1000,
-            cpm: this.findCpmForCurrentUser(data)
-          })
-          clearInterval(this.state.intervalId)
+          this.cleanGameData(data)
         })
 
         socket.on('disconnect', () => {
           console.log('disconnected')
-          this.setState({
-            gamePlaying: false
-          })
-          clearInterval(this.state.intervalId)
+          this.cleanGameData()
         })
       })
     })
+  }
+
+  cleanGameData (data) {
+    this.setState({
+      gamePlaying: false,
+      chars: 0
+    })
+    clearInterval(this.state.intervalId)
   }
 
   sendRaceData () {

@@ -103,6 +103,21 @@ function startGame (item, room) {
   })
 }
 
+function removeRoomParticipants (room) {
+  io.of('/').in(room.uuid).clients(function (error, clients) {
+    if (error) {
+      throw error
+    }
+    if (clients.length > 0) {
+      console.log('clients in the room:')
+      console.log(clients)
+      clients.forEach(function (socketId) {
+        io.sockets.sockets[socketId].leave(room.uuid)
+      })
+    }
+  })
+}
+
 function playGame (room) {
   if (room.startTime + room.duration < Date.now()) {
     clearInterval(room.intervalId)
@@ -129,8 +144,11 @@ function playGame (room) {
       })
     })
     console.log('game ended')
-    room.closeSockets()
-    // TODO(aibek): close socket.io
+    new Promise(function (resolve, reject) {
+      resolve(removeRoomParticipants(room))
+    }).then(() => {
+      room.closeSockets()
+    })
   } else {
     sendGameData(room, 'gamedata')
   }
@@ -139,7 +157,7 @@ function playGame (room) {
 function sendGameData (room, call) {
   updatingGameDataLock.acquire(room.uuid, function () {
     let timeLeft = (room.startTime + room.duration) - Date.now()
-    if(timeLeft < 0) {
+    if (timeLeft < 0) {
       timeLeft = 0
     }
     const data = {
