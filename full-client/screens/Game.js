@@ -2,6 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native'
 import firebase from 'firebase'
 import io from 'socket.io-client'
+import _ from 'lodash'
 
 let socket
 
@@ -15,13 +16,19 @@ export default class Game extends React.Component {
       gameEndMessage: '',
       numOfPlayers: 1,
       gamePlaying: false,
-      timeLeft: 0
+      timeLeft: 0,
+      cpm: 0
     }
     this.setSocketBehavior = this.setSocketBehavior.bind(this)
     this.handleUserInput = this.handleUserInput.bind(this)
     this.sendRaceData = this.sendRaceData.bind(this)
     this.playButtonPressed = this.playButtonPressed.bind(this)
     this.handlePlayGamePressed = this.handlePlayGamePressed.bind(this)
+    this.findCpmForCurrentUser = this.findCpmForCurrentUser.bind(this)
+  }
+
+  findCpmForCurrentUser (data) {
+    return Math.round(_.get(_.find(data.players, ['uid', this.state.currentUser.uid]), 'cpm'))
   }
 
   setSocketBehavior (idToken) {
@@ -52,7 +59,8 @@ export default class Game extends React.Component {
         socket.on('gamedata', (data) => {
           console.log(data)
           this.setState({
-            timeLeft: data.timeLeft / 1000
+            timeLeft: data.timeLeft / 1000,
+            cpm: this.findCpmForCurrentUser(data)
           })
         })
 
@@ -62,7 +70,8 @@ export default class Game extends React.Component {
           this.setState({
             gameEndMessage: 'Game ended',
             gamePlaying: false,
-            timeLeft: data.timeLeft / 1000
+            timeLeft: data.timeLeft / 1000,
+            cpm: this.findCpmForCurrentUser(data)
           })
           clearInterval(this.state.intervalId)
         })
@@ -89,6 +98,7 @@ export default class Game extends React.Component {
 
   handlePlayGamePressed () {
     const { currentUser } = firebase.auth()
+    console.log(currentUser)
     this.setState({ currentUser })
     // TODO(aibek): check authentication, otherwise redirect to signin
     currentUser.getIdToken(/* forceRefresh */ true).then((idToken) => {
@@ -145,7 +155,7 @@ export default class Game extends React.Component {
           </View>
           <View style={styles.gameStatusBarItem}><Text>position / {this.state.numOfPlayers}</Text></View>
           <View style={styles.gameStatusBarItem}><Text>Time: {Math.round(this.state.timeLeft)}</Text></View>
-          <View style={styles.gameStatusBarItem}><Text>cpm</Text></View>
+          <View style={styles.gameStatusBarItem}><Text>CPM: {this.state.cpm}</Text></View>
         </View>
         <View style={{ flex: 1, flexDirection: 'column' }}>
           <TextInput
