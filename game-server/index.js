@@ -1,4 +1,4 @@
-const io = require('socket.io')(3000)
+const io = require('socket.io')(3000) // TODO(aibek): make port configurable
 const Room = require('./Room')
 const inherits = require('inherits')
 const LinkedList = require('linked-list')
