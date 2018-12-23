@@ -22,3 +22,4 @@ To properly run the server you will need to do the following:
 ```
 
 - `sequelize db:migrate`
+- Run `node index.js`
