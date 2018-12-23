@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView } from 'react-native'
 import firebase from 'firebase'
 import io from 'socket.io-client'
 import _ from 'lodash'
@@ -186,7 +186,7 @@ export default class Game extends React.Component {
             style={styles.gameStatusBarItem}><Text>Time: {Math.round(this.state.timeLeft)}</Text></View>
           <View style={styles.gameStatusBarItem}><Text>CPM: {this.state.cpm}</Text></View>
         </View>
-        <View style={{ flex: 1, flexDirection: 'column' }}>
+        <View style={styles.textInput}>
           <TextInput
             style={{ height: 40 }}
             autoCapitalize='none'
@@ -195,9 +195,9 @@ export default class Game extends React.Component {
             value={this.state.input}
           />
         </View>
-        <View style={styles.raceTextView}>
+        <ScrollView style={styles.raceTextView}>
           <Text style={styles.raceText}>{this.state.text}</Text>
-        </View>
+        </ScrollView>
       </View>
     )
   }
@@ -224,14 +224,18 @@ const styles = StyleSheet.create({
     color: '#fff'
   },
   gameStatusBar: {
-    flex: 1,
+    flex: 0.3,
     flexDirection: 'row',
-    marginTop: 30
+    marginTop: 10
   },
   gameStatusBarItem: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  textInput: {
+    flex: 0.1,
+    flexDirection: 'column'
   },
   raceTextView: {
     flex: 3,
