@@ -21,11 +21,24 @@ socketioAuth(io, {
     const firebaseIdToken = data.token
     return firebaseAdmin.auth().verifyIdToken(firebaseIdToken)
       .then(function (decodedToken) {
-        const uid = decodedToken.uid
+        console.log(decodedToken)
+        // With this, all players are "safe" and considered authenticated on the server
         socket._serverData = {
-          uid
+          uid: decodedToken.uid,
+          email: decodedToken.email
         }
-        console.log(uid)
+        // TODO(aibek): is it a good way to do it?
+        models.User.findOrCreate({
+          where: {
+            email: decodedToken.email
+          },
+          defaults: {
+            uid: decodedToken.uid,
+            // TODO(aibek): change later to fullName
+            fullName: decodedToken.uid,
+            email: decodedToken.email
+          }
+        })
         // inform the callback of auth success/failure
         return callback(null, true)
       }).catch(function (error) {
@@ -41,6 +54,7 @@ const SERVER_SEND_DATA_INTERVAL = 500
 
 // Defining list item wrapper for room object
 inherits(RoomItem, LinkedList.Item)
+
 function RoomItem (room) {
   this.room = room
   LinkedList.Item.apply(this, arguments)
