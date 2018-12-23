@@ -188,7 +188,7 @@ export default class Game extends React.Component {
         </View>
         <View style={styles.textInput}>
           <TextInput
-            style={{ height: 40 }}
+            style={styles.textInputStyle}
             autoCapitalize='none'
             placeholder='Start typing here..'
             onChangeText={this.handleUserInput}
@@ -235,7 +235,16 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 0.1,
-    flexDirection: 'column'
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    margin: 10
+  },
+  textInputStyle: {
+    flex: 1,
+    padding: 5,
+    height: 40,
+    borderColor: '#449eb2',
+    borderWidth: 1
   },
   raceTextView: {
     flex: 3,
