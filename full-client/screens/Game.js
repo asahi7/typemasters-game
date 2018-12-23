@@ -4,6 +4,7 @@ import firebase from 'firebase'
 import io from 'socket.io-client'
 import _ from 'lodash'
 
+const GAME_SERVER_ADDR = 'http://192.168.0.9:3000'
 let socket
 
 export default class Game extends React.Component {
@@ -35,7 +36,7 @@ export default class Game extends React.Component {
   }
 
   setSocketBehavior (idToken) {
-    socket = io.connect('http://192.168.0.9:3000', { reconnect: true })
+    socket = io.connect(GAME_SERVER_ADDR, { reconnect: true })
     socket.on('connect', () => {
       socket.emit('authentication', { token: idToken })
       socket.on('authenticated', () => {
