@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, View, TextInput, Button } from 'react-native'
+import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native'
 import firebase from 'firebase'
 import io from 'socket.io-client'
 import _ from 'lodash'
@@ -166,8 +166,19 @@ export default class Game extends React.Component {
       <View style={styles.container}>
         <View style={styles.gameStatusBar}>
           <View style={styles.gameStatusBarItem}>
-            <Button title={this.state.gamePlaying === true ? 'Stop' : 'Play'}
-              onPress={this.playButtonPressed} />
+            {this.state.gamePlaying === true
+              ? <TouchableOpacity
+                style={[styles.playButton, styles.playButtonBgStop]}
+                onPress={this.playButtonPressed}
+              >
+                <Text style={styles.playButtonText}>Stop</Text>
+              </TouchableOpacity>
+              : <TouchableOpacity
+                style={[styles.playButton, styles.playButtonBgPlay]}
+                onPress={this.playButtonPressed}
+              >
+                <Text style={styles.playButtonText}>Play</Text>
+              </TouchableOpacity>}
           </View>
           <View
             style={styles.gameStatusBarItem}><Text>{this.state.position}/{this.state.numOfPlayers}</Text></View>
@@ -184,8 +195,8 @@ export default class Game extends React.Component {
             value={this.state.input}
           />
         </View>
-        <View style={{ flex: 3, flexDirection: 'column' }}>
-          <Text>{this.state.text}</Text>
+        <View style={styles.raceTextView}>
+          <Text style={styles.raceText}>{this.state.text}</Text>
         </View>
       </View>
     )
@@ -199,6 +210,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
+  playButton: {
+    alignItems: 'center',
+    padding: 10
+  },
+  playButtonBgStop: {
+    backgroundColor: '#ff0000'
+  },
+  playButtonBgPlay: {
+    backgroundColor: '#76e77e'
+  },
+  playButtonText: {
+    color: '#fff'
+  },
   gameStatusBar: {
     flex: 1,
     flexDirection: 'row',
@@ -208,5 +232,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  raceTextView: {
+    flex: 3,
+    flexDirection: 'column',
+    padding: 10
+  },
+  raceText: {
+    fontSize: 20
   }
 })
