@@ -1,12 +1,8 @@
 import firebase from 'firebase'
 const API_URL = 'http://192.168.0.9:3001'
 
+// TODO(aibek): handle following
 let currentUser = null
-
-firebase.auth().onAuthStateChanged(function (user) {
-  console.log('WEBAPI', { user })
-  currentUser = user
-})
 
 function parseJSON (response) {
   if (response.status >= 400) {
@@ -43,5 +39,7 @@ const attachToken = async (options) => {
 }
 
 export default {
-
+  getRaceCount: (uid) => {
+    return fetch(`${API_URL}/statistics/getRaceCount?uid=${uid}`).then(parseJSON)
+  }
 }

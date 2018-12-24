@@ -2,6 +2,7 @@ import React from 'react'
 import { View, Text, StyleSheet, Button } from 'react-native'
 import firebase from 'firebase'
 import SignIn from './SignIn'
+import WebAPI from '../WebAPI'
 
 export default class PersonalPage extends React.Component {
   constructor (props) {
@@ -15,9 +16,14 @@ export default class PersonalPage extends React.Component {
   componentDidMount () {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        this.setState({
-          user,
-          authenticated: true
+        console.log(user)
+        // TODO(aibek): the race count is fetched only on user's state change BUG
+        WebAPI.getRaceCount(user.uid).then((result) => {
+          this.setState({
+            user,
+            authenticated: true,
+            totalRaces: result.result
+          })
         })
       } else {
         this.setState({
@@ -44,8 +50,17 @@ export default class PersonalPage extends React.Component {
     } else {
       return (
         <View style={styles.container}>
-          <Text>Hello {this.state.user.uid}</Text>
-          <Button title='Sign out' onPress={this.handleSignOut} />
+          <View style={styles.signOutButton}>
+            <Button title='Sign out' onPress={this.handleSignOut} />
+          </View>
+          <View style={styles.row}>
+            <Text>UID:</Text>
+            <Text>{this.state.user.uid}</Text>
+          </View>
+          <View style={styles.row}>
+            <Text>Total races:</Text>
+            <Text>{this.state.totalRaces}</Text>
+          </View>
         </View>
       )
     }
@@ -55,7 +70,24 @@ export default class PersonalPage extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    paddingTop: 20,
+    paddingLeft: 10,
+    paddingRight: 10,
+    justifyContent: 'flex-start',
     alignItems: 'center'
+  },
+  signOutButton: {
+    flex: 0.1,
+    flexDirection: 'row',
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    justifyContent: 'flex-end'
+  },
+  row: {
+    flex: 0.1,
+    flexDirection: 'row',
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 })
