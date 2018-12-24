@@ -11,20 +11,26 @@ export default class PersonalPage extends React.Component {
       authenticated: false
     }
     this.handleSignOut = this.handleSignOut.bind(this)
+    this.updateRaceCount = this.updateRaceCount.bind(this)
+  }
+
+  updateRaceCount (user) {
+    return WebAPI.getRaceCount(user.uid).then((result) => {
+      this.setState({
+        totalRaces: result.result
+      })
+    })
   }
 
   componentDidMount () {
-    firebase.auth().onAuthStateChanged(user => {
+    firebase.auth().onAuthStateChanged(async user => {
       if (user) {
-        console.log(user)
-        // TODO(aibek): the race count is fetched only on user's state change BUG
-        WebAPI.getRaceCount(user.uid).then((result) => {
-          this.setState({
-            user,
-            authenticated: true,
-            totalRaces: result.result
-          })
+        await this.updateRaceCount(user)
+        this.setState({
+          user,
+          authenticated: true
         })
+        console.log(user)
       } else {
         this.setState({
           user: null,
@@ -33,6 +39,17 @@ export default class PersonalPage extends React.Component {
         this.props.navigation.navigate('SignIn')
       }
     })
+
+    // TODO(aibek): do we have to remove listener or it is removed automatically
+    // On each tap of Personal Page, it will fetch an updated data from API
+    this.props.navigation.addListener(
+      'willFocus',
+      () => {
+        if (this.state.user) {
+          this.updateRaceCount(this.state.user)
+        }
+      }
+    )
   }
 
   handleSignOut () {
