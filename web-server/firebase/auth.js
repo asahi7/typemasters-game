@@ -20,7 +20,8 @@ const EXCLUDED_ROUTES_FROM_VERIFICATION = [
   '/users/signin',
   '/users/signup',
   '/statistics/getAverageCpm',
-  '/statistics/getRaceCount'
+  '/statistics/getRaceCount',
+  '/statistics/getLatestAverageCpm'
 ]
 
 /**

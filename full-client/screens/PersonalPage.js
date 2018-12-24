@@ -17,12 +17,14 @@ export default class PersonalPage extends React.Component {
   updateStatistics (user) {
     return Promise.all([
       WebAPI.getRaceCount(user.uid),
-      WebAPI.getAverageCpm(user.uid)
+      WebAPI.getAverageCpm(user.uid),
+      WebAPI.getLatestAverageCpm(user.uid)
     ]).then((results) => {
       console.log(results)
       this.setState({
         totalRaces: results[0].result,
-        avgCpm: results[1].result.avg
+        avgCpm: results[1].result.avg,
+        lastAvgCpm: results[2].result
       })
     })
   }
@@ -86,6 +88,10 @@ export default class PersonalPage extends React.Component {
           <View style={styles.row}>
             <Text>Average CPM:</Text>
             <Text>{this.state.avgCpm}</Text>
+          </View>
+          <View style={styles.row}>
+            <Text>Average CPM for last 10 games:</Text>
+            <Text>{this.state.lastAvgCpm}</Text>
           </View>
         </View>
       )
