@@ -1,5 +1,5 @@
 import firebase from 'firebase'
-const API_URL = 'http://192.168.0.9:3001'
+import Config from './config/Config'
 
 // TODO(aibek): handle following
 let currentUser = null
@@ -40,6 +40,6 @@ const attachToken = async (options) => {
 
 export default {
   getRaceCount: (uid) => {
-    return fetch(`${API_URL}/statistics/getRaceCount?uid=${uid}`).then(parseJSON)
+    return fetch(`${Config.WEB_SERVER_API}/statistics/getRaceCount?uid=${uid}`).then(parseJSON)
   }
 }
