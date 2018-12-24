@@ -11,13 +11,18 @@ export default class PersonalPage extends React.Component {
       authenticated: false
     }
     this.handleSignOut = this.handleSignOut.bind(this)
-    this.updateRaceCount = this.updateRaceCount.bind(this)
+    this.updateStatistics = this.updateStatistics.bind(this)
   }
 
-  updateRaceCount (user) {
-    return WebAPI.getRaceCount(user.uid).then((result) => {
+  updateStatistics (user) {
+    return Promise.all([
+      WebAPI.getRaceCount(user.uid),
+      WebAPI.getAverageCpm(user.uid)
+    ]).then((results) => {
+      console.log(results)
       this.setState({
-        totalRaces: result.result
+        totalRaces: results[0].result,
+        avgCpm: results[1].result.avg
       })
     })
   }
@@ -25,7 +30,7 @@ export default class PersonalPage extends React.Component {
   componentDidMount () {
     firebase.auth().onAuthStateChanged(async user => {
       if (user) {
-        await this.updateRaceCount(user)
+        await this.updateStatistics(user)
         this.setState({
           user,
           authenticated: true
@@ -46,7 +51,7 @@ export default class PersonalPage extends React.Component {
       'willFocus',
       () => {
         if (this.state.user) {
-          this.updateRaceCount(this.state.user)
+          this.updateStatistics(this.state.user)
         }
       }
     )
@@ -77,6 +82,10 @@ export default class PersonalPage extends React.Component {
           <View style={styles.row}>
             <Text>Total races:</Text>
             <Text>{this.state.totalRaces}</Text>
+          </View>
+          <View style={styles.row}>
+            <Text>Average CPM:</Text>
+            <Text>{this.state.avgCpm}</Text>
           </View>
         </View>
       )

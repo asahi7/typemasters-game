@@ -41,5 +41,9 @@ const attachToken = async (options) => {
 export default {
   getRaceCount: (uid) => {
     return fetch(`${Config.WEB_SERVER_API}/statistics/getRaceCount?uid=${uid}`).then(parseJSON)
+  },
+
+  getAverageCpm: (uid) => {
+    return fetch(`${Config.WEB_SERVER_API}/statistics/getAverageCpm?uid=${uid}`).then(parseJSON)
   }
 }
