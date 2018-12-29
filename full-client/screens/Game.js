@@ -100,7 +100,7 @@ export default class Game extends React.Component {
 
   findPlayerPosition (data) {
     // TODO(aibek): consider anonymous users too
-    return _.findIndex(_.sortBy(data.players, (player) => { return -player.cpm }), ['uid', this.state.currentUser.uid]) + 1
+    return _.find(data.players, { 'uid': this.state.currentUser.uid }).position
   }
 
   sendRaceData () {

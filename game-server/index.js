@@ -75,6 +75,7 @@ async function createNewRoom (socket) {
     ]
   })
   room.setText(text.text)
+  room.computeChars()
   room.setDuration(text.duration * 1000) // converting to milliseconds
   room.setTextId(text.id)
   room.addPlayer(socket)
@@ -133,6 +134,8 @@ function removeRoomParticipants (room) {
 }
 
 function playGame (room) {
+  // TODO(aibek): consider players who do not finish in time and save in DB
+  // TODO(aibek): if a player finishes not in time, his finishedTime should still be recorded (Date.now())
   if (room.startTime + room.duration < Date.now()) {
     clearInterval(room.intervalId)
     // TODO(aibek): delete game and room data
@@ -150,6 +153,8 @@ function playGame (room) {
             userUid: player.socket._serverData.uid, // TODO(aibek): above! and also now only save all the races to one user
             raceId: race.id,
             cpm: player.cpm,
+            isWinner: player.isWinner,
+            position: player.position,
             points: 0, // TODO(aibek): compute points for current game
             accuracy: 0 // TODO(aibek): compute accuracy
           }, { transaction: t }))
@@ -168,12 +173,54 @@ function playGame (room) {
   }
 }
 
+/*
+* Method to update players' relative positions to each other
+* Note: should update the actual Room.players object
+**/
+function updatePositions (room) {
+  /*
+    1. sort by chars desc,
+    2. if equal, sort by finishedTime asc
+    Note: if winner, then sort by finishedTime
+  */
+  let arr = room.getFilteredPlayersData()
+  arr.sort(function (a, b) {
+    if (a.chars < b.chars) {
+      return 1
+    } else if (a.chars > b.chars) {
+      return -1
+    } else if (a.isWinner && b.isWinner) {
+      return a.finishedTime < b.finishedTime ? -1 : a.finishedTime > b.finishedTime ? 1 : 0
+    }
+    return 0
+  })
+  for (let i = 0; i < arr.length; i++) {
+    room.players[arr[i].id].position = i + 1
+  }
+}
+
+/*
+Format of sent data:
+
+data: {
+  id, // socketId
+  uid, // firebase-authenticated user uid
+  cpm,
+  isWinner,
+  position, // relative position
+  chars // total written chars count
+}
+
+Note: isWinner can still be true, even if a player is not the absolute winner, it means they finished
+the race.
+*/
 function sendGameData (room, call) {
   updatingGameDataLock.acquire(room.uuid, function () {
     let timeLeft = (room.startTime + room.duration) - Date.now()
     if (timeLeft < 0) {
       timeLeft = 0
     }
+    updatePositions(room)
     const data = {
       room: room.uuid,
       players: room.getFilteredPlayersData(),
@@ -195,14 +242,20 @@ function countCpm (room, chars) {
 io.on('connection', function (socket) {
   console.log('connected')
   socket.on('racedata', function (data) {
-    // TODO(aibek): check for authentication, maybe introduce middleware, maybe use socket.io
     console.log(data)
     const room = startedGames[data.room.uuid]
     if (room && room.startTime + room.duration >= Date.now()) {
       updatingGameDataLock.acquire(room.uuid, function () {
-        const cpm = countCpm(room, data.chars)
-        console.log(data.chars, cpm)
-        room.updatePlayerCpm(socket.id, cpm)
+        if (!room.isWinner(socket.id)) {
+          room.setCharsCount(socket.id, data.chars)
+          const cpm = countCpm(room, data.chars)
+          console.log(data.chars, cpm)
+          room.updatePlayerCpm(socket.id, cpm)
+        }
+        // Player has finished race in time
+        if (data.chars === room.totalChars && !room.isWinner(socket.id)) {
+          room.setWinner(socket.id)
+        }
       }, { skipQueue: true }).catch(function (err) {
         console.log(err.message)
       })

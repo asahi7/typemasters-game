@@ -35,6 +35,15 @@ module.exports = {
       accuracy: {
         type: Sequelize.INTEGER,
         allowNull: false
+      },
+      isWinner: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
+      position: {
+        type: Sequelize.INTEGER,
+        allowNull: false
       }
     })
   },
