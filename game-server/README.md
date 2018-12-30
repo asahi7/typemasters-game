@@ -8,6 +8,7 @@ a database.
 ## Installation & Running
 
 To properly run the server you will need to do the following:
+In models:
 
 - `npm install`
 - `sudo npm install -g sequelize-cli`

@@ -18,13 +18,15 @@ export default class PersonalPage extends React.Component {
     return Promise.all([
       WebAPI.getRaceCount(user.uid),
       WebAPI.getAverageCpm(user.uid),
-      WebAPI.getLatestAverageCpm(user.uid)
+      WebAPI.getLatestAverageCpm(user.uid),
+      WebAPI.getLastPlayedGame(user.uid)
     ]).then((results) => {
       console.log(results)
       this.setState({
         totalRaces: results[0].result,
         avgCpm: results[1].result.avg,
-        lastAvgCpm: results[2].result
+        lastAvgCpm: results[2].result,
+        lastPlayed: results[3].result
       })
     })
   }
@@ -37,12 +39,12 @@ export default class PersonalPage extends React.Component {
           user,
           authenticated: true
         })
-        console.log(user)
       } else {
         this.setState({
           user: null,
           authenticated: false
         })
+        console.log('not logged')
         this.props.navigation.navigate('SignIn')
       }
     })
@@ -92,6 +94,10 @@ export default class PersonalPage extends React.Component {
           <View style={styles.row}>
             <Text>Average CPM for last 10 games:</Text>
             <Text>{this.state.lastAvgCpm}</Text>
+          </View>
+          <View style={styles.row}>
+            <Text>Last played:</Text>
+            <Text>{this.state.lastPlayed}</Text>
           </View>
         </View>
       )

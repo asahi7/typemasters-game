@@ -108,7 +108,7 @@ Text.hasMany(Race)
 Race.belongsTo(Text, { foreignKey: 'textId' })
 Race.hasMany(RacePlayer)
 RacePlayer.belongsTo(Race, { foreignKey: 'raceId' })
-User.hasMany(RacePlayer)
+// User.hasMany(RacePlayer)
 RacePlayer.belongsTo(User, { foreignKey: 'userUid' })
 
 module.exports = {

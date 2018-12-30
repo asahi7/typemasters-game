@@ -51,4 +51,25 @@ router.get('/getRaceCount', [
   })
 })
 
+router.get('/getLastPlayedGame', [
+  query('uid').isAlphanumeric().isLength({ min: 1 })
+], async (req, res) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() })
+  }
+  return models.Race.findAll({
+    include: {
+      model: models.RacePlayer,
+      where: { raceId: models.sequelize.col('race.id') }
+    },
+    where: { '$racePlayers.userUid$': req.query.uid },
+    attributes: ['date'],
+    order: [['date', 'DESC']],
+    exclude: ['racePlayers']
+  }).then((result) => {
+    return res.send({ result: result[0]['date'] })
+  })
+})
+
 module.exports = router
