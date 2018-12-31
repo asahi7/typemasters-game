@@ -58,17 +58,18 @@ router.get('/getLastPlayedGame', [
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() })
   }
-  return models.Race.findAll({
+  return models.Race.findOne({
     include: {
       model: models.RacePlayer,
-      where: { raceId: models.sequelize.col('race.id') }
+      where: { raceId: models.sequelize.col('race.id'),
+        userUid: req.query.uid }
     },
-    where: { '$racePlayers.userUid$': req.query.uid },
     attributes: ['date'],
-    order: [['date', 'DESC']],
-    exclude: ['racePlayers']
-  }).then((result) => {
-    return res.send({ result: result[0]['date'] })
+    order: [['date', 'DESC']]
+  }
+  ).then(function (race) {
+    console.log(race.get('date'))
+    return res.send({ result: race.get('date') })
   })
 })
 
