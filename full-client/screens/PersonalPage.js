@@ -20,7 +20,8 @@ export default class PersonalPage extends React.Component {
       WebAPI.getAverageCpm(user.uid),
       WebAPI.getLatestAverageCpm(user.uid),
       WebAPI.getLastPlayedGame(user.uid),
-      WebAPI.getBestResult(user.uid)
+      WebAPI.getBestResult(user.uid),
+      WebAPI.getGamesWon(user.uid)
     ]).then((results) => {
       console.log(results)
       this.setState({
@@ -28,7 +29,8 @@ export default class PersonalPage extends React.Component {
         avgCpm: results[1].result.avg,
         lastAvgCpm: results[2].result,
         lastPlayed: results[3].result,
-        bestResult: results[4].result
+        bestResult: results[4].result,
+        gamesWon: results[5].result
       })
     })
   }
@@ -104,6 +106,10 @@ export default class PersonalPage extends React.Component {
           <View style={styles.row}>
             <Text>Best result:</Text>
             <Text>{this.state.bestResult}</Text>
+          </View>
+          <View style={styles.row}>
+            <Text>Games Won:</Text>
+            <Text>{this.state.gamesWon}</Text>
           </View>
         </View>
       )

@@ -1,4 +1,4 @@
 export default {
-  WEB_SERVER_API: 'http://10.64.131.79:3001',
-  GAME_SERVER_API: 'http://10.64.131.79:3000'
+  WEB_SERVER_API: 'http://192.168.0.12:3001',
+  GAME_SERVER_API: 'http://192.168.0.12:3000'
 }

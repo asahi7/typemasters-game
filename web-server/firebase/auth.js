@@ -23,7 +23,8 @@ const EXCLUDED_ROUTES_FROM_VERIFICATION = [
   '/statistics/getRaceCount',
   '/statistics/getLatestAverageCpm',
   '/statistics/getLastPlayedGame',
-  '/statistics/getBestResult'
+  '/statistics/getBestResult',
+  '/statistics/getGamesWon'
 ]
 
 /**
