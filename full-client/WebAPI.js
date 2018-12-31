@@ -53,5 +53,9 @@ export default {
 
   getLastPlayedGame: (uid) => {
     return fetch(`${Config.WEB_SERVER_API}/statistics/getLastPlayedGame?uid=${uid}`).then(parseJSON)
+  },
+
+  getBestResult: (uid) => {
+    return fetch(`${Config.WEB_SERVER_API}/statistics/getBestResult?uid=${uid}`).then(parseJSON)
   }
 }
