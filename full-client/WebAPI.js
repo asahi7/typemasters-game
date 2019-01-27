@@ -67,7 +67,12 @@ export default {
     return fetch(`${Config.WEB_SERVER_API}/statistics/getGamesWon?uid=${uid}&language=${language}`).then(parseJSON)
   },
 
+  getLastScore: (uid, language) => {
+    return fetch(`${Config.WEB_SERVER_API}/statistics/getLastScore?uid=${uid}&language=${language}`).then(parseJSON)
+  },
+
   getUserInfo: (uid) => {
+    console.log('sff', uid)
     return fetch(`${Config.WEB_SERVER_API}/users?uid=${uid}`).then(parseJSON)
   }
 }

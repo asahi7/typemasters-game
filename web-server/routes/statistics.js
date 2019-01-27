@@ -43,7 +43,9 @@ router.get('/getAverageCpm', [
     ],
     attributes: ['id']
   }).then((results) => {
-    const sum = _.sumBy(results, (o) => { return o.racePlayers[0].cpm })
+    const sum = _.sumBy(results, (o) => {
+      return o.racePlayers[0].cpm
+    })
     const average = (sum / _.size(results))
     return Math.round(average * 100) / 100
   }).then(avg => {
@@ -93,6 +95,30 @@ router.get('/getFirstRace', [
     order: [['date', 'ASC']]
   }).then(result => {
     return res.send({ result })
+  })
+})
+
+// TODO(madina): possible duplicate of getLastPlayedGame
+router.get('/getLastScore', [
+  query('uid').isAlphanumeric().isLength({ min: 1 }),
+  query('language').isAlpha().isLength({ min: 1, max: 2 })
+], async (req, res) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() })
+  }
+  models.Race.findOne({
+    include: [
+      {
+        model: models.Text, attributes: [], where: { language: req.query.language }
+      },
+      {
+        model: models.RacePlayer, attributes: ['cpm'], where: { userUid: req.query.uid }
+      }
+    ],
+    order: [['date', 'DESC']]
+  }).then(result => {
+    return res.send({ result: result.racePlayers[0].cpm })
   })
 })
 

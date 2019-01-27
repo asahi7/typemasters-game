@@ -23,6 +23,7 @@ router.get('/', [
     })
     return
   }
+  console.log('in users/n/n', user)
   res.send(user)
 })
 

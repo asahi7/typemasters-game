@@ -35,9 +35,9 @@ export default class PersonalPage extends React.Component {
         WebAPI.getBestResult(user.uid, this.state.language),
         WebAPI.getGamesWon(user.uid, this.state.language),
         WebAPI.getFirstRace(user.uid, this.state.language),
-        WebAPI.getUserInfo(user.uid)
+        WebAPI.getUserInfo(user.uid),
+        WebAPI.getLastScore(user.uid, this.state.language)
       ]).then((results) => {
-        console.log(results)
         this.setState({
           // TODO(aibek): what if null
           totalRaces: results[0].result,
@@ -47,10 +47,9 @@ export default class PersonalPage extends React.Component {
           bestResult: results[4].result,
           gamesWon: results[5].result,
           firstRaceData: results[6].result,
-          userInfo: results[7]
+          userInfo: results[7],
+          lastScore: results[8].result
         })
-      }).then(() => {
-        console.log(this.state.firstRaceData)
       })
     })
   }
@@ -115,6 +114,11 @@ export default class PersonalPage extends React.Component {
           </View>
           }
           <View style={styles.row}>
+            <Text>Email:</Text>
+            <Text>{this.state.userInfo.email}</Text>
+            {console.log('asaasandafsd/n', this.state.userInfo)}
+          </View>
+          <View style={styles.row}>
             <Text>Total races:</Text>
             <Text>{this.state.totalRaces}</Text>
           </View>
@@ -129,11 +133,15 @@ export default class PersonalPage extends React.Component {
           <View style={styles.row}>
             <Text>First race information:</Text>
             <Text>CPM: {this.state.firstRaceData.racePlayers[0].cpm} -
-              Date: {this.state.firstRaceData.date}</Text>
+                            Date: {this.state.firstRaceData.date}</Text>
           </View>
           <View>
             <Text>Last played:</Text>
             <Text>{this.state.lastPlayed}</Text>
+          </View>
+          <View>
+            <Text>Last score:</Text>
+            <Text>{this.state.lastScore}</Text>
           </View>
           <View style={styles.row}>
             <Text>Best result:</Text>
