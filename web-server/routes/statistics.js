@@ -69,6 +69,26 @@ router.get('/getFirstRace', [
   })
 })
 
+
+router.get('/getLastScore', [
+  query('uid').isAlphanumeric().isLength({ min: 1 })
+], async (req, res) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() })
+  }
+  models.Race.findOne({
+    include: [{
+      model: models.RacePlayer,
+      where: { userUid: req.query.uid }
+    }],
+    order: [['date', 'DESC']]
+  }).then(result => {
+    return res.send({ result: result.racePlayers[0].cpm })
+  })
+
+})
+
 router.get('/getLastPlayedGame', [
   query('uid').isAlphanumeric().isLength({ min: 1 })
 ], async (req, res) => {

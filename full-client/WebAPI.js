@@ -67,7 +67,12 @@ export default {
     return fetch(`${Config.WEB_SERVER_API}/statistics/getGamesWon?uid=${uid}`).then(parseJSON)
   },
 
+  getLastScore: (uid) => {
+    return fetch(`${Config.WEB_SERVER_API}/statistics/getLastScore?uid=${uid}`).then(parseJSON)
+  },
+
   getUserInfo: (uid) => {
+    console.log('sff',uid)
     return fetch(`${Config.WEB_SERVER_API}/users?uid=${uid}`).then(parseJSON)
   }
 }
