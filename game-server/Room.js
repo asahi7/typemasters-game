@@ -57,6 +57,10 @@ class Room {
     this.textId = id
   }
 
+  setPlayerDisconnected (socketId) {
+    this.players[socketId].disconnected = true
+  }
+
   updatePlayerCpm (socketId, cpm) {
     this.players[socketId].cpm = cpm
   }

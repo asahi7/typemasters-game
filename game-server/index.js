@@ -148,16 +148,18 @@ function playGame (room) {
         const playerPromises = []
         _.forEach(room.players, (player, key) => {
           // TODO(aibek): consider anonymous users
-          playerPromises.push(models.RacePlayer.create({
-            // userUid: room.players[i].id, // TODO(aibek): temporarily save socket_id to DB
-            userUid: player.socket._serverData.uid, // TODO(aibek): above! and also now only save all the races to one user
-            raceId: race.id,
-            cpm: player.cpm,
-            isWinner: player.isWinner,
-            position: player.position,
-            points: 0, // TODO(aibek): compute points for current game
-            accuracy: 0 // TODO(aibek): compute accuracy
-          }, { transaction: t }))
+          if (!player.disconnected) {
+            playerPromises.push(models.RacePlayer.create({
+              // userUid: room.players[i].id, // TODO(aibek): temporarily save socket_id to DB
+              userUid: player.socket._serverData.uid, // TODO(aibek): above! and also now only save all the races to one user
+              raceId: race.id,
+              cpm: player.cpm,
+              isWinner: player.isWinner,
+              position: player.position,
+              points: 0, // TODO(aibek): compute points for current game
+              accuracy: 0 // TODO(aibek): compute accuracy
+            }, { transaction: t }))
+          }
         })
         return Promise.all(playerPromises)
       })
@@ -293,7 +295,13 @@ io.on('connection', function (socket) {
     }
   })
 
+  socket.on('removePlayer', function (data) {
+    console.log(data)
+    const room = startedGames[data.room.uuid]
+    console.log('the player accidentally disconnected')
+    room.setPlayerDisconnected(socket.id)
+  })
+
   socket.on('disconnect', function () {
-    io.emit('user disconnected')
   })
 })

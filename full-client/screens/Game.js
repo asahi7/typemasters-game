@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView } from 'react-native'
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, BackHandler } from 'react-native'
 import firebase from 'firebase'
 import io from 'socket.io-client'
 import _ from 'lodash'
@@ -29,6 +29,8 @@ export default class Game extends React.Component {
     this.cleanGameData = this.cleanGameData.bind(this)
     this.findPlayerPosition = this.findPlayerPosition.bind(this)
     this.setGameData = this.setGameData.bind(this)
+    this.dicsonnectPlayer = this.dicsonnectPlayer.bind(this)
+    this.handleBackPress = this.handleBackPress.bind(this)
   }
 
   findCpmForCurrentUser (data) {
@@ -125,10 +127,6 @@ export default class Game extends React.Component {
     })
   }
 
-  componentWillMount () {
-
-  }
-
   handleUserInput (input) {
     this.setState({
       input
@@ -148,18 +146,41 @@ export default class Game extends React.Component {
     }
   }
 
+  componentDidMount () {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackPress)
+  }
+
+  componentWillUnmount () {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress)
+  }
+
+  handleBackPress () {
+    this.dicsonnectPlayer()
+  }
+
   playButtonPressed () {
     if (this.state.gamePlaying === true) {
-      socket.disconnect()
-      this.setState({
-        gamePlaying: false
-      })
+      this.dicsonnectPlayer()
     } else {
       this.setState({
         gamePlaying: true
       })
       this.handlePlayGamePressed()
     }
+  }
+
+  dicsonnectPlayer () {
+    if (this.state.uuid) {
+      socket.emit('removePlayer', {
+        room: {
+          uuid: this.state.uuid
+        }
+      })
+    }
+    socket.disconnect()
+    this.setState({
+      gamePlaying: false
+    })
   }
 
   render () {
