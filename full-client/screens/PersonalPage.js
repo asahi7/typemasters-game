@@ -18,14 +18,19 @@ export default class PersonalPage extends React.Component {
     return Promise.all([
       WebAPI.getRaceCount(user.uid),
       WebAPI.getAverageCpm(user.uid),
-      WebAPI.getLatestAverageCpm(user.uid)
+      WebAPI.getLatestAverageCpm(user.uid),
+      WebAPI.getFirstRace(user.uid)
     ]).then((results) => {
       console.log(results)
       this.setState({
+        // TODO(aibek): what if null
         totalRaces: results[0].result,
         avgCpm: results[1].result.avg,
-        lastAvgCpm: results[2].result
+        lastAvgCpm: results[2].result,
+        firstRaceData: results[3].result
       })
+    }).then(() => {
+      console.log(this.state.firstRaceData)
     })
   }
 
@@ -92,6 +97,10 @@ export default class PersonalPage extends React.Component {
           <View style={styles.row}>
             <Text>Average CPM for last 10 games:</Text>
             <Text>{this.state.lastAvgCpm}</Text>
+          </View>
+          <View style={styles.row}>
+            <Text>First race information:</Text>
+            <Text>CPM: {this.state.firstRaceData.racePlayers[0].cpm} - Date: {this.state.firstRaceData.date}</Text>
           </View>
         </View>
       )

@@ -51,4 +51,22 @@ router.get('/getRaceCount', [
   })
 })
 
+router.get('/getFirstRace', [
+  query('uid').isAlphanumeric().isLength({ min: 1 })
+], async (req, res) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() })
+  }
+  models.Race.findOne({
+    include: [{
+      model: models.RacePlayer,
+      where: { userUid: req.query.uid }
+    }],
+    order: [['date', 'ASC']]
+  }).then(result => {
+    return res.send({ result })
+  })
+})
+
 module.exports = router

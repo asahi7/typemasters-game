@@ -49,5 +49,9 @@ export default {
 
   getLatestAverageCpm: (uid) => {
     return fetch(`${Config.WEB_SERVER_API}/statistics/getLatestAverageCpm?uid=${uid}`).then(parseJSON)
+  },
+
+  getFirstRace: (uid) => {
+    return fetch(`${Config.WEB_SERVER_API}/statistics/getFirstRace?uid=${uid}`).then(parseJSON)
   }
 }
