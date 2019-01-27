@@ -65,5 +65,9 @@ export default {
 
   getGamesWon: (uid) => {
     return fetch(`${Config.WEB_SERVER_API}/statistics/getGamesWon?uid=${uid}`).then(parseJSON)
+  },
+
+  getUserInfo: (uid) => {
+    return fetch(`${Config.WEB_SERVER_API}/users?uid=${uid}`).then(parseJSON)
   }
 }

@@ -22,7 +22,8 @@ export default class PersonalPage extends React.Component {
       WebAPI.getLastPlayedGame(user.uid),
       WebAPI.getBestResult(user.uid),
       WebAPI.getGamesWon(user.uid),
-      WebAPI.getFirstRace(user.uid)
+      WebAPI.getFirstRace(user.uid),
+      WebAPI.getUserInfo(user.uid)
     ]).then((results) => {
       console.log(results)
       this.setState({
@@ -33,7 +34,8 @@ export default class PersonalPage extends React.Component {
         lastPlayed: results[3].result,
         bestResult: results[4].result,
         gamesWon: results[5].result,
-        firstRaceData: results[6].result
+        firstRaceData: results[6].result,
+        userInfo: results[7]
       })
     }).then(() => {
       console.log(this.state.firstRaceData)
@@ -83,6 +85,7 @@ export default class PersonalPage extends React.Component {
     if (this.state.authenticated === false) {
       return <SignIn navigation={this.props.navigation} />
     } else {
+      // TODO(aibek): add conditional rendering to everything
       return (
         <View style={styles.container}>
           <View style={styles.signOutButton}>
@@ -92,6 +95,12 @@ export default class PersonalPage extends React.Component {
             <Text>UID:</Text>
             <Text>{this.state.user.uid}</Text>
           </View>
+          {this.state.userInfo.email &&
+            <View style={styles.row}>
+              <Text>Email:</Text>
+              <Text>{this.state.userInfo.email}</Text>
+            </View>
+          }
           <View style={styles.row}>
             <Text>Total races:</Text>
             <Text>{this.state.totalRaces}</Text>
