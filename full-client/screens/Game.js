@@ -1,5 +1,14 @@
 import React from 'react'
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, BackHandler } from 'react-native'
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  BackHandler,
+  AsyncStorage
+} from 'react-native'
 import firebase from 'firebase'
 import io from 'socket.io-client'
 import _ from 'lodash'
@@ -43,7 +52,7 @@ export default class Game extends React.Component {
       socket.emit('authentication', { token: idToken })
       socket.on('authenticated', () => {
         console.log('Asking for a new game..')
-        socket.emit('newgame')
+        socket.emit('newgame', { language: this.state.language })
         this.setState({
           gamePlaying: true,
           text: 'Loading..'
@@ -148,6 +157,17 @@ export default class Game extends React.Component {
 
   componentDidMount () {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackPress)
+    AsyncStorage.getItem('textLanguage').then((value) => {
+      if (!value) {
+        this.setState({
+          language: 'en'
+        })
+      } else {
+        this.setState({
+          language: value.toLowerCase()
+        })
+      }
+    })
   }
 
   componentWillUnmount () {
@@ -162,10 +182,22 @@ export default class Game extends React.Component {
     if (this.state.gamePlaying === true) {
       this.dicsonnectPlayer()
     } else {
-      this.setState({
-        gamePlaying: true
+      AsyncStorage.getItem('textLanguage').then((value) => {
+        if (!value) {
+          this.setState({
+            language: 'en'
+          })
+        } else {
+          this.setState({
+            language: value.toLowerCase()
+          })
+        }
+      }).then(() => {
+        this.setState({
+          gamePlaying: true
+        })
+        this.handlePlayGamePressed()
       })
-      this.handlePlayGamePressed()
     }
   }
 

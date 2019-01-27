@@ -49,6 +49,10 @@ class Room {
     this.text = text
   }
 
+  setLanguage (language) {
+    this.language = language
+  }
+
   setDuration (duration) {
     this.duration = duration
   }

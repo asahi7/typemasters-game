@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, StyleSheet, Button } from 'react-native'
+import { View, Text, StyleSheet, Button, AsyncStorage } from 'react-native'
 import firebase from 'firebase'
 import SignIn from './SignIn'
 import WebAPI from '../WebAPI'
@@ -8,37 +8,50 @@ export default class PersonalPage extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      authenticated: false
+      authenticated: false,
+      language: null
     }
     this.handleSignOut = this.handleSignOut.bind(this)
     this.updateStatistics = this.updateStatistics.bind(this)
   }
 
   updateStatistics (user) {
-    return Promise.all([
-      WebAPI.getRaceCount(user.uid),
-      WebAPI.getAverageCpm(user.uid),
-      WebAPI.getLatestAverageCpm(user.uid),
-      WebAPI.getLastPlayedGame(user.uid),
-      WebAPI.getBestResult(user.uid),
-      WebAPI.getGamesWon(user.uid),
-      WebAPI.getFirstRace(user.uid),
-      WebAPI.getUserInfo(user.uid)
-    ]).then((results) => {
-      console.log(results)
-      this.setState({
-        // TODO(aibek): what if null
-        totalRaces: results[0].result,
-        avgCpm: results[1].result.avg,
-        lastAvgCpm: results[2].result,
-        lastPlayed: results[3].result,
-        bestResult: results[4].result,
-        gamesWon: results[5].result,
-        firstRaceData: results[6].result,
-        userInfo: results[7]
-      })
+    return AsyncStorage.getItem('textLanguage').then((value) => {
+      if (!value) {
+        this.setState({
+          language: 'en'
+        })
+      } else {
+        this.setState({
+          language: value.toLowerCase()
+        })
+      }
     }).then(() => {
-      console.log(this.state.firstRaceData)
+      return Promise.all([
+        WebAPI.getRaceCount(user.uid, this.state.language),
+        WebAPI.getAverageCpm(user.uid, this.state.language),
+        WebAPI.getLatestAverageCpm(user.uid, this.state.language),
+        WebAPI.getLastPlayedGame(user.uid, this.state.language),
+        WebAPI.getBestResult(user.uid, this.state.language),
+        WebAPI.getGamesWon(user.uid, this.state.language),
+        WebAPI.getFirstRace(user.uid, this.state.language),
+        WebAPI.getUserInfo(user.uid)
+      ]).then((results) => {
+        console.log(results)
+        this.setState({
+          // TODO(aibek): what if null
+          totalRaces: results[0].result,
+          avgCpm: results[1].result.avg,
+          lastAvgCpm: results[2].result,
+          lastPlayed: results[3].result,
+          bestResult: results[4].result,
+          gamesWon: results[5].result,
+          firstRaceData: results[6].result,
+          userInfo: results[7]
+        })
+      }).then(() => {
+        console.log(this.state.firstRaceData)
+      })
     })
   }
 
@@ -96,10 +109,10 @@ export default class PersonalPage extends React.Component {
             <Text>{this.state.user.uid}</Text>
           </View>
           {this.state.userInfo.email &&
-            <View style={styles.row}>
-              <Text>Email:</Text>
-              <Text>{this.state.userInfo.email}</Text>
-            </View>
+          <View style={styles.row}>
+            <Text>Email:</Text>
+            <Text>{this.state.userInfo.email}</Text>
+          </View>
           }
           <View style={styles.row}>
             <Text>Total races:</Text>
@@ -115,7 +128,8 @@ export default class PersonalPage extends React.Component {
           </View>
           <View style={styles.row}>
             <Text>First race information:</Text>
-            <Text>CPM: {this.state.firstRaceData.racePlayers[0].cpm} - Date: {this.state.firstRaceData.date}</Text>
+            <Text>CPM: {this.state.firstRaceData.racePlayers[0].cpm} -
+              Date: {this.state.firstRaceData.date}</Text>
           </View>
           <View>
             <Text>Last played:</Text>

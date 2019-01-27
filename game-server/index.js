@@ -67,13 +67,15 @@ let startingGamesCnt = 0
 let startedGames = {}
 const updatingGameDataLock = new AsyncLock()
 
-async function createNewRoom (socket) {
+async function createNewRoom (socket, data) {
   const room = new Room()
   const text = await models.Text.findOne({
+    where: { language: data.language },
     order: [
       models.sequelize.fn('RAND')
     ]
   })
+  room.setLanguage(data.language)
   room.setText(text.text)
   room.computeChars()
   room.setDuration(text.duration * 1000) // converting to milliseconds
@@ -264,10 +266,10 @@ io.on('connection', function (socket) {
     }
   })
 
-  socket.on('newgame', function () {
+  socket.on('newgame', function (data) {
     console.log('Asking for a new game')
     if (startingGamesCnt === 0) {
-      createNewRoom(socket)
+      createNewRoom(socket, data)
     } else {
       console.log('The queue is not empty!')
       let current = startingGames.head
@@ -276,6 +278,10 @@ io.on('connection', function (socket) {
         if (current.room.countPlayers() < MAXIMUM_PLAYERS_IN_ROOM) {
           // TODO(aibek): isn't here any race condition?
           const room = current.room
+          if (room.language !== data.language) {
+            current = current.next
+            continue
+          }
           startingGamesLock.acquire(room.uuid, function () {
             if (room.started === false && current.room.countPlayers() < MAXIMUM_PLAYERS_IN_ROOM) {
               current.room.addPlayer(socket)
@@ -290,7 +296,7 @@ io.on('connection', function (socket) {
         current = current.next
       }
       if (addedToGame === false) {
-        createNewRoom(socket)
+        createNewRoom(socket, data)
       }
     }
   })

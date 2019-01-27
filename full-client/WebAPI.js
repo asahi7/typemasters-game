@@ -39,32 +39,32 @@ const attachToken = async (options) => {
 }
 
 export default {
-  getRaceCount: (uid) => {
-    return fetch(`${Config.WEB_SERVER_API}/statistics/getRaceCount?uid=${uid}`).then(parseJSON)
+  getRaceCount: (uid, language) => {
+    return fetch(`${Config.WEB_SERVER_API}/statistics/getRaceCount?uid=${uid}&language=${language}`).then(parseJSON)
   },
 
-  getAverageCpm: (uid) => {
-    return fetch(`${Config.WEB_SERVER_API}/statistics/getAverageCpm?uid=${uid}`).then(parseJSON)
+  getAverageCpm: (uid, language) => {
+    return fetch(`${Config.WEB_SERVER_API}/statistics/getAverageCpm?uid=${uid}&language=${language}`).then(parseJSON)
   },
 
-  getLatestAverageCpm: (uid) => {
-    return fetch(`${Config.WEB_SERVER_API}/statistics/getLatestAverageCpm?uid=${uid}`).then(parseJSON)
+  getLatestAverageCpm: (uid, language) => {
+    return fetch(`${Config.WEB_SERVER_API}/statistics/getLatestAverageCpm?uid=${uid}&language=${language}`).then(parseJSON)
   },
 
-  getFirstRace: (uid) => {
-    return fetch(`${Config.WEB_SERVER_API}/statistics/getFirstRace?uid=${uid}`).then(parseJSON)
+  getFirstRace: (uid, language) => {
+    return fetch(`${Config.WEB_SERVER_API}/statistics/getFirstRace?uid=${uid}&language=${language}`).then(parseJSON)
   },
 
-  getLastPlayedGame: (uid) => {
-    return fetch(`${Config.WEB_SERVER_API}/statistics/getLastPlayedGame?uid=${uid}`).then(parseJSON)
+  getLastPlayedGame: (uid, language) => {
+    return fetch(`${Config.WEB_SERVER_API}/statistics/getLastPlayedGame?uid=${uid}&language=${language}`).then(parseJSON)
   },
 
-  getBestResult: (uid) => {
-    return fetch(`${Config.WEB_SERVER_API}/statistics/getBestResult?uid=${uid}`).then(parseJSON)
+  getBestResult: (uid, language) => {
+    return fetch(`${Config.WEB_SERVER_API}/statistics/getBestResult?uid=${uid}&language=${language}`).then(parseJSON)
   },
 
-  getGamesWon: (uid) => {
-    return fetch(`${Config.WEB_SERVER_API}/statistics/getGamesWon?uid=${uid}`).then(parseJSON)
+  getGamesWon: (uid, language) => {
+    return fetch(`${Config.WEB_SERVER_API}/statistics/getGamesWon?uid=${uid}&language=${language}`).then(parseJSON)
   },
 
   getUserInfo: (uid) => {
