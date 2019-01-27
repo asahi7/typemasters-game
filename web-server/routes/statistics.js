@@ -69,4 +69,63 @@ router.get('/getFirstRace', [
   })
 })
 
+router.get('/getLastPlayedGame', [
+  query('uid').isAlphanumeric().isLength({ min: 1 })
+], async (req, res) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() })
+  }
+  return models.Race.findOne({
+    include: {
+      model: models.RacePlayer,
+      where: {
+        raceId: models.sequelize.col('race.id'),
+        userUid: req.query.uid
+      }
+    },
+    attributes: ['date'],
+    order: [['date', 'DESC']]
+  }
+  ).then(function (race) {
+    return res.send({ result: race.get('date') })
+  })
+})
+
+router.get('/getBestResult', [
+  query('uid').isAlphanumeric().isLength({ min: 1 })
+], async (req, res) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() })
+  }
+  return models.RacePlayer.findOne({
+    attributes: ['cpm'],
+    where: { userUid: req.query.uid },
+    order: [['cpm', 'DESC']]
+  }
+  ).then(function (race) {
+    console.log(race.get('cpm'))
+    return res.send({ result: race.get('cpm') })
+  })
+})
+
+router.get('/getGamesWon', [
+  query('uid').isAlphanumeric().isLength({ min: 1 })
+], async (req, res) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() })
+  }
+  return models.RacePlayer.count({
+    where: {
+      userUid: req.query.uid,
+      isWinner: 1
+    }
+  }
+  ).then(function (result) {
+    return res.send({ result: result })
+  })
+})
+
 module.exports = router

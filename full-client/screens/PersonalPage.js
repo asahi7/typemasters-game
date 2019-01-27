@@ -19,6 +19,9 @@ export default class PersonalPage extends React.Component {
       WebAPI.getRaceCount(user.uid),
       WebAPI.getAverageCpm(user.uid),
       WebAPI.getLatestAverageCpm(user.uid),
+      WebAPI.getLastPlayedGame(user.uid),
+      WebAPI.getBestResult(user.uid),
+      WebAPI.getGamesWon(user.uid),
       WebAPI.getFirstRace(user.uid)
     ]).then((results) => {
       console.log(results)
@@ -27,7 +30,10 @@ export default class PersonalPage extends React.Component {
         totalRaces: results[0].result,
         avgCpm: results[1].result.avg,
         lastAvgCpm: results[2].result,
-        firstRaceData: results[3].result
+        lastPlayed: results[3].result,
+        bestResult: results[4].result,
+        gamesWon: results[5].result,
+        firstRaceData: results[6].result
       })
     }).then(() => {
       console.log(this.state.firstRaceData)
@@ -42,12 +48,12 @@ export default class PersonalPage extends React.Component {
           user,
           authenticated: true
         })
-        console.log(user)
       } else {
         this.setState({
           user: null,
           authenticated: false
         })
+        console.log('not logged')
         this.props.navigation.navigate('SignIn')
       }
     })
@@ -101,6 +107,18 @@ export default class PersonalPage extends React.Component {
           <View style={styles.row}>
             <Text>First race information:</Text>
             <Text>CPM: {this.state.firstRaceData.racePlayers[0].cpm} - Date: {this.state.firstRaceData.date}</Text>
+          </View>
+          <View>
+            <Text>Last played:</Text>
+            <Text>{this.state.lastPlayed}</Text>
+          </View>
+          <View style={styles.row}>
+            <Text>Best result:</Text>
+            <Text>{this.state.bestResult}</Text>
+          </View>
+          <View style={styles.row}>
+            <Text>Games Won:</Text>
+            <Text>{this.state.gamesWon}</Text>
           </View>
         </View>
       )
