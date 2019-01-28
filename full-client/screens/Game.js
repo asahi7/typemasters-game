@@ -2,7 +2,9 @@ import React from 'react'
 import {
   StyleSheet,
   Text,
+  TouchableHighlight,
   View,
+  Modal,
   TextInput,
   TouchableOpacity,
   ScrollView,
@@ -27,7 +29,9 @@ export default class Game extends React.Component {
       position: 1,
       gamePlaying: false,
       timeLeft: 0,
-      cpm: 0
+      cpm: 0,
+      modalVisible: false,
+      modalText: ''
     }
     this.setSocketBehavior = this.setSocketBehavior.bind(this)
     this.handleUserInput = this.handleUserInput.bind(this)
@@ -40,6 +44,7 @@ export default class Game extends React.Component {
     this.setGameData = this.setGameData.bind(this)
     this.dicsonnectPlayer = this.dicsonnectPlayer.bind(this)
     this.handleBackPress = this.handleBackPress.bind(this)
+    this.setModalVisible = this.setModalVisible.bind(this)
   }
 
   findCpmForCurrentUser (data) {
@@ -75,14 +80,14 @@ export default class Game extends React.Component {
 
         socket.on('gamedata', (data) => {
           console.log(data)
-          this.setGameData(data)
+          this.setGameData(data, false)
         })
 
         socket.on('gameended', (data) => {
           console.log('game ended')
           console.log(data)
           this.cleanGameData()
-          this.setGameData(data)
+          this.setGameData(data, true)
         })
 
         socket.on('disconnect', () => {
@@ -93,11 +98,26 @@ export default class Game extends React.Component {
     })
   }
 
-  setGameData (data) {
+  setGameData (data, isGameEnded) {
+    const isWinner = _.find(data.players, { 'uid': this.state.currentUser.uid }).isWinner
     this.setState({
       timeLeft: data.timeLeft / 1000,
       cpm: this.findCpmForCurrentUser(data),
       position: this.findPlayerPosition(data)
+    }, () => {
+      if (isWinner === true || isGameEnded === true) {
+        if (isWinner) {
+          this.setState({
+            modalText: 'You are the winner!'
+          })
+        } else if (isGameEnded) {
+          this.setState({
+            modalText: 'Time is up!'
+          })
+        }
+        this.dicsonnectPlayer()
+        this.setModalVisible(true)
+      }
     })
   }
 
@@ -215,9 +235,42 @@ export default class Game extends React.Component {
     })
   }
 
+  setModalVisible (visible) {
+    this.setState({ modalVisible: visible })
+  }
+
   render () {
     return (
       <View style={styles.container}>
+        <Modal
+          visible={this.state.modalVisible}
+          transparent
+          onRequestClose={() => {}}
+        >
+          <View style={{ flex: 1,
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#00000080' }}>
+            <View style={{ backgroundColor: '#fff',
+              padding: 20,
+              width: 300,
+              height: 300,
+              alignItems: 'center',
+              justifyContent: 'center' }}>
+              <Text style={{ color: 'red', fontSize: 20 }}>{this.state.modalText}</Text>
+              <View
+                style={styles.gameStatusBarItem}><Text>You are {this.state.position} out of {this.state.numOfPlayers}</Text></View>
+              <View style={styles.gameStatusBarItem}><Text>Your CPM: {this.state.cpm}</Text></View>
+              <TouchableHighlight
+                onPress={() => {
+                  this.setModalVisible(!this.state.modalVisible)
+                }}>
+                <Text style={{ color: 'red', fontSize: 20 }}>Close [X]</Text>
+              </TouchableHighlight>
+            </View>
+          </View>
+        </Modal>
         <View style={styles.gameStatusBar}>
           <View style={styles.gameStatusBarItem}>
             {this.state.gamePlaying === true
@@ -252,6 +305,12 @@ export default class Game extends React.Component {
         <ScrollView style={styles.raceTextView}>
           <Text style={styles.raceText}>{this.state.text}</Text>
         </ScrollView>
+        <TouchableHighlight
+          onPress={() => {
+            this.setModalVisible(true)
+          }} style={{ marginBottom: 20 }}>
+          <Text>Show Modal</Text>
+        </TouchableHighlight>
       </View>
     )
   }

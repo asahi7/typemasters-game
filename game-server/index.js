@@ -150,7 +150,7 @@ function playGame (room) {
         const playerPromises = []
         _.forEach(room.players, (player, key) => {
           // TODO(aibek): consider anonymous users
-          if (!player.disconnected) {
+          if (!player.disconnected || player.isWinner) {
             playerPromises.push(models.RacePlayer.create({
               // userUid: room.players[i].id, // TODO(aibek): temporarily save socket_id to DB
               userUid: player.socket._serverData.uid, // TODO(aibek): above! and also now only save all the races to one user

@@ -62,7 +62,7 @@ class Room {
   }
 
   setPlayerDisconnected (socketId) {
-    this.players[socketId].disconnected = true
+    if (this.players[socketId]) { this.players[socketId].disconnected = true }
   }
 
   updatePlayerCpm (socketId, cpm) {
