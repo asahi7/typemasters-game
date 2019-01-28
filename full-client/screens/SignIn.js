@@ -1,6 +1,7 @@
 import React from 'react'
-import { StyleSheet, Text, View, TextInput, Button } from 'react-native'
+import { StyleSheet, Text, TextInput, Button } from 'react-native'
 import firebase from 'firebase'
+import { LinearGradient } from 'expo'
 
 export default class SignIn extends React.Component {
   constructor (props) {
@@ -24,7 +25,7 @@ export default class SignIn extends React.Component {
 
   render () {
     return (
-      <View style={styles.container}>
+      <LinearGradient colors={['#e1f6fa', '#dac6d8']} style={styles.container}>
         <Text>Login</Text>
         {this.state.errorMessage &&
         <Text style={{ color: 'red' }}>
@@ -50,7 +51,7 @@ export default class SignIn extends React.Component {
           title="Don't have an account? Sign Up"
           onPress={() => this.props.navigation.navigate('SignUp')}
         />
-      </View>
+      </LinearGradient>
     )
   }
 }

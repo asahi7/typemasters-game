@@ -15,6 +15,7 @@ import firebase from 'firebase'
 import io from 'socket.io-client'
 import _ from 'lodash'
 import Config from '../config/Config'
+import { LinearGradient } from 'expo'
 
 let socket
 
@@ -82,7 +83,6 @@ export default class Game extends React.Component {
           console.log(data)
           this.setGameData(data, false)
         })
-
         socket.on('gameended', (data) => {
           console.log('game ended')
           console.log(data)
@@ -241,7 +241,7 @@ export default class Game extends React.Component {
 
   render () {
     return (
-      <View style={styles.container}>
+      <LinearGradient colors={['#e1f6fa', '#dac6d8']} style={styles.container}>
         <Modal
           visible={this.state.modalVisible}
           transparent
@@ -311,7 +311,7 @@ export default class Game extends React.Component {
           }} style={{ marginBottom: 20 }}>
           <Text>Show Modal</Text>
         </TouchableHighlight>
-      </View>
+      </LinearGradient>
     )
   }
 }
@@ -319,7 +319,6 @@ export default class Game extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center'
   },

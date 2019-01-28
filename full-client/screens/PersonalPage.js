@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Button, AsyncStorage } from 'react-native'
 import firebase from 'firebase'
 import SignIn from './SignIn'
 import WebAPI from '../WebAPI'
+import { LinearGradient } from 'expo'
 
 export default class PersonalPage extends React.Component {
   constructor (props) {
@@ -32,6 +33,7 @@ export default class PersonalPage extends React.Component {
         WebAPI.getAverageCpm(user.uid, this.state.language),
         WebAPI.getLatestAverageCpm(user.uid, this.state.language),
         WebAPI.getLastPlayedGame(user.uid, this.state.language),
+        // TODO(aibek): best result is not fetched
         WebAPI.getBestResult(user.uid, this.state.language),
         WebAPI.getGamesWon(user.uid, this.state.language),
         WebAPI.getFirstRace(user.uid, this.state.language),
@@ -99,7 +101,7 @@ export default class PersonalPage extends React.Component {
     } else {
       // TODO(aibek): add conditional rendering to everything
       return (
-        <View style={styles.container}>
+        <LinearGradient colors={['#e1f6fa', '#dac6d8']} style={styles.container}>
           <View style={styles.signOutButton}>
             <Button title='Sign out' onPress={this.handleSignOut} />
           </View>
@@ -113,11 +115,6 @@ export default class PersonalPage extends React.Component {
             <Text>{this.state.userInfo.email}</Text>
           </View>
           }
-          <View style={styles.row}>
-            <Text>Email:</Text>
-            <Text>{this.state.userInfo.email}</Text>
-            {console.log('asaasandafsd/n', this.state.userInfo)}
-          </View>
           <View style={styles.row}>
             <Text>Total races:</Text>
             <Text>{this.state.totalRaces}</Text>
@@ -151,7 +148,7 @@ export default class PersonalPage extends React.Component {
             <Text>Games Won:</Text>
             <Text>{this.state.gamesWon}</Text>
           </View>
-        </View>
+        </LinearGradient>
       )
     }
   }

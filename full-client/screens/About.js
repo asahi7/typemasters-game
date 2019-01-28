@@ -1,12 +1,13 @@
 import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import { Text, StyleSheet } from 'react-native'
+import { LinearGradient } from 'expo'
 
 export default class About extends React.Component {
   render () {
     return (
-      <View style={styles.container}>
+      <LinearGradient colors={['#e1f6fa', '#dac6d8']} style={styles.container}>
         <Text>About</Text>
-      </View>
+      </LinearGradient>
     )
   }
 }

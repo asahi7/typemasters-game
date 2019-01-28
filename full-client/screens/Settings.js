@@ -1,5 +1,6 @@
 import React from 'react'
-import { View, Text, StyleSheet, AsyncStorage, Picker } from 'react-native'
+import { Text, StyleSheet, AsyncStorage, Picker } from 'react-native'
+import { LinearGradient } from 'expo'
 
 export default class Settings extends React.Component {
   constructor (props) {
@@ -31,7 +32,7 @@ export default class Settings extends React.Component {
 
   render () {
     return (
-      <View style={styles.container}>
+      <LinearGradient colors={['#e1f6fa', '#dac6d8']} style={styles.container}>
         <Text>Settings</Text>
         {this.state.language &&
           <Picker selectedValue={this.state.language}
@@ -49,7 +50,7 @@ export default class Settings extends React.Component {
             <Picker.Item value='KZ' label='Kazakh' />
           </Picker>
         }
-      </View>
+      </LinearGradient>
     )
   }
 }
