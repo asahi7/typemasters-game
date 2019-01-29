@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, StyleSheet, Button, AsyncStorage } from 'react-native'
+import { View, Text, StyleSheet, Button, AsyncStorage, ScrollView } from 'react-native'
 import firebase from 'firebase'
 import SignIn from './SignIn'
 import WebAPI from '../WebAPI'
@@ -30,6 +30,7 @@ export default class PersonalPage extends React.Component {
     }).then(() => {
       return Promise.all([
         WebAPI.getRaceCount(user.uid, this.state.language),
+        // TODO(aibek): average is not fetched
         WebAPI.getAverageCpm(user.uid, this.state.language),
         WebAPI.getLatestAverageCpm(user.uid, this.state.language),
         WebAPI.getLastPlayedGame(user.uid, this.state.language),
@@ -102,52 +103,62 @@ export default class PersonalPage extends React.Component {
       // TODO(aibek): add conditional rendering to everything
       return (
         <LinearGradient colors={['#e1f6fa', '#dac6d8']} style={styles.container}>
-          <View style={styles.signOutButton}>
-            <Button title='Sign out' onPress={this.handleSignOut} />
+          <View style={{ marginTop: 30 }}>
+            <Text style={styles.header}>
+              Personal Page
+            </Text>
           </View>
-          <View style={styles.row}>
-            <Text>UID:</Text>
-            <Text>{this.state.user.uid}</Text>
-          </View>
-          {this.state.userInfo.email &&
-          <View style={styles.row}>
-            <Text>Email:</Text>
-            <Text>{this.state.userInfo.email}</Text>
-          </View>
-          }
-          <View style={styles.row}>
-            <Text>Total races:</Text>
-            <Text>{this.state.totalRaces}</Text>
-          </View>
-          <View style={styles.row}>
-            <Text>Average CPM:</Text>
-            <Text>{this.state.avgCpm}</Text>
-          </View>
-          <View style={styles.row}>
-            <Text>Average CPM for last 10 games:</Text>
-            <Text>{this.state.lastAvgCpm}</Text>
-          </View>
-          <View style={styles.row}>
-            <Text>First race information:</Text>
-            <Text>CPM: {this.state.firstRaceData.racePlayers[0].cpm} -
-                            Date: {this.state.firstRaceData.date}</Text>
-          </View>
-          <View>
-            <Text>Last played:</Text>
-            <Text>{this.state.lastPlayed}</Text>
-          </View>
-          <View>
-            <Text>Last score:</Text>
-            <Text>{this.state.lastScore}</Text>
-          </View>
-          <View style={styles.row}>
-            <Text>Best result:</Text>
-            <Text>{this.state.bestResult}</Text>
-          </View>
-          <View style={styles.row}>
-            <Text>Games Won:</Text>
-            <Text>{this.state.gamesWon}</Text>
-          </View>
+          <ScrollView style={{ flex: 1, marginTop: 10, marginBottom: 10 }}>
+            <View style={{ marginTop: 10 }}>
+              <Text style={styles.tableHeader}>General</Text>
+              <View style={styles.row}>
+                <Text style={styles.column}>uid</Text>
+                <Text style={styles.column}>{this.state.user.uid}</Text>
+              </View>
+              {this.state.userInfo.email &&
+              <View style={styles.row}>
+                <Text style={styles.column}>email</Text>
+                <Text style={styles.column}>{this.state.userInfo.email}</Text>
+              </View>
+              }
+              <View style={styles.row}>
+                <Text style={styles.column}>total games</Text>
+                <Text style={styles.column}>{this.state.totalRaces}</Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.column}>average cpm</Text>
+                <Text style={styles.column}>{this.state.avgCpm}</Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.column}>average cpm for last 10 games</Text>
+                <Text style={styles.column}>{this.state.lastAvgCpm}</Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.column}>first game data</Text>
+                <Text style={styles.column}>{this.state.firstRaceData.racePlayers[0].cpm} cpm</Text>
+                <Text style={styles.column}>{this.state.firstRaceData.date}</Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.column}>last game</Text>
+                <Text style={styles.column}>{this.state.lastPlayed}</Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.column}>last score</Text>
+                <Text style={styles.column}>{this.state.lastScore}</Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.column}>games won</Text>
+                <Text style={styles.column}>{this.state.gamesWon}</Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.column}>best result</Text>
+                <Text style={styles.column}>{this.state.bestResult} cpm</Text>
+              </View>
+            </View>
+            <View style={styles.signOutButton}>
+              <Button title='Sign out' onPress={this.handleSignOut} />
+            </View>
+          </ScrollView>
         </LinearGradient>
       )
     }
@@ -157,20 +168,39 @@ export default class PersonalPage extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 20,
-    paddingLeft: 10,
-    paddingRight: 10,
     justifyContent: 'flex-start',
     alignItems: 'center'
   },
-  signOutButton: {
+  header: {
+    fontSize: 30,
+    color: '#2E322F',
+    letterSpacing: 2,
+    textTransform: 'capitalize',
+    textAlign: 'center',
+    fontWeight: '700'
+  },
+  tableHeader: {
+    fontSize: 20,
+    color: '#56ABBD',
+    letterSpacing: 2,
+    textTransform: 'capitalize',
+    textAlign: 'center',
+    fontWeight: '700'
+  },
+  row: {
     flex: 0.1,
     flexDirection: 'row',
     alignSelf: 'stretch',
     alignItems: 'center',
-    justifyContent: 'flex-end'
+    justifyContent: 'center'
   },
-  row: {
+  column: {
+    padding: 5,
+    color: '#56ABBD',
+    fontSize: 15
+  },
+  signOutButton: {
+    marginTop: 10,
     flex: 0.1,
     flexDirection: 'row',
     alignSelf: 'stretch',

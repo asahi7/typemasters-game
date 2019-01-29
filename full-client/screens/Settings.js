@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, StyleSheet, AsyncStorage, Picker } from 'react-native'
+import { Text, StyleSheet, AsyncStorage, Picker, View } from 'react-native'
 import { LinearGradient } from 'expo'
 
 export default class Settings extends React.Component {
@@ -33,7 +33,14 @@ export default class Settings extends React.Component {
   render () {
     return (
       <LinearGradient colors={['#e1f6fa', '#dac6d8']} style={styles.container}>
-        <Text>Settings</Text>
+        <View style={{ marginTop: 30 }}>
+          <Text style={styles.header}>
+            Settings
+          </Text>
+        </View>
+        <View style={{ marginTop: 20, alignItems: 'center' }}>
+          <Text style={styles.normalText}>Select your typing language</Text>
+        </View>
         {this.state.language &&
           <Picker selectedValue={this.state.language}
             style={{ height: 50, width: 200 }}
@@ -58,7 +65,22 @@ export default class Settings extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center'
+  },
+  header: {
+    fontSize: 30,
+    color: '#2E322F',
+    letterSpacing: 2,
+    textTransform: 'capitalize',
+    textAlign: 'center',
+    fontWeight: '700'
+  },
+  normalText: {
+    fontSize: 15,
+    color: '#2E322F',
+    letterSpacing: 2,
+    textTransform: 'capitalize',
+    textAlign: 'center',
+    fontWeight: '700'
   }
 })

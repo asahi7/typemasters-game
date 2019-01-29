@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, TextInput, Button } from 'react-native'
+import { StyleSheet, Text, TextInput, Button, View } from 'react-native'
 import firebase from 'firebase'
 import { LinearGradient } from 'expo'
 
@@ -26,7 +26,11 @@ export default class SignIn extends React.Component {
   render () {
     return (
       <LinearGradient colors={['#e1f6fa', '#dac6d8']} style={styles.container}>
-        <Text>Login</Text>
+        <View style={{ marginTop: 30 }}>
+          <Text style={styles.header}>
+            Sign In
+          </Text>
+        </View>
         {this.state.errorMessage &&
         <Text style={{ color: 'red' }}>
           {this.state.errorMessage}
@@ -46,11 +50,15 @@ export default class SignIn extends React.Component {
           onChangeText={password => this.setState({ password })}
           value={this.state.password}
         />
-        <Button title='Sign in' onPress={this.handleSignIn} />
-        <Button
-          title="Don't have an account? Sign Up"
-          onPress={() => this.props.navigation.navigate('SignUp')}
-        />
+        <View style={{ marginTop: 10 }}>
+          <Button title='Sign in' onPress={this.handleSignIn} />
+        </View>
+        <View style={{ marginTop: 10 }}>
+          <Button
+            title="Don't have an account? Sign Up"
+            onPress={() => this.props.navigation.navigate('SignUp')}
+          />
+        </View>
       </LinearGradient>
     )
   }
@@ -59,14 +67,23 @@ export default class SignIn extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center'
+  },
+  header: {
+    fontSize: 30,
+    color: '#2E322F',
+    letterSpacing: 2,
+    textTransform: 'capitalize',
+    textAlign: 'center',
+    fontWeight: '700'
   },
   textInput: {
     height: 40,
     width: '90%',
     borderColor: 'gray',
     borderWidth: 1,
-    marginTop: 8
+    marginTop: 8,
+    paddingLeft: 2,
+    paddingRight: 2
   }
 })

@@ -15,7 +15,7 @@ export default class Main extends React.Component {
   render () {
     return (
       <LinearGradient colors={['#e1f6fa', '#dac6d8']} style={styles.container}>
-        <View style={{ marginTop: 20 }}>
+        <View style={{ marginTop: 30 }}>
           <Text style={styles.header}>
             Compete With Others And Increase Your Typing Speed!
           </Text>
@@ -41,7 +41,7 @@ export default class Main extends React.Component {
         </View>
         {/* TODO(aibek): add link to settings for language */}
         <View style={{ marginTop: 20, alignItems: 'center' }}>
-          <Text style={styles.normalText}>Choose your language and</Text>
+          <Text style={styles.normalText}>Choose your typing language and</Text>
           <TouchableOpacity style={styles.playButton} onPress={this.handlePlayPressed}>
             <Text style={styles.playButtonText}>Play</Text>
           </TouchableOpacity>
