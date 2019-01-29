@@ -16,7 +16,12 @@ module.exports = {
       },
       fullName: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
+      },
+      nickname: {
+        type: Sequelize.STRING,
+        allowNull: true,
+        unique: true
       },
       email: {
         type: Sequelize.STRING,
