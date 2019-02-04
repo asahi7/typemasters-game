@@ -28,31 +28,30 @@ export default class PersonalPage extends React.Component {
         })
       }
     }).then(() => {
+      console.log('ok2')
       return Promise.all([
         WebAPI.getRaceCount(user.uid, this.state.language),
-        // TODO(aibek): average is not fetched
         WebAPI.getAverageCpm(user.uid, this.state.language),
         WebAPI.getLatestAverageCpm(user.uid, this.state.language),
         WebAPI.getLastPlayedGame(user.uid, this.state.language),
-        // TODO(aibek): best result is not fetched
         WebAPI.getBestResult(user.uid, this.state.language),
         WebAPI.getGamesWon(user.uid, this.state.language),
         WebAPI.getFirstRace(user.uid, this.state.language),
-        WebAPI.getUserInfo(user.uid),
-        WebAPI.getLastScore(user.uid, this.state.language)
+        WebAPI.getUserInfo(user.uid)
       ]).then((results) => {
         this.setState({
-          // TODO(aibek): what if null
           totalRaces: results[0].result,
-          avgCpm: results[1].result.avg,
+          avgCpm: (results[1].result !== null ? results[1].result : null),
           lastAvgCpm: results[2].result,
-          lastPlayed: results[3].result,
+          lastPlayed: (results[3].result !== null ? results[3].result.date : null),
+          lastScore: (results[3].result !== null ? results[3].result.cpm : null),
           bestResult: results[4].result,
           gamesWon: results[5].result,
           firstRaceData: results[6].result,
-          userInfo: results[7],
-          lastScore: results[8].result
+          userInfo: results[7]
         })
+      }).catch((error) => {
+        console.log(error)
       })
     })
   }
@@ -60,7 +59,9 @@ export default class PersonalPage extends React.Component {
   componentDidMount () {
     firebase.auth().onAuthStateChanged(async user => {
       if (user) {
+        console.log('okk3')
         await this.updateStatistics(user)
+        console.log('okk4')
         this.setState({
           user,
           authenticated: true
@@ -74,7 +75,6 @@ export default class PersonalPage extends React.Component {
         this.props.navigation.navigate('SignIn')
       }
     })
-
     // TODO(aibek): do we have to remove listener or it is removed automatically
     // On each tap of Personal Page, it will fetch an updated data from API
     this.props.navigation.addListener(
@@ -115,7 +115,7 @@ export default class PersonalPage extends React.Component {
                 <Text style={styles.column}>uid</Text>
                 <Text style={styles.column}>{this.state.user.uid}</Text>
               </View>
-              {this.state.userInfo.email &&
+              {this.state.userInfo && this.state.userInfo.email &&
               <View style={styles.row}>
                 <Text style={styles.column}>email</Text>
                 <Text style={styles.column}>{this.state.userInfo.email}</Text>
@@ -133,11 +133,13 @@ export default class PersonalPage extends React.Component {
                 <Text style={styles.column}>average cpm for last 10 games</Text>
                 <Text style={styles.column}>{this.state.lastAvgCpm}</Text>
               </View>
+              { this.state.firstRaceData &&
               <View style={styles.row}>
                 <Text style={styles.column}>first game data</Text>
                 <Text style={styles.column}>{this.state.firstRaceData.racePlayers[0].cpm} cpm</Text>
                 <Text style={styles.column}>{this.state.firstRaceData.date}</Text>
               </View>
+              }
               <View style={styles.row}>
                 <Text style={styles.column}>last game</Text>
                 <Text style={styles.column}>{this.state.lastPlayed}</Text>

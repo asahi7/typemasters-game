@@ -2,6 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, TextInput, Button, View } from 'react-native'
 import firebase from 'firebase'
 import { LinearGradient } from 'expo'
+import WebAPI from '../WebAPI'
 
 export default class SignUp extends React.Component {
   constructor (props) {
@@ -18,6 +19,9 @@ export default class SignUp extends React.Component {
     firebase
       .auth()
       .createUserWithEmailAndPassword(this.state.email, this.state.password)
+      .then((authInfo) => {
+        return WebAPI.createUserIfNotExists(authInfo.user.email, authInfo.user.uid)
+      })
       .then(() => this.props.navigation.navigate('PersonalPage'))
       .catch(error => this.setState({ errorMessage: error.message }))
   }

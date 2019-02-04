@@ -38,6 +38,13 @@ const config = {
 firebase.initializeApp(config)
 
 /**
+ * Simple blank method to trigger creation of a new user, by firebase middleware
+ */
+router.post('/createUserIfNotExists', async (req, res) => {
+  return res.sendStatus(200)
+})
+
+/**
  * @param req.body.email
  * @param req.body.password
  */

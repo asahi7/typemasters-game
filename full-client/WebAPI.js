@@ -39,6 +39,15 @@ const attachToken = async (options) => {
 }
 
 export default {
+  createUserIfNotExists: () => {
+    const options = {
+      method: 'POST'
+    }
+    return attachToken(options).then(options => {
+      return fetch(`${Config.WEB_SERVER_API}/users/createUserIfNotExists`, options).then(parseJSON)
+    })
+  },
+
   getRaceCount: (uid, language) => {
     return fetch(`${Config.WEB_SERVER_API}/statistics/getRaceCount?uid=${uid}&language=${language}`).then(parseJSON)
   },
@@ -72,7 +81,6 @@ export default {
   },
 
   getUserInfo: (uid) => {
-    console.log('sff', uid)
     return fetch(`${Config.WEB_SERVER_API}/users?uid=${uid}`).then(parseJSON)
   }
 }

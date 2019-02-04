@@ -25,8 +25,7 @@ const EXCLUDED_ROUTES_FROM_VERIFICATION = [
   '/statistics/getFirstRace',
   '/statistics/getLastPlayedGame',
   '/statistics/getBestResult',
-  '/statistics/getGamesWon',
-  '/statistics/getLastScore'
+  '/statistics/getGamesWon'
 ]
 
 /**
@@ -81,7 +80,7 @@ const firebaseAddUserMiddleware = async (req, res, next) => {
 async function addUser (payload) {
   console.log({ payload })
   // TODO(aibek): fullName can not be null, but we put it user.uid
-  await models.User.create({ uid: payload.uid, fullName: payload.uid, email: payload.email })
+  await models.User.create({ uid: payload.uid, email: payload.email })
 }
 
 module.exports = {

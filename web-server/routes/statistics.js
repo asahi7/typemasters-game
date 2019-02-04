@@ -98,8 +98,7 @@ router.get('/getFirstRace', [
   })
 })
 
-// TODO(madina): possible duplicate of getLastPlayedGame
-router.get('/getLastScore', [
+router.get('/getLastPlayedGame', [
   query('uid').isAlphanumeric().isLength({ min: 1 }),
   query('language').isAlpha().isLength({ min: 1, max: 2 })
 ], async (req, res) => {
@@ -118,32 +117,15 @@ router.get('/getLastScore', [
     ],
     order: [['date', 'DESC']]
   }).then(result => {
-    return res.send({ result: result.racePlayers[0].cpm })
-  })
-})
-
-router.get('/getLastPlayedGame', [
-  query('uid').isAlphanumeric().isLength({ min: 1 }),
-  query('language').isAlpha().isLength({ min: 1, max: 2 })
-], async (req, res) => {
-  const errors = validationResult(req)
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() })
-  }
-  return models.Race.findOne({
-    include: [
-      {
-        model: models.Text, attributes: [], where: { language: req.query.language }
-      },
-      {
-        model: models.RacePlayer, attributes: ['cpm'], where: { userUid: req.query.uid }
+    if (!result) {
+      return res.send({ result: null })
+    }
+    return res.send({
+      result: {
+        date: result.get('date'),
+        cpm: result.racePlayers[0].cpm
       }
-    ],
-    attributes: ['date'],
-    order: [['date', 'DESC']]
-  }
-  ).then(function (race) {
-    return res.send({ result: race.get('date') })
+    })
   })
 })
 
@@ -166,6 +148,9 @@ router.get('/getBestResult', [
     ],
     order: [[models.RacePlayer, 'cpm', 'DESC']]
   }).then(function (race) {
+    if (!race) {
+      return res.send({ result: null })
+    }
     race = race.toJSON()
     return res.send({ result: _.get(race, 'racePlayers[0].cpm') })
   })
