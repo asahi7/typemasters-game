@@ -229,7 +229,9 @@ export default class Game extends React.Component {
         }
       })
     }
-    socket.disconnect()
+    if (this.state.gamePlaying === true && socket) {
+      socket.disconnect()
+    }
     this.setState({
       gamePlaying: false
     })
