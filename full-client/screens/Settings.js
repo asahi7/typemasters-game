@@ -45,16 +45,16 @@ export default class Settings extends React.Component {
           <Picker selectedValue={this.state.language}
             style={{ height: 50, width: 200 }}
             onValueChange={this.languageSelected}>
-            <Picker.Item value='ZH' label='Chinese (Mandarin)' />
+            <Picker.Item value='ZH' label='Chinese' />
             <Picker.Item value='EN' label='English' />
             <Picker.Item value='FR' label='French' />
             <Picker.Item value='DE' label='German' />
-            <Picker.Item value='KO' label='Korean' />
             <Picker.Item value='HI' label='Hindi' />
+            <Picker.Item value='KZ' label='Kazakh' />
+            <Picker.Item value='KO' label='Korean' />
             <Picker.Item value='RU' label='Russian' />
             <Picker.Item value='ES' label='Spanish' />
             <Picker.Item value='TR' label='Turkish' />
-            <Picker.Item value='KZ' label='Kazakh' />
           </Picker>
         }
       </LinearGradient>
