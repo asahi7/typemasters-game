@@ -1,17 +1,34 @@
 import React from 'react'
-import { Text, StyleSheet, AsyncStorage, Picker, View } from 'react-native'
+import { Text, StyleSheet, AsyncStorage, Picker, View, TextInput, Button, Keyboard } from 'react-native'
 import { LinearGradient } from 'expo'
+import WebAPI from '../WebAPI'
+import firebase from 'firebase'
 
 export default class Settings extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      language: null
+      language: null,
+      nickname: null,
+      loading: true,
+      authorized: null
     }
     this.languageSelected = this.languageSelected.bind(this)
+    this.saveSettings = this.saveSettings.bind(this)
+    this.handleNicknameInput = this.handleNicknameInput.bind(this)
+    this.updateScreen = this.updateScreen.bind(this)
   }
 
   componentWillMount () {
+    this.props.navigation.addListener(
+      'willFocus',
+      () => {
+        this.updateScreen()
+      }
+    )
+  }
+
+  updateScreen () {
     AsyncStorage.getItem('textLanguage').then((value) => {
       if (!value) {
         this.setState({
@@ -22,41 +39,88 @@ export default class Settings extends React.Component {
           language: value
         })
       }
+    }).then(() => {
+      const { currentUser } = firebase.auth()
+      if (currentUser) {
+        // signed in
+        console.log(currentUser)
+        WebAPI.getNickname(currentUser.uid).then((result) => {
+          console.log(result)
+          this.setState({ nickname: result.nickname, loading: false, authorized: true })
+        })
+      } else {
+        this.setState({ loading: false, authorized: false })
+      }
     })
   }
 
+  saveSettings () {
+    AsyncStorage.setItem('textLanguage', this.state.language)
+    WebAPI.saveNickname(this.state.nickname).catch(err => {
+      // TODO(aibek): show normal error
+      console.log(err)
+    })
+    Keyboard.dismiss()
+  }
+
   languageSelected (itemValue) {
-    AsyncStorage.setItem('textLanguage', itemValue)
     this.setState({ language: itemValue })
   }
 
+  handleNicknameInput (input) {
+    this.setState({
+      nickname: input
+    })
+  }
+
   render () {
-    return (
+    return (!this.state.loading &&
       <LinearGradient colors={['#e1f6fa', '#dac6d8']} style={styles.container}>
         <View style={{ marginTop: 30 }}>
           <Text style={styles.header}>
             Settings
           </Text>
         </View>
+        {this.state.authorized &&
+        <View>
+          <View style={{ marginTop: 20, alignItems: 'center' }}>
+            <Text style={styles.normalText}>Your
+              nickname: {this.state.nickname ? this.state.nickname : 'Not specified'}</Text>
+          </View>
+          <TextInput
+            style={styles.textInputStyle}
+            autoCapitalize='none'
+            placeholder='Your nickname'
+            onChangeText={this.handleNicknameInput}
+            value={this.state.nickname}
+          />
+        </View>
+        }
         <View style={{ marginTop: 20, alignItems: 'center' }}>
           <Text style={styles.normalText}>Select your typing language</Text>
         </View>
         {this.state.language &&
-          <Picker selectedValue={this.state.language}
-            style={{ height: 50, width: 200 }}
-            onValueChange={this.languageSelected}>
-            <Picker.Item value='ZH' label='Chinese' />
-            <Picker.Item value='EN' label='English' />
-            <Picker.Item value='FR' label='French' />
-            <Picker.Item value='DE' label='German' />
-            <Picker.Item value='HI' label='Hindi' />
-            <Picker.Item value='KZ' label='Kazakh' />
-            <Picker.Item value='KO' label='Korean' />
-            <Picker.Item value='RU' label='Russian' />
-            <Picker.Item value='ES' label='Spanish' />
-            <Picker.Item value='TR' label='Turkish' />
-          </Picker>
+        <Picker selectedValue={this.state.language}
+          style={{ height: 50, width: 200 }}
+          onValueChange={this.languageSelected}>
+          <Picker.Item value='ZH' label='Chinese' />
+          <Picker.Item value='EN' label='English' />
+          <Picker.Item value='FR' label='French' />
+          <Picker.Item value='DE' label='German' />
+          <Picker.Item value='HI' label='Hindi' />
+          <Picker.Item value='KZ' label='Kazakh' />
+          <Picker.Item value='KO' label='Korean' />
+          <Picker.Item value='RU' label='Russian' />
+          <Picker.Item value='ES' label='Spanish' />
+          <Picker.Item value='TR' label='Turkish' />
+        </Picker>
         }
+        {/* TODO(aibek): use this button color for all buttons */}
+        <Button
+          onPress={this.saveSettings}
+          title='Save'
+          color='#841584'
+        />
       </LinearGradient>
     )
   }

@@ -80,4 +80,38 @@ router.post('/signin', async (req, res) => {
   })
 })
 
+router.post('/saveNickname', [
+  query('nickname').isAlphanumeric().isLength({ min: 3 })
+], async (req, res) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() })
+  }
+  return models.User.update(
+    { nickname: req.query.nickname },
+    { where: { uid: res.locals.userPayload.uid } }
+  ).then(() => {
+    res.sendStatus(200)
+  }).catch(() => {
+    return res.sendStatus(500)
+  })
+})
+
+router.get('/getNickname', [
+  query('uid').isAlphanumeric().isLength({ min: 1 })
+], async (req, res) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() })
+  }
+  return models.User.findOne({
+    where: { uid: req.query.uid }
+  }).then((user) => {
+    if (!user) {
+      return res.send({ nickname: null })
+    }
+    res.send({ nickname: user.nickname })
+  })
+})
+
 module.exports = router

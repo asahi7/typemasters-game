@@ -8,6 +8,7 @@ firebaseAdmin.initializeApp({
   credential: firebaseAdmin.credential.cert(firebaseServiceAccount)
 })
 
+// TODO(aibek): add more descriptive authorization policy, like post, get methods specification
 /*
 * Array which specifies routes in the application for which authentication check will not be
 * performed.
@@ -19,6 +20,7 @@ const EXCLUDED_ROUTES_FROM_VERIFICATION = [
   '/users',
   '/users/signin',
   '/users/signup',
+  '/users/getNickname',
   '/statistics/getAverageCpm',
   '/statistics/getRaceCount',
   '/statistics/getLatestAverageCpm',
@@ -66,7 +68,7 @@ const firebaseAuthorizationMiddleware = async (req, res, next) => {
 const firebaseAddUserMiddleware = async (req, res, next) => {
   const payload = res.locals.userPayload
   if (payload && payload.uid) {
-    const user = await models.User.findOne({ uid: payload.uid })
+    const user = await models.User.findOne({ where: { uid: payload.uid } })
     if (_.isEmpty(user)) {
       await addUser(payload)
     }
@@ -78,8 +80,6 @@ const firebaseAddUserMiddleware = async (req, res, next) => {
  * A method to create a user in a database using firebase middleware.
  */
 async function addUser (payload) {
-  console.log({ payload })
-  // TODO(aibek): fullName can not be null, but we put it user.uid
   await models.User.create({ uid: payload.uid, email: payload.email })
 }
 

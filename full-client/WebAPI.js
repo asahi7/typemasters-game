@@ -38,7 +38,21 @@ const attachToken = async (options) => {
   }
 }
 
+// TODO(aibek): write comments (request, response) to each API call
 export default {
+  saveNickname: (nickname) => {
+    const options = {
+      method: 'POST'
+    }
+    return attachToken(options).then(options => {
+      return fetch(`${Config.WEB_SERVER_API}/users/saveNickname?nickname=${nickname}`, options).then(parseJSON)
+    })
+  },
+
+  getNickname: (uid) => {
+    return fetch(`${Config.WEB_SERVER_API}/users/getNickname?uid=${uid}`).then(parseJSON)
+  },
+
   createUserIfNotExists: () => {
     const options = {
       method: 'POST'
