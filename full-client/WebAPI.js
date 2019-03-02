@@ -3,7 +3,10 @@ import Config from './config/Config'
 
 function parseJSON (response) {
   if (response.status >= 400) {
-    throw new Error(response)
+    return response.json().then((error) => {
+      console.log(error)
+      throw new Error(error.message)
+    })
   }
   const contentType = response.headers.get('Content-Type')
   if (contentType && contentType.includes('application/json')) {

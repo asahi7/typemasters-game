@@ -4,6 +4,8 @@ const models = require('../../models/models')
 const _ = require('lodash')
 const { query, validationResult } = require('express-validator/check')
 
+const Sequelize = models.sequelize.Sequelize
+
 /**
  * Gets a user
  * @param req.query.uid
@@ -44,7 +46,10 @@ router.post('/saveNickname', [
     { where: { uid: res.locals.userPayload.uid } }
   ).then(() => {
     res.sendStatus(200)
-  }).catch(() => {
+  }).catch(err => {
+    if (err instanceof Sequelize.UniqueConstraintError) {
+      return res.status(409).send({ message: 'nickname is already present' })
+    }
     return res.sendStatus(500)
   })
 })

@@ -13,7 +13,8 @@ export default class Settings extends React.Component {
       nickname: null,
       loading: true,
       authenticated: null,
-      nicknameInput: ''
+      nicknameInput: '',
+      errorMessage: null
     }
     this.languageSelected = this.languageSelected.bind(this)
     this.saveSettings = this.saveSettings.bind(this)
@@ -32,6 +33,7 @@ export default class Settings extends React.Component {
   }
 
   updateScreen () {
+    this.setState({ errorMessage: null })
     AsyncStorage.getItem('textLanguage').then((value) => {
       if (!value) {
         this.setState({
@@ -56,13 +58,14 @@ export default class Settings extends React.Component {
 
   saveSettings () {
     AsyncStorage.setItem('textLanguage', this.state.language)
+    const nicknameInput = this.state.nicknameInput
     WebAPI.saveNickname(this.state.nicknameInput).then(() => {
-      const nicknameInput = this.state.nicknameInput
-      this.setState({ nickname: nicknameInput, nicknameInput: '' })
+      this.setState({ nickname: nicknameInput })
     }).catch(err => {
-      // TODO(aibek): show normal error
-      console.log(err)
+      console.log(err.message)
+      this.setState({ errorMessage: err.message })
     })
+    this.setState({ nicknameInput: '' })
     Keyboard.dismiss()
   }
 
@@ -85,6 +88,10 @@ export default class Settings extends React.Component {
             Settings
           </Text>
         </View>
+        {this.state.errorMessage &&
+        <Text style={{ color: 'red' }}>
+          {this.state.errorMessage}
+        </Text>}
         {this.state.authenticated &&
         <View>
           <View style={{ marginTop: 20, alignItems: 'center' }}>
