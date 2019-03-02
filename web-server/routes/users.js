@@ -2,7 +2,6 @@ const express = require('express')
 const router = express.Router()
 const models = require('../../models/models')
 const _ = require('lodash')
-const firebase = require('firebase')
 const { query, validationResult } = require('express-validator/check')
 
 /**
@@ -23,61 +22,14 @@ router.get('/', [
     })
     return
   }
-  console.log('in users/n/n', user)
   res.send(user)
 })
-
-const config = {
-  apiKey: 'AIzaSyABqH90F1qdKwhSXci_SRERvBNn7GVJEV4',
-  authDomain: 'typemasters-cc028.firebaseapp.com',
-  databaseURL: 'https://typemasters-cc028.firebaseio.com',
-  projectId: 'typemasters-cc028',
-  storageBucket: 'typemasters-cc028.appspot.com',
-  messagingSenderId: '1097557406122'
-}
-firebase.initializeApp(config)
 
 /**
  * Simple blank method to trigger creation of a new user, by firebase middleware
  */
 router.post('/createUserIfNotExists', async (req, res) => {
   return res.sendStatus(200)
-})
-
-/**
- * @param req.body.email
- * @param req.body.password
- */
-router.post('/signup', async (req, res) => {
-  await firebase.auth().createUserWithEmailAndPassword(req.body.email, req.body.password).then(() => {
-    const user = firebase.auth().currentUser
-    console.log(user)
-    firebase.auth().currentUser.getIdToken(true).then(function (idToken) {
-      res.send({ token: idToken, user })
-    }).catch(function (error) {
-      console.log(error)
-    })
-  }).catch(function (error) {
-    console.log(error)
-  })
-})
-
-/**
- * @param req.body.email
- * @param req.body.password
- */
-router.post('/signin', async (req, res) => {
-  await firebase.auth().signInWithEmailAndPassword(req.body.email, req.body.password).then(() => {
-    const user = firebase.auth().currentUser
-    console.log(user)
-    firebase.auth().currentUser.getIdToken(true).then(function (idToken) {
-      res.send({ token: idToken, user })
-    }).catch(function (error) {
-      console.log(error)
-    })
-  }).catch(function (error) {
-    console.log(error)
-  })
 })
 
 router.post('/saveNickname', [

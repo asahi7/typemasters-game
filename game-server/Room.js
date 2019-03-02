@@ -7,11 +7,10 @@ class Room {
     this.started = false
     this.intervalId = 0
     this.text = 'Hello world!'
-    this.duration = 30000 // 30 sec
+    this.duration = 0
     this.textId = 0
     this.totalChars = 0
     this.startTime = 0
-    // TODO(aibek): add players' ids, aliases, common data
     this.players = {}
   }
 
@@ -39,8 +38,6 @@ class Room {
           isWinner: false,
           position: 0,
           chars: 0
-          // TODO(aibek): count player's position not by cpm but by written chars, if equal compare by finishedTime
-          // TODO(aibek): add more data about players
         }
     })
   }

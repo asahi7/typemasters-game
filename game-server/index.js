@@ -1,3 +1,5 @@
+// TODO(aibek): refactor
+
 const io = require('socket.io')(3000) // TODO(aibek): make port configurable
 const Room = require('./Room')
 const inherits = require('inherits')
@@ -17,11 +19,9 @@ firebaseAdmin.initializeApp({
 socketioAuth(io, {
   // TODO(aibek): consider anonymous players
   authenticate: function (socket, data, callback) {
-    console.log(data)
     const firebaseIdToken = data.token
     return firebaseAdmin.auth().verifyIdToken(firebaseIdToken)
       .then(function (decodedToken) {
-        console.log(decodedToken)
         // With this, all players are "safe" and considered authenticated on the server
         socket._serverData = {
           uid: decodedToken.uid,
@@ -34,8 +34,6 @@ socketioAuth(io, {
           },
           defaults: {
             uid: decodedToken.uid,
-            // TODO(aibek): change later to fullName
-            fullName: decodedToken.uid,
             email: decodedToken.email
           }
         })
@@ -81,7 +79,6 @@ async function createNewRoom (socket, data) {
   room.setDuration(text.duration * 1000) // converting to milliseconds
   room.setTextId(text.id)
   room.addPlayer(socket)
-  // The socket will join a room with uuid
   socket.join(room.uuid)
   const item = new RoomItem(room)
   startingGames.append(item)
@@ -92,17 +89,16 @@ async function createNewRoom (socket, data) {
 }
 
 function startGame (item, room) {
-  console.log(room.countPlayers())
+  console.log('Players in room ' + room.countPlayers())
   startingGamesLock.acquire(item.room.uuid, function () {
     const room = item.room
     console.log('Game ' + room.uuid + ' has started')
     const data = {
-      msg: 'game in room: ' + room.uuid + ' has started',
+      msg: 'Game in room: ' + room.uuid + ' has started',
       text: room.text,
       duration: room.duration,
       room: room.uuid,
       players: room.getFilteredPlayersData()
-      // TODO(aibek): add more data
     }
     io.to(room.uuid).emit('gamestarted', data)
     room.started = true
@@ -126,7 +122,7 @@ function removeRoomParticipants (room) {
       throw error
     }
     if (clients.length > 0) {
-      console.log('clients in the room:')
+      console.log('Clients in the room: ')
       console.log(clients)
       clients.forEach(function (socketId) {
         io.sockets.sockets[socketId].leave(room.uuid)
