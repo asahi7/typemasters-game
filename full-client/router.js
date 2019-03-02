@@ -1,7 +1,6 @@
 import React from 'react'
-import { createStackNavigator, createBottomTabNavigator, StackNavigator } from 'react-navigation'
+import { createStackNavigator, createBottomTabNavigator, createSwitchNavigator } from 'react-navigation'
 import { Icon } from 'react-native-elements'
-
 import Main from './screens/Main'
 import Game from './screens/Game'
 import Leaderboard from './screens/Leaderboard'
@@ -10,10 +9,9 @@ import SignUp from './screens/SignUp'
 import PersonalPage from './screens/PersonalPage'
 import Settings from './screens/Settings'
 import About from './screens/About'
+import AuthLoading from './screens/AuthLoading'
 
-const tabBarIconSize = 25
-
-export const MainStack = StackNavigator({
+const MainStack = createStackNavigator({
   Main: {
     screen: Main,
     navigationOptions: ({ navigation }) => ({
@@ -28,13 +26,16 @@ export const MainStack = StackNavigator({
   }
 }, { initialRouteName: 'Main' })
 
-export const PersonalPageStack = StackNavigator({
+const PersonalPageStack = createStackNavigator({
   PersonalPage: {
     screen: PersonalPage,
     navigationOptions: ({ navigation }) => ({
       header: null
     })
-  },
+  }
+}, { initialRouteName: 'PersonalPage' })
+
+const AuthStack = createStackNavigator({
   SignUp: {
     screen: SignUp,
     navigationOptions: ({ navigation }) => ({
@@ -47,10 +48,23 @@ export const PersonalPageStack = StackNavigator({
       header: null
     })
   }
-}, { initialRouteName: 'PersonalPage' })
+}, { initialRouteName: 'SignIn' })
 
-export const Tabs = createBottomTabNavigator({
-  'Main': {
+const AuthSwitchNavigator = createSwitchNavigator({
+  AuthLoading: {
+    screen: AuthLoading,
+    navigationOptions: ({ navigation }) => ({
+      header: null
+    })
+  },
+  PersonalPage: PersonalPageStack,
+  Auth: AuthStack
+}, { initialRouteName: 'AuthLoading' })
+
+const tabBarIconSize = 25
+
+const Tabs = createBottomTabNavigator({
+  Main: {
     screen: MainStack,
     navigationOptions: {
       tabBarLabel: 'Main',
@@ -58,7 +72,7 @@ export const Tabs = createBottomTabNavigator({
         color={tintColor} />
     }
   },
-  'Leaderboard': {
+  Leaderboard: {
     screen: Leaderboard,
     navigationOptions: {
       tabBarLabel: 'Leaderboard',
@@ -66,15 +80,15 @@ export const Tabs = createBottomTabNavigator({
         color={tintColor} />
     }
   },
-  'Personal Page': {
-    screen: PersonalPageStack,
+  PersonalPage: {
+    screen: AuthSwitchNavigator,
     navigationOptions: {
       tabBarLabel: 'Personal Page',
       tabBarIcon: ({ tintColor }) => <Icon name='md-body' type='ionicon' size={tabBarIconSize}
         color={tintColor} />
     }
   },
-  'Settings': {
+  Settings: {
     screen: Settings,
     navigationOptions: {
       tabBarLabel: 'Settings',
@@ -82,7 +96,7 @@ export const Tabs = createBottomTabNavigator({
         color={tintColor} />
     }
   },
-  'About': {
+  About: {
     screen: About,
     navigationOptions: {
       tabBarLabel: 'About',
@@ -90,7 +104,7 @@ export const Tabs = createBottomTabNavigator({
         size={tabBarIconSize} color={tintColor} />
     }
   }
-})
+}, { initialRouteName: 'Main' })
 
 export const createRootNavigator = () => {
   return createStackNavigator(

@@ -21,12 +21,9 @@ export default class SignIn extends React.Component {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then((authInfo) => {
-        console.log(authInfo.user)
-        console.log('okk1')
         return WebAPI.createUserIfNotExists(authInfo.user.email, authInfo.user.uid)
       })
       .then(() => {
-        console.log('okk2')
         this.props.navigation.navigate('PersonalPage')
       })
       .catch(error => this.setState({ errorMessage: error.message }))
