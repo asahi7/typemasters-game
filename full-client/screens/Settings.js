@@ -12,7 +12,8 @@ export default class Settings extends React.Component {
       language: null,
       nickname: null,
       loading: true,
-      authenticated: null
+      authenticated: null,
+      nicknameInput: ''
     }
     this.languageSelected = this.languageSelected.bind(this)
     this.saveSettings = this.saveSettings.bind(this)
@@ -54,7 +55,10 @@ export default class Settings extends React.Component {
 
   saveSettings () {
     AsyncStorage.setItem('textLanguage', this.state.language)
-    WebAPI.saveNickname(this.state.nickname).catch(err => {
+    WebAPI.saveNickname(this.state.nicknameInput).then(() => {
+      const nicknameInput = this.state.nicknameInput
+      this.setState({ nickname: nicknameInput, nicknameInput: '' })
+    }).catch(err => {
       // TODO(aibek): show normal error
       console.log(err)
     })
@@ -67,7 +71,7 @@ export default class Settings extends React.Component {
 
   handleNicknameInput (input) {
     this.setState({
-      nickname: input
+      nicknameInput: input
     })
   }
 
@@ -86,13 +90,15 @@ export default class Settings extends React.Component {
             <Text style={styles.normalText}>Your
               nickname: {this.state.nickname ? this.state.nickname : 'Not specified'}</Text>
           </View>
-          <TextInput
-            style={styles.textInputStyle}
-            autoCapitalize='none'
-            placeholder='Your nickname'
-            onChangeText={this.handleNicknameInput}
-            value={this.state.nickname}
-          />
+          <View style={{ marginTop: 10, alignItems: 'center' }}>
+            <TextInput
+              style={styles.textInput}
+              autoCapitalize='none'
+              placeholder='Your nickname'
+              onChangeText={this.handleNicknameInput}
+              value={this.state.nicknameInput}
+            />
+          </View>
         </View>
         }
         <View style={{ marginTop: 20, alignItems: 'center' }}>
@@ -145,5 +151,13 @@ const styles = StyleSheet.create({
     textTransform: 'capitalize',
     textAlign: 'center',
     fontWeight: '700'
+  },
+  textInput: {
+    height: 40,
+    width: '60%',
+    borderColor: 'gray',
+    borderWidth: 1,
+    paddingLeft: 2,
+    paddingRight: 2
   }
 })
