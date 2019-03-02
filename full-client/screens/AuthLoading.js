@@ -11,6 +11,7 @@ export default class AuthLoading extends React.Component {
   }
 
   componentDidMount () {
+    // Every time user's log in state changes, this will be triggered.
     firebase.auth().onAuthStateChanged((user) => {
       this.props.navigation.navigate(user ? 'PersonalPage' : 'Auth')
     })

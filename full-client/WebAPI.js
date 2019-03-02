@@ -1,9 +1,6 @@
 import firebase from 'firebase'
 import Config from './config/Config'
 
-// TODO(aibek): handle following
-let currentUser = null
-
 function parseJSON (response) {
   if (response.status >= 400) {
     throw new Error(response)
@@ -15,12 +12,18 @@ function parseJSON (response) {
   return response
 }
 
+/**
+ * Helper method to attach token to an API call.
+ *
+ * Example:
+ * return attachToken(options).then(options => {
+ *   return fetch(API, options).then(parseJSON)
+ * })
+ * */
 const attachToken = async (options) => {
-  const user = currentUser || await firebase.auth().currentUser
+  const user = firebase.auth().currentUser
   if (user) {
     return user.getIdToken(true).then(token => {
-      // TODO(aibek): check token retrival & error handling
-      console.log('TOKEN', token)
       if (!token) {
         throw new Error('Unauthorized')
       }
@@ -38,7 +41,6 @@ const attachToken = async (options) => {
   }
 }
 
-// TODO(aibek): write comments (request, response) to each API call
 export default {
   saveNickname: (nickname) => {
     const options = {

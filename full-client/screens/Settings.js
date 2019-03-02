@@ -120,7 +120,6 @@ export default class Settings extends React.Component {
           <Picker.Item value='TR' label='Turkish' />
         </Picker>
         }
-        {/* TODO(aibek): use this button color for all buttons */}
         <Button
           onPress={this.saveSettings}
           title='Save'

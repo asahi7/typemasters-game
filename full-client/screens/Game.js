@@ -44,12 +44,84 @@ export default class Game extends React.Component {
     this.findPlayerPosition = this.findPlayerPosition.bind(this)
     this.setGameData = this.setGameData.bind(this)
     this.dicsonnectPlayer = this.dicsonnectPlayer.bind(this)
-    this.handleBackPress = this.handleBackPress.bind(this)
     this.setModalVisible = this.setModalVisible.bind(this)
   }
 
-  findCpmForCurrentUser (data) {
-    return Math.round(_.get(_.find(data.players, ['uid', this.state.currentUser.uid]), 'cpm'))
+  componentDidMount () {
+    BackHandler.addEventListener('hardwareBackPress', () => { this.dicsonnectPlayer() })
+    AsyncStorage.getItem('textLanguage').then((value) => {
+      if (!value) {
+        this.setState({
+          language: 'en'
+        })
+      } else {
+        this.setState({
+          language: value.toLowerCase()
+        })
+      }
+    })
+  }
+
+  componentWillUnmount () {
+    BackHandler.removeEventListener('hardwareBackPress', () => { this.dicsonnectPlayer() })
+  }
+
+  /**
+   * A method to disconnect from the game server.
+   */
+  dicsonnectPlayer () {
+    if (this.state.uuid) {
+      socket.emit('removePlayer', {
+        room: {
+          uuid: this.state.uuid
+        }
+      })
+    }
+    if (this.state.gamePlaying === true && socket) {
+      socket.disconnect()
+    }
+    this.setState({
+      gamePlaying: false
+    })
+  }
+
+  /**
+   * Play button handler can have two states, when a game is on or when it is not playing.
+   * If it is on, the player gets disconnected, otherwise a new game is started.
+   * */
+  playButtonPressed () {
+    if (this.state.gamePlaying === true) {
+      this.dicsonnectPlayer()
+    } else {
+      AsyncStorage.getItem('textLanguage').then((value) => {
+        if (!value) {
+          this.setState({
+            language: 'en'
+          })
+        } else {
+          this.setState({
+            language: value.toLowerCase()
+          })
+        }
+      }).then(() => {
+        this.handlePlayGamePressed()
+      })
+    }
+  }
+
+  /**
+   * Handler for starting a new game.
+   * It fetches a user token from firebase which is needed for authentication on the game server.
+   */
+  handlePlayGamePressed () {
+    const { currentUser } = firebase.auth()
+    this.setState({ currentUser, gamePlaying: true })
+    currentUser.getIdToken(true).then((idToken) => {
+      this.setSocketBehavior(idToken)
+    }).catch(function (error) {
+      // TODO(aibek): handle better
+      console.log(error)
+    })
   }
 
   setSocketBehavior (idToken) {
@@ -60,11 +132,11 @@ export default class Game extends React.Component {
         console.log('Asking for a new game..')
         socket.emit('newgame', { language: this.state.language })
         this.setState({
-          gamePlaying: true,
           text: 'Loading..'
         })
+
         socket.on('gamestarted', (data) => {
-          console.log(data.msg)
+          console.log('Game started')
           this.setState({
             text: data.text,
             uuid: data.room,
@@ -76,25 +148,31 @@ export default class Game extends React.Component {
               intervalId
             })
           })
-          console.log(data)
         })
 
         socket.on('gamedata', (data) => {
-          console.log(data)
           this.setGameData(data, false)
         })
         socket.on('gameended', (data) => {
-          console.log('game ended')
-          console.log(data)
+          console.log('Game finished')
           this.cleanGameData()
           this.setGameData(data, true)
         })
 
         socket.on('disconnect', () => {
-          console.log('disconnected')
+          console.log('Disconnected')
           this.cleanGameData()
         })
       })
+    })
+  }
+
+  sendRaceData () {
+    socket.emit('racedata', {
+      chars: this.state.chars,
+      room: {
+        uuid: this.state.uuid
+      }
     })
   }
 
@@ -121,12 +199,8 @@ export default class Game extends React.Component {
     })
   }
 
-  cleanGameData () {
-    this.setState({
-      gamePlaying: false,
-      chars: 0
-    })
-    clearInterval(this.state.intervalId)
+  findCpmForCurrentUser (data) {
+    return Math.round(_.get(_.find(data.players, ['uid', this.state.currentUser.uid]), 'cpm'))
   }
 
   findPlayerPosition (data) {
@@ -134,26 +208,16 @@ export default class Game extends React.Component {
     return _.find(data.players, { 'uid': this.state.currentUser.uid }).position
   }
 
-  sendRaceData () {
-    socket.emit('racedata', {
-      chars: this.state.chars,
-      room: {
-        uuid: this.state.uuid
-      }
-    })
+  setModalVisible (visible) {
+    this.setState({ modalVisible: visible })
   }
 
-  handlePlayGamePressed () {
-    const { currentUser } = firebase.auth()
-    console.log(currentUser)
-    this.setState({ currentUser })
-    // TODO(aibek): check authentication, otherwise redirect to signin
-    currentUser.getIdToken(/* forceRefresh */ true).then((idToken) => {
-      console.log(idToken)
-      this.setSocketBehavior(idToken)
-    }).catch(function (error) {
-      console.log(error) // TODO(aibek): handle better
+  cleanGameData () {
+    this.setState({
+      gamePlaying: false,
+      chars: 0
     })
+    clearInterval(this.state.intervalId)
   }
 
   handleUserInput (input) {
@@ -173,72 +237,6 @@ export default class Game extends React.Component {
         chars: (this.state.chars + word.length)
       })
     }
-  }
-
-  componentDidMount () {
-    BackHandler.addEventListener('hardwareBackPress', this.handleBackPress)
-    AsyncStorage.getItem('textLanguage').then((value) => {
-      if (!value) {
-        this.setState({
-          language: 'en'
-        })
-      } else {
-        this.setState({
-          language: value.toLowerCase()
-        })
-      }
-    })
-  }
-
-  componentWillUnmount () {
-    BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress)
-  }
-
-  handleBackPress () {
-    this.dicsonnectPlayer()
-  }
-
-  playButtonPressed () {
-    if (this.state.gamePlaying === true) {
-      this.dicsonnectPlayer()
-    } else {
-      AsyncStorage.getItem('textLanguage').then((value) => {
-        if (!value) {
-          this.setState({
-            language: 'en'
-          })
-        } else {
-          this.setState({
-            language: value.toLowerCase()
-          })
-        }
-      }).then(() => {
-        this.setState({
-          gamePlaying: true
-        })
-        this.handlePlayGamePressed()
-      })
-    }
-  }
-
-  dicsonnectPlayer () {
-    if (this.state.uuid) {
-      socket.emit('removePlayer', {
-        room: {
-          uuid: this.state.uuid
-        }
-      })
-    }
-    if (this.state.gamePlaying === true && socket) {
-      socket.disconnect()
-    }
-    this.setState({
-      gamePlaying: false
-    })
-  }
-
-  setModalVisible (visible) {
-    this.setState({ modalVisible: visible })
   }
 
   render () {

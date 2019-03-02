@@ -16,6 +16,20 @@ export default class PersonalPage extends React.Component {
     this.updateStatistics = this.updateStatistics.bind(this)
   }
 
+  async componentDidMount () {
+    const user = firebase.auth().currentUser
+    this.setState({ user })
+    await this.updateStatistics(user)
+    this.props.navigation.addListener(
+      'willFocus',
+      () => {
+        if (this.state.user) {
+          this.updateStatistics(this.state.user)
+        }
+      }
+    )
+  }
+
   updateStatistics (user) {
     return AsyncStorage.getItem('textLanguage').then((value) => {
       if (!value) {
@@ -54,20 +68,6 @@ export default class PersonalPage extends React.Component {
         console.log(error)
       })
     })
-  }
-
-  async componentDidMount () {
-    const user = firebase.auth().currentUser
-    this.setState({ user })
-    await this.updateStatistics(user)
-    this.props.navigation.addListener(
-      'willFocus',
-      () => {
-        if (this.state.user) {
-          this.updateStatistics(this.state.user)
-        }
-      }
-    )
   }
 
   handleSignOut () {
