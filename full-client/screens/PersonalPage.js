@@ -143,7 +143,11 @@ export default class PersonalPage extends React.Component {
             </View>
           </View>
           <View style={styles.signOutButton}>
-            <Button title='Sign out' onPress={this.handleSignOut} />
+            <Button
+              onPress={this.handleSignOut}
+              title='Sign out'
+              color='#841584'
+            />
           </View>
         </ScrollView>
       </LinearGradient>

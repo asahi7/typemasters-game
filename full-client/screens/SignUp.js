@@ -58,8 +58,9 @@ export default class SignUp extends React.Component {
         </View>
         <View style={{ marginTop: 10 }}>
           <Button
-            title='Already have an account? Sign in'
             onPress={() => this.props.navigation.navigate('SignIn')}
+            title='Already have an account? Sign in'
+            color='#841584'
           />
         </View>
       </LinearGradient>
