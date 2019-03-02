@@ -2,6 +2,7 @@ import React from 'react'
 import { Text, StyleSheet, AsyncStorage, Picker, View, TextInput, Button, Keyboard } from 'react-native'
 import { LinearGradient } from 'expo'
 import WebAPI from '../WebAPI'
+import Loading from './Loading'
 import firebase from 'firebase'
 
 export default class Settings extends React.Component {
@@ -11,7 +12,7 @@ export default class Settings extends React.Component {
       language: null,
       nickname: null,
       loading: true,
-      authorized: null
+      authenticated: null
     }
     this.languageSelected = this.languageSelected.bind(this)
     this.saveSettings = this.saveSettings.bind(this)
@@ -42,14 +43,11 @@ export default class Settings extends React.Component {
     }).then(() => {
       const { currentUser } = firebase.auth()
       if (currentUser) {
-        // signed in
-        console.log(currentUser)
         WebAPI.getNickname(currentUser.uid).then((result) => {
-          console.log(result)
-          this.setState({ nickname: result.nickname, loading: false, authorized: true })
+          this.setState({ nickname: result.nickname, loading: false, authenticated: true })
         })
       } else {
-        this.setState({ loading: false, authorized: false })
+        this.setState({ loading: false, authenticated: false })
       }
     })
   }
@@ -74,14 +72,15 @@ export default class Settings extends React.Component {
   }
 
   render () {
-    return (!this.state.loading &&
+    if (this.state.loading) return <Loading />
+    return (
       <LinearGradient colors={['#e1f6fa', '#dac6d8']} style={styles.container}>
         <View style={{ marginTop: 30 }}>
           <Text style={styles.header}>
             Settings
           </Text>
         </View>
-        {this.state.authorized &&
+        {this.state.authenticated &&
         <View>
           <View style={{ marginTop: 20, alignItems: 'center' }}>
             <Text style={styles.normalText}>Your

@@ -2,13 +2,15 @@ import React from 'react'
 import { View, Text, StyleSheet, Button, AsyncStorage, ScrollView } from 'react-native'
 import firebase from 'firebase'
 import WebAPI from '../WebAPI'
+import Loading from './Loading'
 import { LinearGradient } from 'expo'
 
 export default class PersonalPage extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      language: null
+      language: null,
+      loading: true
     }
     this.handleSignOut = this.handleSignOut.bind(this)
     this.updateStatistics = this.updateStatistics.bind(this)
@@ -45,7 +47,8 @@ export default class PersonalPage extends React.Component {
           bestResult: results[4].result,
           gamesWon: results[5].result,
           firstRaceData: results[6].result,
-          userInfo: results[7]
+          userInfo: results[7],
+          loading: false
         })
       }).catch((error) => {
         console.log(error)
@@ -55,9 +58,8 @@ export default class PersonalPage extends React.Component {
 
   async componentDidMount () {
     const user = firebase.auth().currentUser
-    // TODO(aibek): add loading view until the data is fetched
-    await this.updateStatistics(user)
     this.setState({ user })
+    await this.updateStatistics(user)
     this.props.navigation.addListener(
       'willFocus',
       () => {
@@ -77,6 +79,7 @@ export default class PersonalPage extends React.Component {
   }
 
   render () {
+    if (this.state.loading) return <Loading />
     return (
       <LinearGradient colors={['#e1f6fa', '#dac6d8']} style={styles.container}>
         <View style={{ marginTop: 30 }}>
@@ -91,6 +94,12 @@ export default class PersonalPage extends React.Component {
               <Text style={styles.column}>uid</Text>
               <Text style={styles.column}>{this.state.user && this.state.user.uid}</Text>
             </View>
+            {this.state.userInfo && this.state.userInfo.nickname &&
+              <View style={styles.row}>
+                <Text style={styles.column}>nickname</Text>
+                <Text style={styles.column}>{this.state.userInfo.nickname}</Text>
+              </View>
+            }
             {this.state.userInfo && this.state.userInfo.email &&
               <View style={styles.row}>
                 <Text style={styles.column}>email</Text>
