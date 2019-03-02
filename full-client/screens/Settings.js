@@ -25,6 +25,7 @@ export default class Settings extends React.Component {
     this.props.navigation.addListener(
       'willFocus',
       () => {
+        this.setState({ loading: true })
         this.updateScreen()
       }
     )

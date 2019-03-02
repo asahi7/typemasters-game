@@ -24,6 +24,7 @@ export default class PersonalPage extends React.Component {
       'willFocus',
       () => {
         if (this.state.user) {
+          this.setState({ loading: true })
           this.updateStatistics(this.state.user)
         }
       }
