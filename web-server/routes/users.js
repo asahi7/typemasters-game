@@ -16,7 +16,7 @@ router.get('/', [
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() })
   }
-  const user = await models.User.findOne({ uid: req.query.uid })
+  const user = await models.User.findOne({ where: { uid: req.query.uid } })
   if (_.isEmpty(user)) {
     res.status(400).send({
       error: `User with uid: ${req.query.uid} does not exist`
