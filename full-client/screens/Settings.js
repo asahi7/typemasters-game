@@ -61,12 +61,14 @@ export default class Settings extends React.Component {
   saveSettings () {
     AsyncStorage.setItem('textLanguage', this.state.language)
     const nicknameInput = this.state.nicknameInput
-    WebAPI.saveNickname(this.state.nicknameInput).then(() => {
-      this.setState({ nickname: nicknameInput })
-    }).catch(err => {
-      console.log(err.message)
-      this.setState({ errorMessage: err.message })
-    })
+    if (nicknameInput.length !== 0) {
+      WebAPI.saveNickname(this.state.nicknameInput).then(() => {
+        this.setState({ nickname: nicknameInput })
+      }).catch(err => {
+        console.log(err.message)
+        this.setState({ errorMessage: err.message })
+      })
+    }
     this.setState({ nicknameInput: '' })
     Keyboard.dismiss()
   }
