@@ -20,7 +20,7 @@ router.get('/getLatestAverageCpm', [
     WHERE t.language='${req.query.language}' AND rp.userUid='${req.query.uid}'
     ORDER BY rp.id DESC LIMIT 10`,
     { type: models.sequelize.QueryTypes.SELECT }).then((result) => {
-    return res.send({ result: +result[0].avg })
+    return res.send({ result: Math.round(result[0].avg) })
   })
 })
 
@@ -49,7 +49,7 @@ router.get('/getAverageCpm', [
     const average = (sum / _.size(results))
     return Math.round(average * 100) / 100
   }).then(avg => {
-    return res.send({ result: avg })
+    return res.send({ result: Math.round(avg) })
   })
 })
 
