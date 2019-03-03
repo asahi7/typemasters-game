@@ -4,6 +4,8 @@ import { LinearGradient } from 'expo'
 import WebAPI from '../WebAPI'
 import Loading from './Loading'
 import firebase from 'firebase'
+import Commons from '../Commons'
+import globalStyles from '../styles'
 
 export default class Settings extends React.Component {
   constructor (props) {
@@ -82,9 +84,9 @@ export default class Settings extends React.Component {
   render () {
     if (this.state.loading) return <Loading />
     return (
-      <LinearGradient colors={['#e1f6fa', '#dac6d8']} style={styles.container}>
+      <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
         <View style={{ marginTop: 30 }}>
-          <Text style={styles.header}>
+          <Text style={globalStyles.header}>
             Settings
           </Text>
         </View>
@@ -95,7 +97,7 @@ export default class Settings extends React.Component {
         {this.state.authenticated &&
         <View>
           <View style={{ marginTop: 20, alignItems: 'center' }}>
-            <Text style={styles.normalText}>Your
+            <Text style={globalStyles.normalText}>Your
               nickname: {this.state.nickname ? this.state.nickname : 'Not specified'}</Text>
           </View>
           <View style={{ marginTop: 10, alignItems: 'center' }}>
@@ -110,7 +112,7 @@ export default class Settings extends React.Component {
         </View>
         }
         <View style={{ marginTop: 20, alignItems: 'center' }}>
-          <Text style={styles.normalText}>Select your typing language</Text>
+          <Text style={globalStyles.normalText}>Select your typing language</Text>
         </View>
         {this.state.language &&
         <Picker selectedValue={this.state.language}
@@ -131,7 +133,7 @@ export default class Settings extends React.Component {
         <Button
           onPress={this.saveSettings}
           title='Save'
-          color='#841584'
+          color={Commons.buttonColor}
         />
       </LinearGradient>
     )
@@ -139,26 +141,6 @@ export default class Settings extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center'
-  },
-  header: {
-    fontSize: 30,
-    color: '#2E322F',
-    letterSpacing: 2,
-    textTransform: 'capitalize',
-    textAlign: 'center',
-    fontWeight: '700'
-  },
-  normalText: {
-    fontSize: 15,
-    color: '#2E322F',
-    letterSpacing: 2,
-    textTransform: 'capitalize',
-    textAlign: 'center',
-    fontWeight: '700'
-  },
   textInput: {
     height: 40,
     width: '60%',

@@ -1,6 +1,7 @@
 import React from 'react'
-import { View, Text, ActivityIndicator, StyleSheet } from 'react-native'
+import { View, Text, ActivityIndicator } from 'react-native'
 import firebase from 'firebase'
+import globalStyles from '../styles'
 
 export default class AuthLoading extends React.Component {
   constructor (props) {
@@ -20,7 +21,7 @@ export default class AuthLoading extends React.Component {
   render () {
     if (this.state.loading) {
       return (
-        <View style={styles.container}>
+        <View style={globalStyles.loadingContainer}>
           <ActivityIndicator size='large' />
           <Text>Loading</Text>
         </View>
@@ -28,10 +29,3 @@ export default class AuthLoading extends React.Component {
     }
   }
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
-  }
-})

@@ -3,6 +3,8 @@ import { StyleSheet, Text, TextInput, Button, View } from 'react-native'
 import firebase from 'firebase'
 import { LinearGradient } from 'expo'
 import WebAPI from '../WebAPI'
+import Commons from '../Commons'
+import globalStyles from '../styles'
 
 export default class SignIn extends React.Component {
   constructor (props) {
@@ -31,9 +33,9 @@ export default class SignIn extends React.Component {
 
   render () {
     return (
-      <LinearGradient colors={['#e1f6fa', '#dac6d8']} style={styles.container}>
+      <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
         <View style={{ marginTop: 30 }}>
-          <Text style={styles.header}>
+          <Text style={globalStyles.header}>
             Sign In
           </Text>
         </View>
@@ -60,14 +62,14 @@ export default class SignIn extends React.Component {
           <Button
             onPress={this.handleSignIn}
             title='Sign in'
-            color='#841584'
+            color={Commons.buttonColor}
           />
         </View>
         <View style={{ marginTop: 10 }}>
           <Button
             onPress={() => this.props.navigation.navigate('SignUp')}
             title="Don't have an account? Sign Up"
-            color='#841584'
+            color={Commons.buttonColor}
           />
         </View>
       </LinearGradient>
@@ -76,18 +78,6 @@ export default class SignIn extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center'
-  },
-  header: {
-    fontSize: 30,
-    color: '#2E322F',
-    letterSpacing: 2,
-    textTransform: 'capitalize',
-    textAlign: 'center',
-    fontWeight: '700'
-  },
   textInput: {
     height: 40,
     width: '90%',

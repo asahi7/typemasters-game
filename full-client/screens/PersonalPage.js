@@ -4,6 +4,8 @@ import firebase from 'firebase'
 import WebAPI from '../WebAPI'
 import Loading from './Loading'
 import { LinearGradient } from 'expo'
+import Commons from '../Commons'
+import globalStyles from '../styles'
 
 export default class PersonalPage extends React.Component {
   constructor (props) {
@@ -82,66 +84,71 @@ export default class PersonalPage extends React.Component {
   render () {
     if (this.state.loading) return <Loading />
     return (
-      <LinearGradient colors={['#e1f6fa', '#dac6d8']} style={styles.container}>
+      <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
         <View style={{ marginTop: 30 }}>
-          <Text style={styles.header}>
+          <Text style={globalStyles.header}>
               Personal Page
           </Text>
         </View>
-        <ScrollView style={{ flex: 1, marginTop: 10, marginBottom: 10 }}>
+        <ScrollView style={{ marginTop: 10, marginBottom: 10 }}>
           <View style={{ marginTop: 10 }}>
-            <Text style={styles.tableHeader}>General</Text>
-            <View style={styles.row}>
-              <Text style={styles.column}>uid</Text>
-              <Text style={styles.column}>{this.state.user && this.state.user.uid}</Text>
-            </View>
+            <Text style={globalStyles.tableHeader}>General</Text>
             {this.state.userInfo && this.state.userInfo.nickname &&
-              <View style={styles.row}>
-                <Text style={styles.column}>nickname</Text>
-                <Text style={styles.column}>{this.state.userInfo.nickname}</Text>
-              </View>
+            <View style={globalStyles.row}>
+              <Text style={globalStyles.column}>Nickname:</Text>
+              <Text style={globalStyles.column}>{this.state.userInfo.nickname}</Text>
+            </View>
             }
             {this.state.userInfo && this.state.userInfo.email &&
-              <View style={styles.row}>
-                <Text style={styles.column}>email</Text>
-                <Text style={styles.column}>{this.state.userInfo.email}</Text>
-              </View>
+            <View style={globalStyles.row}>
+              <Text style={globalStyles.column}>Email:</Text>
+              <Text style={globalStyles.column}>{this.state.userInfo.email}</Text>
+            </View>
             }
-            <View style={styles.row}>
-              <Text style={styles.column}>total games</Text>
-              <Text style={styles.column}>{this.state.totalRaces}</Text>
+            <View style={globalStyles.row}>
+              <Text style={globalStyles.column}>UID:</Text>
+              <Text style={globalStyles.column}>{this.state.user && this.state.user.uid}</Text>
             </View>
-            <View style={styles.row}>
-              <Text style={styles.column}>average cpm</Text>
-              <Text style={styles.column}>{this.state.avgCpm}</Text>
+            <View style={globalStyles.row}>
+              <Text style={globalStyles.column}>Total games:</Text>
+              <Text style={globalStyles.column}>{this.state.totalRaces}</Text>
             </View>
-            <View style={styles.row}>
-              <Text style={styles.column}>average cpm for last 10 games</Text>
-              <Text style={styles.column}>{this.state.lastAvgCpm}</Text>
+            <View style={globalStyles.row}>
+              <Text style={globalStyles.column}>Average cpm:</Text>
+              <Text style={globalStyles.column}>{this.state.avgCpm} cpm</Text>
+            </View>
+            <View style={globalStyles.row}>
+              <Text style={globalStyles.column}>Average cpm (10 games):</Text>
+              <Text style={globalStyles.column}>{this.state.lastAvgCpm} cpm</Text>
+            </View>
+            <View style={globalStyles.row}>
+              <Text style={globalStyles.column}>Games won:</Text>
+              <Text style={globalStyles.column}>{this.state.gamesWon}</Text>
+            </View>
+            <View style={globalStyles.row}>
+              <Text style={globalStyles.column}>Best Result:</Text>
+              <Text style={globalStyles.column}>{this.state.bestResult} cpm</Text>
+            </View>
+            <View style={globalStyles.row}>
+              <Text style={globalStyles.column}>Last game:</Text>
+              <Text style={globalStyles.column}>{this.state.lastPlayed}</Text>
+            </View>
+            <View style={globalStyles.row}>
+              <Text style={globalStyles.column}>Last game:</Text>
+              <Text style={globalStyles.column}>{this.state.lastScore} cpm</Text>
             </View>
             { this.state.firstRaceData &&
-              <View style={styles.row}>
-                <Text style={styles.column}>first game data</Text>
-                <Text style={styles.column}>{this.state.firstRaceData.racePlayers[0].cpm} cpm</Text>
-                <Text style={styles.column}>{this.state.firstRaceData.date}</Text>
+              <View style={globalStyles.row}>
+                <Text style={globalStyles.column}>First game:</Text>
+                <Text style={globalStyles.column}>{this.state.firstRaceData.racePlayers[0].cpm} cpm</Text>
               </View>
             }
-            <View style={styles.row}>
-              <Text style={styles.column}>last game</Text>
-              <Text style={styles.column}>{this.state.lastPlayed}</Text>
+            { this.state.firstRaceData &&
+            <View style={globalStyles.row}>
+              <Text style={globalStyles.column}>First game:</Text>
+              <Text style={globalStyles.column}>{this.state.firstRaceData.date}</Text>
             </View>
-            <View style={styles.row}>
-              <Text style={styles.column}>last score</Text>
-              <Text style={styles.column}>{this.state.lastScore}</Text>
-            </View>
-            <View style={styles.row}>
-              <Text style={styles.column}>games won</Text>
-              <Text style={styles.column}>{this.state.gamesWon}</Text>
-            </View>
-            <View style={styles.row}>
-              <Text style={styles.column}>best result</Text>
-              <Text style={styles.column}>{this.state.bestResult} cpm</Text>
-            </View>
+            }
           </View>
           <View style={styles.signOutButton}>
             <Button
@@ -157,39 +164,6 @@ export default class PersonalPage extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center'
-  },
-  header: {
-    fontSize: 30,
-    color: '#2E322F',
-    letterSpacing: 2,
-    textTransform: 'capitalize',
-    textAlign: 'center',
-    fontWeight: '700'
-  },
-  tableHeader: {
-    fontSize: 20,
-    color: '#56ABBD',
-    letterSpacing: 2,
-    textTransform: 'capitalize',
-    textAlign: 'center',
-    fontWeight: '700'
-  },
-  row: {
-    flex: 0.1,
-    flexDirection: 'row',
-    alignSelf: 'stretch',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  column: {
-    padding: 5,
-    color: '#56ABBD',
-    fontSize: 15
-  },
   signOutButton: {
     marginTop: 10,
     flex: 0.1,

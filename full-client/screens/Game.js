@@ -16,6 +16,8 @@ import io from 'socket.io-client'
 import _ from 'lodash'
 import Config from '../config/Config'
 import { LinearGradient } from 'expo'
+import Commons from '../Commons'
+import globalStyles from '../styles'
 
 let socket
 
@@ -241,7 +243,7 @@ export default class Game extends React.Component {
 
   render () {
     return (
-      <LinearGradient colors={['#e1f6fa', '#dac6d8']} style={styles.container}>
+      <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
         <Modal
           visible={this.state.modalVisible}
           transparent
@@ -317,11 +319,6 @@ export default class Game extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
   playButton: {
     alignItems: 'center',
     padding: 10

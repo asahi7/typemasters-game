@@ -1,13 +1,15 @@
 import React from 'react'
-import { Text, StyleSheet, View } from 'react-native'
+import { Text, View } from 'react-native'
 import { LinearGradient } from 'expo'
+import Commons from '../Commons'
+import globalStyles from '../styles'
 
 export default class Leaderboard extends React.Component {
   render () {
     return (
-      <LinearGradient colors={['#e1f6fa', '#dac6d8']} style={styles.container}>
+      <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
         <View style={{ marginTop: 30 }}>
-          <Text style={styles.header}>
+          <Text style={globalStyles.header}>
             Leaderboard
           </Text>
         </View>
@@ -15,18 +17,3 @@ export default class Leaderboard extends React.Component {
     )
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center'
-  },
-  header: {
-    fontSize: 30,
-    color: '#2E322F',
-    letterSpacing: 2,
-    textTransform: 'capitalize',
-    textAlign: 'center',
-    fontWeight: '700'
-  }
-})
