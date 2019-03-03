@@ -20,7 +20,7 @@ router.get('/getLatestAverageCpm', [
     WHERE t.language='${req.query.language}' AND rp.userUid='${req.query.uid}'
     ORDER BY rp.id DESC LIMIT 10`,
     { type: models.sequelize.QueryTypes.SELECT }).then((result) => {
-    return res.send({ result: result[0].avg })
+    return res.send({ result: +result[0].avg })
   })
 })
 
