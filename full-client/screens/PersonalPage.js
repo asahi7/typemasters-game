@@ -154,6 +154,9 @@ export default class PersonalPage extends React.Component {
             </View>
             }
           </View>
+          <View style={{marginTop: 10}}>
+            <Text style={[globalStyles.normalText, {color: 'red'}]}>*Data may not update instantly after the race.</Text>
+          </View>
           <View style={globalStyles.normalButton}>
             <Button
               onPress={this.handleSignOut}
