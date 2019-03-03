@@ -6,6 +6,7 @@ import Loading from './Loading'
 import { LinearGradient } from 'expo'
 import Commons from '../Commons'
 import globalStyles from '../styles'
+import moment from 'moment'
 
 export default class PersonalPage extends React.Component {
   constructor (props) {
@@ -135,7 +136,7 @@ export default class PersonalPage extends React.Component {
             </View>
             <View style={globalStyles.row}>
               <Text style={globalStyles.column}>Last game:</Text>
-              <Text style={globalStyles.column}>{this.state.lastPlayed}</Text>
+              <Text style={globalStyles.column}>{moment(this.state.lastPlayed).format('HH:mm, D MMMM, YYYY')}</Text>
             </View>
             <View style={globalStyles.row}>
               <Text style={globalStyles.column}>Last game:</Text>
@@ -150,12 +151,12 @@ export default class PersonalPage extends React.Component {
             { this.state.firstRaceData &&
             <View style={globalStyles.row}>
               <Text style={globalStyles.column}>First game:</Text>
-              <Text style={globalStyles.column}>{this.state.firstRaceData.date}</Text>
+              <Text style={globalStyles.column}>{moment(this.state.firstRaceData.date).format('HH:mm, D MMMM, YYYY')}</Text>
             </View>
             }
           </View>
-          <View style={{marginTop: 10}}>
-            <Text style={[globalStyles.normalText, {color: 'red'}]}>*Data may not update instantly after the race.</Text>
+          <View style={{ marginTop: 10 }}>
+            <Text style={[globalStyles.normalText, { color: 'red' }]}>*Data may not update instantly after the race.</Text>
           </View>
           <View style={globalStyles.normalButton}>
             <Button
