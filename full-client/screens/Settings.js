@@ -90,7 +90,7 @@ export default class Settings extends React.Component {
             Settings
           </Text>
         </View>
-        <ScrollView style={{ marginTop: 10, marginBottom: 10 }}>
+        <ScrollView style={{ marginTop: 10, marginBottom: 10 }} keyboardShouldPersistTaps={'always'}>
           {this.state.errorMessage &&
           <Text style={{ color: 'red' }}>
             {this.state.errorMessage}
