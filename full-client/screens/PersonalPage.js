@@ -110,6 +110,10 @@ export default class PersonalPage extends React.Component {
               <Text style={globalStyles.column}>{this.state.user && this.state.user.uid}</Text>
             </View>
             <View style={globalStyles.row}>
+              <Text style={globalStyles.column}>Typing language:</Text>
+              <Text style={globalStyles.column}>{this.state.language}</Text>
+            </View>
+            <View style={globalStyles.row}>
               <Text style={globalStyles.column}>Total games:</Text>
               <Text style={globalStyles.column}>{this.state.totalRaces}</Text>
             </View>
@@ -126,7 +130,7 @@ export default class PersonalPage extends React.Component {
               <Text style={globalStyles.column}>{this.state.gamesWon}</Text>
             </View>
             <View style={globalStyles.row}>
-              <Text style={globalStyles.column}>Best Result:</Text>
+              <Text style={globalStyles.column}>Best result:</Text>
               <Text style={globalStyles.column}>{this.state.bestResult} cpm</Text>
             </View>
             <View style={globalStyles.row}>
