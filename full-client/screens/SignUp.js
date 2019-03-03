@@ -55,10 +55,10 @@ export default class SignUp extends React.Component {
           onChangeText={password => this.setState({ password })}
           value={this.state.password}
         />
-        <View style={{ marginTop: 10 }}>
+        <View style={globalStyles.normalButton}>
           <Button title='Sign up' color={Commons.buttonColor} onPress={this.handleSignUp} />
         </View>
-        <View style={{ marginTop: 10 }}>
+        <View style={globalStyles.normalButton}>
           <Button
             onPress={() => this.props.navigation.navigate('SignIn')}
             title='Already have an account? Sign in'

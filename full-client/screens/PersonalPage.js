@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, StyleSheet, Button, AsyncStorage, ScrollView } from 'react-native'
+import { View, Text, Button, AsyncStorage, ScrollView } from 'react-native'
 import firebase from 'firebase'
 import WebAPI from '../WebAPI'
 import Loading from './Loading'
@@ -150,7 +150,7 @@ export default class PersonalPage extends React.Component {
             </View>
             }
           </View>
-          <View style={styles.signOutButton}>
+          <View style={globalStyles.normalButton}>
             <Button
               onPress={this.handleSignOut}
               title='Sign out'
@@ -162,14 +162,3 @@ export default class PersonalPage extends React.Component {
     )
   }
 }
-
-const styles = StyleSheet.create({
-  signOutButton: {
-    marginTop: 10,
-    flex: 0.1,
-    flexDirection: 'row',
-    alignSelf: 'stretch',
-    alignItems: 'center',
-    justifyContent: 'center'
-  }
-})

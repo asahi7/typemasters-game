@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, StyleSheet, AsyncStorage, Picker, View, TextInput, Button, Keyboard } from 'react-native'
+import { Text, StyleSheet, AsyncStorage, Picker, View, TextInput, Button, Keyboard, ScrollView } from 'react-native'
 import { LinearGradient } from 'expo'
 import WebAPI from '../WebAPI'
 import Loading from './Loading'
@@ -90,51 +90,67 @@ export default class Settings extends React.Component {
             Settings
           </Text>
         </View>
-        {this.state.errorMessage &&
-        <Text style={{ color: 'red' }}>
-          {this.state.errorMessage}
-        </Text>}
-        {this.state.authenticated &&
-        <View>
-          <View style={{ marginTop: 20, alignItems: 'center' }}>
-            <Text style={globalStyles.normalText}>Your
-              nickname: {this.state.nickname ? this.state.nickname : 'Not specified'}</Text>
+        <ScrollView style={{ marginTop: 10, marginBottom: 10 }}>
+          {this.state.errorMessage &&
+          <Text style={{ color: 'red' }}>
+            {this.state.errorMessage}
+          </Text>
+          }
+          <View style={{ marginTop: 10 }}>
+            {this.state.authenticated &&
+              <View style={globalStyles.row}>
+                <Text style={globalStyles.column}>Your nickname:</Text>
+                <Text style={globalStyles.column}>{this.state.nickname ? this.state.nickname : 'Not specified'}</Text>
+              </View>
+            }
+            {this.state.authenticated &&
+              <View style={globalStyles.row}>
+                <Text style={globalStyles.column}>Change nickname:</Text>
+                <View style={globalStyles.column}>
+                  <TextInput
+                    style={styles.textInput}
+                    autoCapitalize='none'
+                    placeholder='Your nickname'
+                    onChangeText={this.handleNicknameInput}
+                    value={this.state.nicknameInput}
+                  />
+                </View>
+              </View>
+            }
+            {this.state.userInfo && this.state.userInfo.nickname &&
+            <View style={globalStyles.row}>
+              <Text style={globalStyles.column}>Nickname:</Text>
+              <Text style={globalStyles.column}>{this.state.userInfo.nickname}</Text>
+            </View>
+            }
+            <View style={globalStyles.row}>
+              <Text style={globalStyles.column}>Typing language:</Text>
+              {this.state.language &&
+              <Picker selectedValue={this.state.language}
+                style={[{ width: 150 }, styles.column]}
+                onValueChange={this.languageSelected}>
+                <Picker.Item value='ZH' label='Chinese' />
+                <Picker.Item value='EN' label='English' />
+                <Picker.Item value='FR' label='French' />
+                <Picker.Item value='DE' label='German' />
+                <Picker.Item value='HI' label='Hindi' />
+                <Picker.Item value='KZ' label='Kazakh' />
+                <Picker.Item value='KO' label='Korean' />
+                <Picker.Item value='RU' label='Russian' />
+                <Picker.Item value='ES' label='Spanish' />
+                <Picker.Item value='TR' label='Turkish' />
+              </Picker>
+              }
+            </View>
           </View>
-          <View style={{ marginTop: 10, alignItems: 'center' }}>
-            <TextInput
-              style={styles.textInput}
-              autoCapitalize='none'
-              placeholder='Your nickname'
-              onChangeText={this.handleNicknameInput}
-              value={this.state.nicknameInput}
+          <View style={globalStyles.normalButton}>
+            <Button
+              onPress={this.saveSettings}
+              title='Save'
+              color={Commons.buttonColor}
             />
           </View>
-        </View>
-        }
-        <View style={{ marginTop: 20, alignItems: 'center' }}>
-          <Text style={globalStyles.normalText}>Select your typing language</Text>
-        </View>
-        {this.state.language &&
-        <Picker selectedValue={this.state.language}
-          style={{ height: 50, width: 200 }}
-          onValueChange={this.languageSelected}>
-          <Picker.Item value='ZH' label='Chinese' />
-          <Picker.Item value='EN' label='English' />
-          <Picker.Item value='FR' label='French' />
-          <Picker.Item value='DE' label='German' />
-          <Picker.Item value='HI' label='Hindi' />
-          <Picker.Item value='KZ' label='Kazakh' />
-          <Picker.Item value='KO' label='Korean' />
-          <Picker.Item value='RU' label='Russian' />
-          <Picker.Item value='ES' label='Spanish' />
-          <Picker.Item value='TR' label='Turkish' />
-        </Picker>
-        }
-        <Button
-          onPress={this.saveSettings}
-          title='Save'
-          color={Commons.buttonColor}
-        />
+        </ScrollView>
       </LinearGradient>
     )
   }
@@ -142,11 +158,12 @@ export default class Settings extends React.Component {
 
 const styles = StyleSheet.create({
   textInput: {
-    height: 40,
-    width: '60%',
-    borderColor: 'gray',
-    borderWidth: 1,
+    width: 100,
     paddingLeft: 2,
     paddingRight: 2
+  },
+  column: {
+    marginLeft: 10,
+    marginRight: 10
   }
 })
