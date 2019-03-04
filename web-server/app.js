@@ -9,6 +9,7 @@ const firebase = require('./firebase/auth')
 
 const usersRouter = require('./routes/users')
 const statisticsRouter = require('./routes/statistics')
+const leaderboardRouter = require('./routes/leaderboard')
 
 const app = express()
 
@@ -25,5 +26,6 @@ app.use(firebase.firebaseAddUserMiddleware)
 
 app.use('/users', usersRouter)
 app.use('/statistics', statisticsRouter)
+app.use('/leaderboard', leaderboardRouter)
 
 module.exports = app

@@ -115,6 +115,7 @@ const RacePlayer = sequelize.define('racePlayer', {
 
 Race.belongsTo(Text, { foreignKey: 'textId', targetKey: 'id' })
 RacePlayer.belongsTo(Race, { foreignKey: 'raceId', targetKey: 'id' })
+RacePlayer.belongsTo(User, { foreignKey: 'userUid', targetKey: 'uid' })
 Text.hasMany(Race, { foreignKey: 'textId', sourceKey: 'id' })
 Race.hasMany(RacePlayer, { foreignKey: 'raceId', sourceKey: 'id' })
 User.hasMany(RacePlayer, { foreignKey: 'userUid', sourceKey: 'uid' })
