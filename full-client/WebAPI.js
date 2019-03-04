@@ -54,8 +54,13 @@ export default {
     })
   },
 
-  getNickname: (uid) => {
-    return fetch(`${Config.WEB_SERVER_API}/users/getNickname?uid=${uid}`).then(parseJSON)
+  saveCountry: (country) => {
+    const options = {
+      method: 'POST'
+    }
+    return attachToken(options).then(options => {
+      return fetch(`${Config.WEB_SERVER_API}/users/saveCountry?country=${country}`, options).then(parseJSON)
+    })
   },
 
   createUserIfNotExists: () => {
@@ -95,11 +100,9 @@ export default {
     return fetch(`${Config.WEB_SERVER_API}/statistics/getGamesWon?uid=${uid}&language=${language}`).then(parseJSON)
   },
 
-  getLastScore: (uid, language) => {
-    return fetch(`${Config.WEB_SERVER_API}/statistics/getLastScore?uid=${uid}&language=${language}`).then(parseJSON)
-  },
-
   getUserInfo: (uid) => {
-    return fetch(`${Config.WEB_SERVER_API}/users?uid=${uid}`).then(parseJSON)
+    return attachToken().then(options => {
+      return fetch(`${Config.WEB_SERVER_API}/users?uid=${uid}`, options).then(parseJSON)
+    })
   }
 }

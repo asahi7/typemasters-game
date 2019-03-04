@@ -46,6 +46,11 @@ export default class PersonalPage extends React.Component {
         })
       }
     }).then(() => {
+      // This is done because user might not exist on the database and will create it first
+      return WebAPI.getUserInfo(user.uid).then((result) => {
+        this.setState({ userInfo: result })
+      })
+    }).then(() => {
       return Promise.all([
         WebAPI.getRaceCount(user.uid, this.state.language),
         WebAPI.getAverageCpm(user.uid, this.state.language),
@@ -53,8 +58,7 @@ export default class PersonalPage extends React.Component {
         WebAPI.getLastPlayedGame(user.uid, this.state.language),
         WebAPI.getBestResult(user.uid, this.state.language),
         WebAPI.getGamesWon(user.uid, this.state.language),
-        WebAPI.getFirstRace(user.uid, this.state.language),
-        WebAPI.getUserInfo(user.uid)
+        WebAPI.getFirstRace(user.uid, this.state.language)
       ]).then((results) => {
         this.setState({
           totalRaces: results[0].result,
@@ -65,7 +69,6 @@ export default class PersonalPage extends React.Component {
           bestResult: results[4].result,
           gamesWon: results[5].result,
           firstRaceData: results[6].result,
-          userInfo: results[7],
           loading: false
         })
       }).catch((error) => {
