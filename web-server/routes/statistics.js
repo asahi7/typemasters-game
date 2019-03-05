@@ -192,4 +192,28 @@ router.get('/countGamesPlayedToday', async (req, res) => {
   })
 })
 
+router.get('/getLastPlayedGames', async (req, res) => {
+  return models.RacePlayer.findAll({
+    include: [
+      {
+        model: models.Race,
+        required: true,
+        where: {
+          'date': {
+            [Op.lt]: new Date(),
+            [Op.gt]: new Date(new Date() - 24 * 60 * 60 * 1000)
+          }
+        }
+      },
+      {
+        model: models.User, required: true
+      }
+    ],
+    order: [[models.Race, 'date', 'DESC']],
+    limit: 10
+  }).then((result) => {
+    return res.send({ result })
+  })
+})
+
 module.exports = router
