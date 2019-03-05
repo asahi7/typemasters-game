@@ -3,6 +3,7 @@ const router = express.Router()
 const models = require('../../models/models')
 const { query, validationResult } = require('express-validator/check')
 const _ = require('lodash')
+const Op = models.sequelize.Op
 
 router.get('/getLatestAverageCpm', [
   query('uid').isAlphanumeric().isLength({ min: 1 }),
@@ -175,6 +176,19 @@ router.get('/getGamesWon', [
     ]
   }).then(function (result) {
     return res.send({ result: result })
+  })
+})
+
+router.get('/countGamesPlayedToday', async (req, res) => {
+  return models.Race.count({
+    where: {
+      date: {
+        [Op.lt]: new Date(),
+        [Op.gt]: new Date(new Date() - 24 * 60 * 60 * 1000)
+      }
+    }
+  }).then((result) => {
+    return res.send({ result })
   })
 })
 

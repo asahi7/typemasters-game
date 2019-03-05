@@ -108,6 +108,10 @@ export default {
     return fetch(`${Config.WEB_SERVER_API}/leaderboard/getBestAvgResults?language=${language}`).then(parseJSON)
   },
 
+  countGamesPlayedToday: () => {
+    return fetch(`${Config.WEB_SERVER_API}/statistics/countGamesPlayedToday`).then(parseJSON)
+  },
+
   getUserInfo: (uid) => {
     return attachToken().then(options => {
       return fetch(`${Config.WEB_SERVER_API}/users?uid=${uid}`, options).then(parseJSON)
