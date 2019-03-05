@@ -32,4 +32,35 @@ router.get('/getBestResults', [
   })
 })
 
+router.get('/getBestAvgResults', [
+  query('language').isAlpha().isLength({ min: 1, max: 2 })
+], async (req, res) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() })
+  }
+  return models.RacePlayer.findAll({
+    include: [
+      {
+        model: models.Race,
+        attributes: [],
+        required: true,
+        include: [{
+          model: models.Text, required: true, attributes: []
+        }]
+      },
+      {
+        model: models.User, attributes: ['id', 'uid', 'nickname', 'country'], required: true
+      }
+    ],
+    where: models.sequelize.where(models.sequelize.col('race->text.language'), '=', req.query.language),
+    group: 'uid',
+    attributes: [[models.sequelize.fn('AVG', models.sequelize.col('cpm')), 'avg'], 'user.uid', 'user.nickname', 'user.country'],
+    order: [[models.sequelize.fn('AVG', models.sequelize.col('cpm')), 'DESC']],
+    limit: 20
+  }).then((results) => {
+    return res.send(results)
+  })
+})
+
 module.exports = router

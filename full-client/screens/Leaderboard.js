@@ -14,7 +14,8 @@ export default class Leaderboard extends React.Component {
     this.state = {
       language: null,
       loading: true,
-      bestResults: []
+      bestResults: [],
+      bestAvgResults: []
     }
     this.updateStatistics = this.updateStatistics.bind(this)
   }
@@ -47,10 +48,12 @@ export default class Leaderboard extends React.Component {
       }
     }).then(() => {
       return Promise.all([
-        WebAPI.getBestResults(this.state.language)
+        WebAPI.getBestResults(this.state.language),
+        WebAPI.getBestAvgResults(this.state.language)
       ]).then((results) => {
         this.setState({
           bestResults: results[0],
+          bestAvgResults: results[1],
           loading: false
         })
       }).catch((error) => {
@@ -78,6 +81,18 @@ export default class Leaderboard extends React.Component {
                   <Text style={globalStyles.column}>{result.user.country}</Text>
                   <Text style={globalStyles.column}>{result.cpm}</Text>
                   <Text style={globalStyles.column}>{moment(result.race.date).format('HH:mm, D MMMM, YYYY')}</Text>
+                </View>
+              )
+            })}
+          </View>
+          <View style={{ marginTop: 10 }}>
+            <Text style={globalStyles.tableHeader}>Best Average Results By CPM</Text>
+            {this.state.bestAvgResults.map((result, i) => {
+              return (
+                <View style={globalStyles.row} key={i}>
+                  <Text style={globalStyles.column}>{result.user.nickname}</Text>
+                  <Text style={globalStyles.column}>{result.user.country}</Text>
+                  <Text style={globalStyles.column}>{result.avg}</Text>
                 </View>
               )
             })}
