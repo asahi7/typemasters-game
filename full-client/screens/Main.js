@@ -59,11 +59,11 @@ export default class Main extends React.Component {
         </View>
         <ScrollView style={{ marginTop: 10, marginBottom: 10 }}>
           <View style={{ marginTop: 10 }}>
-            <Text style={globalStyles.tableHeader}>Today Played Games: {this.state.gamesPlayedCnt}</Text>
+            <Text style={globalStyles.tableHeader}>Total Played Games Today: {this.state.gamesPlayedCnt}</Text>
           </View>
           {/* TODO(aibek): fill out last played games from API */}
           <View style={{ marginTop: 20 }}>
-            <Text style={globalStyles.tableHeader}>Last Played</Text>
+            <Text style={globalStyles.tableHeader}>Last Games</Text>
             {
               this.state.lastGames.map((result, i) => {
                 return (
