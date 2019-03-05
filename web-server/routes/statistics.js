@@ -192,6 +192,36 @@ router.get('/countGamesPlayedToday', async (req, res) => {
   })
 })
 
+router.get('/countUserPlayedToday', [
+  query('uid').isAlphanumeric().isLength({ min: 1 })
+], async (req, res) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() })
+  }
+  return models.RacePlayer.count({
+    include: [
+      {
+        model: models.Race,
+        required: true,
+        where: {
+          date: {
+            [Op.lt]: new Date(),
+            [Op.gt]: new Date(new Date() - 24 * 60 * 60 * 1000)
+          }
+        }
+      },
+      {
+        model: models.User,
+        required: true,
+        where: { uid: req.query.uid }
+      }
+    ]
+  }).then((result) => {
+    return res.send({ result })
+  })
+})
+
 router.get('/getLastPlayedGames', async (req, res) => {
   return models.RacePlayer.findAll({
     include: [

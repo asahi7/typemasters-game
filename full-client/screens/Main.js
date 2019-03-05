@@ -6,6 +6,7 @@ import Commons from '../Commons'
 import WebAPI from '../WebAPI'
 import Loading from './Loading'
 import moment from 'moment'
+import firebase from 'firebase'
 
 export default class Main extends React.Component {
   constructor (props) {
@@ -13,30 +14,41 @@ export default class Main extends React.Component {
     this.state = {
       gamesPlayedCnt: null,
       lastGames: [],
-      loading: true
+      gamesPlayedCntUser: 0,
+      loading: true,
+      user: null
     }
     this.handlePlayPressed = this.handlePlayPressed.bind(this)
+    this.updateStatistics = this.updateStatistics.bind(this)
   }
 
   async componentDidMount () {
-    await this.updateStatistics()
+    const user = firebase.auth().currentUser
+    this.setState({ user })
+    await this.updateStatistics(user)
     this.props.navigation.addListener(
       'willFocus',
       () => {
         this.setState({ loading: true })
-        this.updateStatistics()
+        const user = this.state.user ? this.state.user : firebase.auth().currentUser
+        this.setState({ user }, () => {
+          this.updateStatistics(this.state.user)
+        })
       }
     )
   }
 
-  updateStatistics () {
+  updateStatistics (user) {
+    console.log(user)
     return Promise.all([
       WebAPI.countGamesPlayedToday(),
-      WebAPI.getLastPlayedGames()
+      WebAPI.getLastPlayedGames(),
+      WebAPI.countUserPlayedToday(user ? user.uid : undefined)
     ]).then((results) => {
       this.setState({
         gamesPlayedCnt: results[0].result,
         lastGames: results[1].result,
+        gamesPlayedCntUser: results[2].result,
         loading: false
       })
     }).catch((error) => {
@@ -58,6 +70,9 @@ export default class Main extends React.Component {
           </Text>
         </View>
         <ScrollView style={{ marginTop: 10, marginBottom: 10 }}>
+          <View style={{ marginTop: 10 }}>
+            <Text style={globalStyles.tableHeader}>Your Played Games Today: {this.state.gamesPlayedCntUser}</Text>
+          </View>
           <View style={{ marginTop: 10 }}>
             <Text style={globalStyles.tableHeader}>Total Played Games Today: {this.state.gamesPlayedCnt}</Text>
           </View>
