@@ -109,6 +109,12 @@ export default class PersonalPage extends React.Component {
               <Text style={globalStyles.column}>{this.state.userInfo.email}</Text>
             </View>
             }
+            {this.state.userInfo && this.state.userInfo.country &&
+            <View style={globalStyles.row}>
+              <Text style={globalStyles.column}>Country:</Text>
+              <Text style={globalStyles.column}>{this.state.userInfo.country}</Text>
+            </View>
+            }
             <View style={globalStyles.row}>
               <Text style={globalStyles.column}>UID:</Text>
               <Text style={globalStyles.column}>{this.state.user && this.state.user.uid}</Text>
