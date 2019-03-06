@@ -118,12 +118,17 @@ export default class Game extends React.Component {
   handlePlayGamePressed () {
     const { currentUser } = firebase.auth()
     this.setState({ currentUser, gamePlaying: true })
-    currentUser.getIdToken(true).then((idToken) => {
-      this.setSocketBehavior(idToken)
-    }).catch(function (error) {
-      // TODO(aibek): handle better
-      console.log(error)
-    })
+    if (currentUser) {
+      currentUser.getIdToken(true).then((idToken) => {
+        this.setSocketBehavior(idToken)
+      }).catch(function (error) {
+        // TODO(aibek): handle better
+        console.log(error)
+      })
+    } else {
+      // Anonymous user
+      this.setSocketBehavior(-1)
+    }
   }
 
   setSocketBehavior (idToken) {
@@ -132,9 +137,11 @@ export default class Game extends React.Component {
       socket.emit('authentication', { token: idToken })
       socket.on('authenticated', () => {
         console.log('Asking for a new game..')
+        console.log(socket.id)
         socket.emit('newgame', { language: this.state.language })
         this.setState({
-          text: 'Loading..'
+          text: 'Loading..',
+          socketId: socket.id
         })
 
         socket.on('gamestarted', (data) => {
@@ -179,7 +186,8 @@ export default class Game extends React.Component {
   }
 
   setGameData (data, isGameEnded) {
-    const isWinner = _.find(data.players, { 'uid': this.state.currentUser.uid }).isWinner
+    console.log(data)
+    const isWinner = _.find(data.players, { 'id': this.state.socketId }).isWinner
     this.setState({
       timeLeft: data.timeLeft / 1000,
       cpm: this.findCpmForCurrentUser(data),
@@ -202,12 +210,12 @@ export default class Game extends React.Component {
   }
 
   findCpmForCurrentUser (data) {
-    return Math.round(_.get(_.find(data.players, ['uid', this.state.currentUser.uid]), 'cpm'))
+    return Math.round(_.get(_.find(data.players, ['id', this.state.socketId]), 'cpm'))
   }
 
   findPlayerPosition (data) {
     // TODO(aibek): consider anonymous users too
-    return _.find(data.players, { 'uid': this.state.currentUser.uid }).position
+    return _.find(data.players, { 'id': this.state.socketId }).position
   }
 
   setModalVisible (visible) {

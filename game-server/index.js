@@ -20,6 +20,13 @@ socketioAuth(io, {
   // TODO(aibek): consider anonymous players
   authenticate: function (socket, data, callback) {
     const firebaseIdToken = data.token
+    // Anonymous player TODO(aibek): potential security bottleneck
+    if (firebaseIdToken === -1) {
+      socket._serverData = {
+        uid: -1
+      }
+      return callback(null, true)
+    }
     return firebaseAdmin.auth().verifyIdToken(firebaseIdToken)
       .then(function (decodedToken) {
         // With this, all players are "safe" and considered authenticated on the server
@@ -79,6 +86,7 @@ async function createNewRoom (socket, data) {
   room.setDuration(text.duration * 1000) // converting to milliseconds
   room.setTextId(text.id)
   room.addPlayer(socket)
+  console.log(socket.id)
   socket.join(room.uuid)
   const item = new RoomItem(room)
   startingGames.append(item)
@@ -146,7 +154,7 @@ function playGame (room) {
         const playerPromises = []
         _.forEach(room.players, (player, key) => {
           // TODO(aibek): consider anonymous users
-          if (!player.disconnected || player.isWinner) {
+          if ((!player.disconnected || player.isWinner) && player.socket._serverData.uid !== -1) {
             playerPromises.push(models.RacePlayer.create({
               // userUid: room.players[i].id, // TODO(aibek): temporarily save socket_id to DB
               userUid: player.socket._serverData.uid, // TODO(aibek): above! and also now only save all the races to one user
