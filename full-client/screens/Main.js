@@ -39,7 +39,6 @@ export default class Main extends React.Component {
   }
 
   updateStatistics (user) {
-    console.log(user)
     return Promise.all([
       WebAPI.countGamesPlayedToday(),
       WebAPI.getLastPlayedGames(),

@@ -87,22 +87,24 @@ export default class Settings extends React.Component {
 
   saveSettings () {
     AsyncStorage.setItem('textLanguage', this.state.language)
-    const nicknameInput = this.state.nicknameInput
-    if (nicknameInput.length !== 0) {
-      WebAPI.saveNickname(this.state.nicknameInput).then(() => {
-        this.setState({ nickname: nicknameInput })
-      }).catch(err => {
-        console.log(err.message)
-        this.setState({ errorMessage: err.message })
-      })
+    if (this.state.authenticated) {
+      const nicknameInput = this.state.nicknameInput
+      if (nicknameInput.length !== 0) {
+        WebAPI.saveNickname(this.state.nicknameInput).then(() => {
+          this.setState({ nickname: nicknameInput })
+        }).catch(err => {
+          console.log(err.message)
+          this.setState({ errorMessage: err.message })
+        })
+      }
+      if (this.state.country !== 'Select') {
+        WebAPI.saveCountry(this.state.country).catch(err => {
+          console.log(err.message)
+          this.setState({ errorMessage: err.message })
+        })
+      }
+      this.setState({ nicknameInput: '' })
     }
-    if (this.state.country !== 'Select') {
-      WebAPI.saveCountry(this.state.country).catch(err => {
-        console.log(err.message)
-        this.setState({ errorMessage: err.message })
-      })
-    }
-    this.setState({ nicknameInput: '' })
     Keyboard.dismiss()
   }
 
@@ -156,10 +158,10 @@ export default class Settings extends React.Component {
               </View>
             </View>
             }
-            {this.state.userInfo && this.state.userInfo.nickname &&
+            {this.state.authenticated &&
             <View style={globalStyles.row}>
               <Text style={globalStyles.column}>Nickname:</Text>
-              <Text style={globalStyles.column}>{this.state.userInfo.nickname}</Text>
+              <Text style={globalStyles.column}>{this.state.nickname}</Text>
             </View>
             }
             <View style={globalStyles.row}>
@@ -181,6 +183,7 @@ export default class Settings extends React.Component {
               </Picker>
               }
             </View>
+            {this.state.authenticated &&
             <View style={globalStyles.row}>
               <Text style={globalStyles.column}>County:</Text>
               <Picker selectedValue={this.state.country ? this.state.country : 'Select'}
@@ -191,6 +194,7 @@ export default class Settings extends React.Component {
                 })}
               </Picker>
             </View>
+            }
           </View>
 
           <View style={globalStyles.normalButton}>
