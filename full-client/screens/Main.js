@@ -114,6 +114,11 @@ export default class Main extends React.Component {
               <Text style={styles.playButtonText}>PLAY</Text>
             </TouchableOpacity>
           </View>
+          {!this.state.authenticated &&
+          <View style={{ marginTop: 10 }}>
+            <Text style={[globalStyles.normalText, { color: 'red' }]}>*Sign in to save your progress.</Text>
+          </View>
+          }
         </ScrollView>
       </LinearGradient>
     )

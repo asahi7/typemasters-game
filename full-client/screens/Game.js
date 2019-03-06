@@ -34,7 +34,8 @@ export default class Game extends React.Component {
       timeLeft: 0,
       cpm: 0,
       modalVisible: false,
-      modalText: ''
+      modalText: '',
+      authenticated: null
     }
     this.setSocketBehavior = this.setSocketBehavior.bind(this)
     this.handleUserInput = this.handleUserInput.bind(this)
@@ -117,8 +118,9 @@ export default class Game extends React.Component {
    */
   handlePlayGamePressed () {
     const { currentUser } = firebase.auth()
-    this.setState({ currentUser, gamePlaying: true })
+    this.setState({ gamePlaying: true })
     if (currentUser) {
+      this.setState({ authenticated: true })
       currentUser.getIdToken(true).then((idToken) => {
         this.setSocketBehavior(idToken)
       }).catch(function (error) {
@@ -126,6 +128,7 @@ export default class Game extends React.Component {
         console.log(error)
       })
     } else {
+      this.setState({ authenticated: false })
       // Anonymous user
       this.setSocketBehavior(-1)
     }
@@ -272,6 +275,11 @@ export default class Game extends React.Component {
               <View
                 style={styles.gameStatusBarItem}><Text>You are {this.state.position} out of {this.state.numOfPlayers}</Text></View>
               <View style={styles.gameStatusBarItem}><Text>Your CPM: {this.state.cpm}</Text></View>
+              {!this.state.authenticated &&
+              <View style={{ marginTop: 10 }}>
+                <Text style={[globalStyles.normalText, { color: 'red' }]}>*Sign in to save your progress.</Text>
+              </View>
+              }
               <TouchableHighlight
                 onPress={() => {
                   this.setModalVisible(!this.state.modalVisible)
