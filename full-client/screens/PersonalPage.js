@@ -16,25 +16,22 @@ export default class PersonalPage extends React.Component {
       loading: true
     }
     this.handleSignOut = this.handleSignOut.bind(this)
-    this.updateStatistics = this.updateStatistics.bind(this)
+    this.updateScreen = this.updateScreen.bind(this)
   }
 
   async componentDidMount () {
-    const user = firebase.auth().currentUser
-    this.setState({ user })
-    await this.updateStatistics(user)
+    await this.updateScreen()
     this.props.navigation.addListener(
       'willFocus',
       () => {
-        if (this.state.user) {
-          this.setState({ loading: true })
-          this.updateStatistics(this.state.user)
-        }
+        this.setState({ loading: true })
+        this.updateScreen()
       }
     )
   }
 
-  updateStatistics (user) {
+  updateScreen () {
+    const user = firebase.auth().currentUser
     return AsyncStorage.getItem('textLanguage').then((value) => {
       if (!value) {
         this.setState({
@@ -117,7 +114,7 @@ export default class PersonalPage extends React.Component {
             }
             <View style={globalStyles.row}>
               <Text style={globalStyles.column}>UID:</Text>
-              <Text style={globalStyles.column}>{this.state.user && this.state.user.uid}</Text>
+              <Text style={globalStyles.column}>{this.state.userInfo && this.state.userInfo.uid}</Text>
             </View>
             <View style={globalStyles.row}>
               <Text style={globalStyles.column}>Typing language:</Text>
