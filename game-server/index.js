@@ -205,7 +205,7 @@ function startGame (item) {
 
 // TODO(aibek): make game finish earlier if all players are disconnected or are winners
 function playGame (room) {
-  if (room.startTime + room.duration < Date.now()) {
+  if (room.startTime + room.duration < Date.now() || room.allDisconnected()) {
     clearInterval(room.intervalId)
     console.log('Game ended for room: ' + room.uuid)
     sendGameData(room, 'gameended')
