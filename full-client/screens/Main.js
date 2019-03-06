@@ -39,7 +39,7 @@ export default class Main extends React.Component {
       return Promise.all([
         WebAPI.countGamesPlayedToday(),
         WebAPI.getLastPlayedGames(),
-        WebAPI.countUserPlayedToday()
+        WebAPI.countUserPlayedToday(user.uid)
       ]).then((results) => {
         this.setState({
           gamesPlayedCnt: results[0].result,

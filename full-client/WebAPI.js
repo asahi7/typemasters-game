@@ -117,11 +117,6 @@ export default {
   },
 
   countUserPlayedToday: (uid) => {
-    if (!uid) {
-      return new Promise((resolve, reject) => {
-        resolve(0)
-      })
-    }
     return fetch(`${Config.WEB_SERVER_API}/statistics/countUserPlayedToday?uid=${uid}`).then(parseJSON)
   },
 
