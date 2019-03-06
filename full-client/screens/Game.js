@@ -74,7 +74,7 @@ export default class Game extends React.Component {
    */
   dicsonnectPlayer () {
     if (this.state.uuid) {
-      socket.emit('removePlayer', {
+      socket.emit('removeplayer', {
         room: {
           uuid: this.state.uuid
         }
@@ -135,7 +135,8 @@ export default class Game extends React.Component {
   }
 
   setSocketBehavior (idToken) {
-    socket = io.connect(Config.GAME_SERVER_API, { reconnect: true })
+    // TODO(aibek): study about reconnect behavior
+    socket = io.connect(Config.GAME_SERVER_API, { reconnect: false })
     socket.on('connect', () => {
       socket.emit('authentication', { token: idToken })
       socket.on('authenticated', () => {

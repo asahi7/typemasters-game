@@ -1,6 +1,4 @@
-// TODO(aibek): refactor
-
-const io = require('socket.io')(3000) // TODO(aibek): make port configurable
+const io = require('socket.io')(3000)
 const Room = require('./Room')
 const inherits = require('inherits')
 const LinkedList = require('linked-list')
@@ -16,25 +14,41 @@ firebaseAdmin.initializeApp({
   credential: firebaseAdmin.credential.cert(serviceAccount)
 })
 
+// Defining list item wrapper for room object
+inherits(RoomItem, LinkedList.Item)
+function RoomItem (room) {
+  this.room = room
+  LinkedList.Item.apply(this)
+}
+
+const STARTING_GAME_TIMEOUT = 7000
+const MAXIMUM_PLAYERS_IN_ROOM = 7
+const SERVER_SEND_DATA_INTERVAL = 500
+// Linked list for games which are to be started
+const startingGames = new LinkedList()
+const startingGamesLock = new AsyncLock()
+let startingGamesCnt = 0
+let startedGames = {}
+const updatingGameDataLock = new AsyncLock()
+
 socketioAuth(io, {
-  // TODO(aibek): consider anonymous players
   authenticate: function (socket, data, callback) {
     const firebaseIdToken = data.token
-    // Anonymous player TODO(aibek): potential security bottleneck
+    // TODO(aibek): potential security bottleneck for anonymous user
     if (firebaseIdToken === -1) {
       socket._serverData = {
+        // -1 is for anonymous users
         uid: -1
       }
       return callback(null, true)
     }
     return firebaseAdmin.auth().verifyIdToken(firebaseIdToken)
       .then(function (decodedToken) {
-        // With this, all players are "safe" and considered authenticated on the server
         socket._serverData = {
           uid: decodedToken.uid,
           email: decodedToken.email
         }
-        // TODO(aibek): is it a good way to do it?
+        // Creates user if not already created
         models.User.findOrCreate({
           where: {
             email: decodedToken.email
@@ -44,7 +58,7 @@ socketioAuth(io, {
             email: decodedToken.email
           }
         })
-        // inform the callback of auth success/failure
+        // Inform the callback of auth success/failure
         return callback(null, true)
       }).catch(function (error) {
         console.log(error)
@@ -53,54 +67,123 @@ socketioAuth(io, {
   }
 })
 
-const STARTING_GAME_TIMEOUT = 5000
-const MAXIMUM_PLAYERS_IN_ROOM = 5
-const SERVER_SEND_DATA_INTERVAL = 500
+io.on('connection', function (socket) {
+  console.log('Connected ' + socket.id)
 
-// Defining list item wrapper for room object
-inherits(RoomItem, LinkedList.Item)
+  socket.on('newgame', function (data) {
+    console.log('Socket asking for a new game: ' + socket.id)
+    if (startingGamesCnt === 0) {
+      createNewRoom(socket, data)
+    } else {
+      console.log('The waiting queue is not empty!')
+      let current = startingGames.head
+      let addedToGame = false
+      while (current !== null && addedToGame === false) {
+        if (current.room.countPlayers() < MAXIMUM_PLAYERS_IN_ROOM) {
+          const room = current.room
+          if (room.language !== data.language) {
+            current = current.next
+            continue
+          }
+          startingGamesLock.acquire(room.uuid, function () {
+            if (socket._serverData.uid && socket._serverData.uid !== -1 && room.containsPlayer(socket._serverData.uid)) {
+              console.log('New player: + ' + socket.id + ' deleted the same player from same room with uid: ' + socket._serverData.uid)
+              room.removePlayer(socket._serverData.uid)
+            }
+            if (room.started === false && room.countPlayers() < MAXIMUM_PLAYERS_IN_ROOM) {
+              room.addPlayer(socket)
+              socket.join(room.uuid)
+              addedToGame = true
+            }
+          }).catch(function (err) {
+            // TODO(aibek): make a better error message and handle better
+            console.log('Error at newgame:')
+            console.log(err.message)
+          })
+        }
+        current = current.next
+      }
+      if (addedToGame === false) {
+        createNewRoom(socket, data)
+      }
+    }
+  })
 
-function RoomItem (room) {
-  this.room = room
-  LinkedList.Item.apply(this, arguments)
-}
+  socket.on('racedata', function (data) {
+    console.log('Race data from socket: ' + socket.id)
+    console.log(data)
+    const room = startedGames[data.room.uuid]
+    if (room && room.startTime + room.duration >= Date.now()) {
+      updatingGameDataLock.acquire(room.uuid, function () {
+        if (!room.isWinner(socket.id)) {
+          room.setCharsCount(socket.id, data.chars)
+          const cpm = room.countCpm(data.chars)
+          room.updatePlayerCpm(socket.id, cpm)
+        }
+        // Player has finished race in time
+        if (data.chars === room.totalChars && !room.isWinner(socket.id)) {
+          room.setWinner(socket.id)
+        }
+      }, { skipQueue: true }).catch(function (err) {
+        console.log('Error at racedata:')
+        console.log(err.message)
+      })
+    }
+  })
 
-// Linked list for games which are to be started
-const startingGames = new LinkedList()
-const startingGamesLock = new AsyncLock()
-let startingGamesCnt = 0
-let startedGames = {}
-const updatingGameDataLock = new AsyncLock()
+  socket.on('removeplayer', function (data) {
+    console.log('Player is being removed: ' + socket.id + ' from room:' + data.room.uuid)
+    const room = startedGames[data.room.uuid]
+    if (room) {
+      room.setPlayerDisconnected(socket.id)
+    }
+  })
+
+  socket.on('disconnect', function () {
+    console.log('Player disconnected: ' + socket.id)
+  })
+})
 
 async function createNewRoom (socket, data) {
   const room = new Room()
+  console.log('Socket: ' + socket.id + ' created room: ' + room.uuid)
   const text = await models.Text.findOne({
     where: { language: data.language },
     order: [
       models.sequelize.fn('RAND')
     ]
   })
-  room.setLanguage(data.language)
-  room.setText(text.text)
+  room.language = data.language
+  room.text = text.text
   room.computeChars()
-  room.setDuration(text.duration * 1000) // converting to milliseconds
-  room.setTextId(text.id)
+  room.duration = text.duration * 1000 // converting to milliseconds
+  room.textId = text.id
   room.addPlayer(socket)
-  console.log(socket.id)
   socket.join(room.uuid)
   const item = new RoomItem(room)
   startingGames.append(item)
   startingGamesCnt++
   setTimeout(function () {
-    startGame(item, room)
+    startGame(item)
   }, STARTING_GAME_TIMEOUT)
 }
 
-function startGame (item, room) {
-  console.log('Players in room ' + room.countPlayers())
+function startGame (item) {
   startingGamesLock.acquire(item.room.uuid, function () {
+    console.log('Game: ' + item.room.uuid + ' has started')
+    console.log(' No of players in room: ' + item.room.countPlayers())
     const room = item.room
-    console.log('Game ' + room.uuid + ' has started')
+    startingGamesCnt--
+    item.detach()
+    if (room.allDisconnected()) {
+      console.log('Game will not start in room: ' + room.uuid + ', all users disconnected')
+      // TODO(aibek): following may be unnecessary
+      room.closeSockets()
+      return
+    }
+    room.started = true
+    startedGames[room.uuid] = room
+    room.startTime = Date.now()
     const data = {
       msg: 'Game in room: ' + room.uuid + ' has started',
       text: room.text,
@@ -109,55 +192,31 @@ function startGame (item, room) {
       players: room.getFilteredPlayersData()
     }
     io.to(room.uuid).emit('gamestarted', data)
-    room.started = true
-    startedGames[room.uuid] = room
-    startingGamesCnt--
-    item.detach()
-    room.startTime = Date.now()
-    console.log('Game start time ' + room.startTime)
     room.intervalId = setInterval(function () {
       playGame(room)
     }, SERVER_SEND_DATA_INTERVAL)
   }).catch(function (err) {
+    console.log(err)
     // TODO(aibek): make a better error message and handle better
+    console.log('Error at startGame:')
     console.log(err.message)
   })
 }
 
-function removeRoomParticipants (room) {
-  io.of('/').in(room.uuid).clients(function (error, clients) {
-    if (error) {
-      throw error
-    }
-    if (clients.length > 0) {
-      console.log('Clients in the room: ')
-      console.log(clients)
-      clients.forEach(function (socketId) {
-        io.sockets.sockets[socketId].leave(room.uuid)
-      })
-    }
-  })
-}
-
+// TODO(aibek): make game finish earlier if all players are disconnected or are winners
 function playGame (room) {
-  // TODO(aibek): consider players who do not finish in time and save in DB
-  // TODO(aibek): if a player finishes not in time, his finishedTime should still be recorded (Date.now())
   if (room.startTime + room.duration < Date.now()) {
     clearInterval(room.intervalId)
-    // TODO(aibek): delete game and room data
-    console.log('game ended for room: ' + room.uuid)
+    console.log('Game ended for room: ' + room.uuid)
     sendGameData(room, 'gameended')
     delete startedGames[room.uuid]
-    // TODO(aibek): save game data into database
     models.sequelize.transaction((t) => {
       return models.Race.create({ textId: room.textId }, { transaction: t }).then((race) => {
         const playerPromises = []
         _.forEach(room.players, (player, key) => {
-          // TODO(aibek): consider anonymous users
           if ((!player.disconnected || player.isWinner) && player.socket._serverData.uid !== -1) {
             playerPromises.push(models.RacePlayer.create({
-              // userUid: room.players[i].id, // TODO(aibek): temporarily save socket_id to DB
-              userUid: player.socket._serverData.uid, // TODO(aibek): above! and also now only save all the races to one user
+              userUid: player.socket._serverData.uid,
               raceId: race.id,
               cpm: player.cpm,
               isWinner: player.isWinner,
@@ -170,148 +229,38 @@ function playGame (room) {
         return Promise.all(playerPromises)
       })
     })
-    console.log('game ended')
-    new Promise(function (resolve, reject) {
-      resolve(removeRoomParticipants(room))
-    }).then(() => {
-      room.closeSockets()
-    })
+    room.removeRoomParticipants(io)
+    room.closeSockets()
   } else {
     sendGameData(room, 'gamedata')
   }
 }
 
-/*
-* Method to update players' relative positions to each other
-* Note: should update the actual Room.players object
-**/
-function updatePositions (room) {
-  /*
-    1. sort by chars desc,
-    2. if equal, sort by finishedTime asc
-    Note: if winner, then sort by finishedTime
-  */
-  let arr = room.getFilteredPlayersData()
-  arr.sort(function (a, b) {
-    if (a.chars < b.chars) {
-      return 1
-    } else if (a.chars > b.chars) {
-      return -1
-    } else if (a.isWinner && b.isWinner) {
-      return a.finishedTime < b.finishedTime ? -1 : a.finishedTime > b.finishedTime ? 1 : 0
-    }
-    return 0
-  })
-  for (let i = 0; i < arr.length; i++) {
-    room.players[arr[i].id].position = i + 1
-  }
-}
-
-/*
-Format of sent data:
-
-data: {
-  id, // socketId
-  uid, // firebase-authenticated user uid
-  cpm,
-  isWinner,
-  position, // relative position
-  chars // total written chars count
-}
-
-Note: isWinner can still be true, even if a player is not the absolute winner, it means they finished
-the race.
-*/
+/**
+ * Method to send player game data towards client.
+ *
+ * @param room
+ * @param call - can signify the end of a game or its progress
+ *
+ * Note: isWinner can still be true, even if a player is not the absolute winner, it means they finished
+ * the race.
+ */
 function sendGameData (room, call) {
+  console.log('Sending the game data in room: ' + room.uuid + ' with call ' + call)
   updatingGameDataLock.acquire(room.uuid, function () {
     let timeLeft = (room.startTime + room.duration) - Date.now()
     if (timeLeft < 0) {
       timeLeft = 0
     }
-    updatePositions(room)
+    room.updatePositions()
     const data = {
       room: room.uuid,
       players: room.getFilteredPlayersData(),
       timeLeft
-      // TODO(aibek): add more data
     }
     io.to(room.uuid).emit(call, data)
   }).catch(function (err) {
+    console.log('Error at sendGameData:')
     console.log(err.message)
   })
 }
-
-function countCpm (room, chars) {
-  const interval = Date.now() - room.startTime
-  const intervalMinutes = interval / (1000 * 60) // TODO(aibek): check formula
-  return chars / intervalMinutes
-}
-
-io.on('connection', function (socket) {
-  console.log('connected')
-  socket.on('racedata', function (data) {
-    console.log(data)
-    const room = startedGames[data.room.uuid]
-    if (room && room.startTime + room.duration >= Date.now()) {
-      updatingGameDataLock.acquire(room.uuid, function () {
-        if (!room.isWinner(socket.id)) {
-          room.setCharsCount(socket.id, data.chars)
-          const cpm = countCpm(room, data.chars)
-          console.log(data.chars, cpm)
-          room.updatePlayerCpm(socket.id, cpm)
-        }
-        // Player has finished race in time
-        if (data.chars === room.totalChars && !room.isWinner(socket.id)) {
-          room.setWinner(socket.id)
-        }
-      }, { skipQueue: true }).catch(function (err) {
-        console.log(err.message)
-      })
-    }
-  })
-
-  socket.on('newgame', function (data) {
-    console.log('Asking for a new game')
-    if (startingGamesCnt === 0) {
-      createNewRoom(socket, data)
-    } else {
-      console.log('The queue is not empty!')
-      let current = startingGames.head
-      let addedToGame = false
-      while (current !== null && addedToGame === false) {
-        if (current.room.countPlayers() < MAXIMUM_PLAYERS_IN_ROOM) {
-          // TODO(aibek): isn't here any race condition?
-          const room = current.room
-          if (room.language !== data.language) {
-            current = current.next
-            continue
-          }
-          startingGamesLock.acquire(room.uuid, function () {
-            if (room.started === false && current.room.countPlayers() < MAXIMUM_PLAYERS_IN_ROOM) {
-              current.room.addPlayer(socket)
-              socket.join(room.uuid)
-              addedToGame = true
-            }
-          }).catch(function (err) {
-            // TODO(aibek): make a better error message and handle better
-            console.log(err.message)
-          })
-        }
-        current = current.next
-      }
-      if (addedToGame === false) {
-        createNewRoom(socket, data)
-      }
-    }
-  })
-
-  socket.on('removePlayer', function (data) {
-    console.log(data)
-    const room = startedGames[data.room.uuid]
-    console.log('the player accidentally disconnected')
-    room.setPlayerDisconnected(socket.id)
-  })
-
-  socket.on('disconnect', function () {
-  })
-})

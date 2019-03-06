@@ -5,12 +5,6 @@ class Room {
   constructor () {
     this.uuid = uuidv4()
     this.started = false
-    this.intervalId = 0
-    this.text = 'Hello world!'
-    this.duration = 0
-    this.textId = 0
-    this.totalChars = 0
-    this.startTime = 0
     this.players = {}
   }
 
@@ -42,20 +36,16 @@ class Room {
     })
   }
 
-  setText (text) {
-    this.text = text
+  containsPlayer (uid) {
+    if (_.find(this.players, ['uid', uid]) !== undefined) {
+      return true
+    }
+    return false
   }
 
-  setLanguage (language) {
-    this.language = language
-  }
-
-  setDuration (duration) {
-    this.duration = duration
-  }
-
-  setTextId (id) {
-    this.textId = id
+  removePlayer (uid) {
+    const socketId = _.findKey(this.players, ['uid', uid])
+    delete this.players[socketId]
   }
 
   setPlayerDisconnected (socketId) {
@@ -86,6 +76,63 @@ class Room {
   closeSockets () {
     _.forEach(this.players, (player) => {
       player.socket.disconnect(true)
+    })
+  }
+
+  allDisconnected () {
+    let result = true
+    _.forEach(this.players, (player) => {
+      if (player.socket.connected) {
+        result = false
+      }
+    })
+    return result
+  }
+
+  countCpm (chars) {
+    const interval = Date.now() - this.startTime
+    const intervalMinutes = interval / (1000 * 60)
+    return chars / intervalMinutes
+  }
+
+  /*
+  * Method to update players' relative positions to each other
+  * Note: should update the actual Room.players object
+  *
+  *  1. Sorts by chars desc,
+  *  2. If equal, sorts by finishedTime asc
+  *  Note: if the winner, then sorts by finishedTime
+  **/
+  updatePositions () {
+    let arr = this.getFilteredPlayersData()
+    arr.sort(function (a, b) {
+      if (a.chars < b.chars) {
+        return 1
+      } else if (a.chars > b.chars) {
+        return -1
+      } else if (a.isWinner && b.isWinner) {
+        return a.finishedTime < b.finishedTime ? -1 : a.finishedTime > b.finishedTime ? 1 : 0
+      }
+      return 0
+    })
+    for (let i = 0; i < arr.length; i++) {
+      this.players[arr[i].id].position = i + 1
+    }
+  }
+
+  removeRoomParticipants (io) {
+    console.log('Players are being removed from room: ' + this.uuid)
+    io.of('/').in(this.uuid).clients(function (error, clients) {
+      if (error) {
+        throw error
+      }
+      if (clients.length > 0) {
+        console.log('Clients in the room to be removed: ')
+        console.log(clients)
+        clients.forEach(function (socketId) {
+          io.sockets.sockets[socketId].leave(this.uuid)
+        })
+      }
     })
   }
 }
