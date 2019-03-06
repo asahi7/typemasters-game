@@ -93,7 +93,7 @@ export default class Main extends React.Component {
           </View>
           {/* TODO(aibek): fill out last played games from API */}
           <View style={{ marginTop: 20 }}>
-            <Text style={globalStyles.tableHeader}>Last Games</Text>
+            <Text style={globalStyles.tableHeader}>Last Games Today</Text>
             {
               this.state.lastGames.map((result, i) => {
                 return (
