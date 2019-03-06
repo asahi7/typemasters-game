@@ -14,7 +14,8 @@ export default class Leaderboard extends React.Component {
       language: null,
       loading: true,
       bestResults: [],
-      bestAvgResults: []
+      bestAvgResults: [],
+      bestTodayResults: []
     }
     this.updateScreen = this.updateScreen.bind(this)
   }
@@ -44,11 +45,13 @@ export default class Leaderboard extends React.Component {
     }).then(() => {
       return Promise.all([
         WebAPI.getBestResults(this.state.language),
-        WebAPI.getBestAvgResults(this.state.language)
+        WebAPI.getBestAvgResults(this.state.language),
+        WebAPI.getBestTodayResults(this.state.language)
       ]).then((results) => {
         this.setState({
           bestResults: results[0],
           bestAvgResults: results[1],
+          bestTodayResults: results[2],
           loading: false
         })
       }).catch((error) => {
@@ -68,14 +71,13 @@ export default class Leaderboard extends React.Component {
         </View>
         <ScrollView style={{ marginTop: 10, marginBottom: 10 }}>
           <View style={{ marginTop: 10 }}>
-            <Text style={globalStyles.tableHeader}>Best Results By CPM</Text>
-            {this.state.bestResults.map((result, i) => {
+            <Text style={globalStyles.tableHeader}>Best Today Results By CPM</Text>
+            {this.state.bestTodayResults.map((result, i) => {
               return (
                 <View style={globalStyles.row} key={i}>
                   <Text style={globalStyles.column}>{result.user.nickname}</Text>
                   <Text style={globalStyles.column}>{result.user.country}</Text>
                   <Text style={globalStyles.column}>{result.cpm}</Text>
-                  <Text style={globalStyles.column}>{moment(result.race.date).format('HH:mm, D MMMM, YYYY')}</Text>
                 </View>
               )
             })}
@@ -88,6 +90,19 @@ export default class Leaderboard extends React.Component {
                   <Text style={globalStyles.column}>{result.user.nickname}</Text>
                   <Text style={globalStyles.column}>{result.user.country}</Text>
                   <Text style={globalStyles.column}>{result.avg}</Text>
+                </View>
+              )
+            })}
+          </View>
+          <View style={{ marginTop: 10 }}>
+            <Text style={globalStyles.tableHeader}>Best Results By CPM</Text>
+            {this.state.bestResults.map((result, i) => {
+              return (
+                <View style={globalStyles.row} key={i}>
+                  <Text style={globalStyles.column}>{result.user.nickname}</Text>
+                  <Text style={globalStyles.column}>{result.user.country}</Text>
+                  <Text style={globalStyles.column}>{result.cpm}</Text>
+                  <Text style={globalStyles.column}>{moment(result.race.date).format('HH:mm, D MMMM, YYYY')}</Text>
                 </View>
               )
             })}

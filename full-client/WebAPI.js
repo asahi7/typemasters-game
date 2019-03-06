@@ -120,6 +120,10 @@ export default {
     return fetch(`${Config.WEB_SERVER_API}/statistics/countUserPlayedToday?uid=${uid}`).then(parseJSON)
   },
 
+  getBestTodayResults: (language) => {
+    return fetch(`${Config.WEB_SERVER_API}/leaderboard/getBestTodayResults?language=${language}`).then(parseJSON)
+  },
+
   getUserInfo: (uid) => {
     return attachToken().then(options => {
       return fetch(`${Config.WEB_SERVER_API}/users?uid=${uid}`, options).then(parseJSON)
