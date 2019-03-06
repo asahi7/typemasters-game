@@ -42,7 +42,8 @@ export default class Settings extends React.Component {
     this.countrySelected = this.countrySelected.bind(this)
   }
 
-  componentWillMount () {
+  async componentDidMount () {
+    await this.updateScreen()
     this.props.navigation.addListener(
       'willFocus',
       () => {
@@ -156,12 +157,6 @@ export default class Settings extends React.Component {
                   value={this.state.nicknameInput}
                 />
               </View>
-            </View>
-            }
-            {this.state.authenticated &&
-            <View style={globalStyles.row}>
-              <Text style={globalStyles.column}>Nickname:</Text>
-              <Text style={globalStyles.column}>{this.state.nickname}</Text>
             </View>
             }
             <View style={globalStyles.row}>

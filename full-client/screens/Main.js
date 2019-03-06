@@ -14,45 +14,59 @@ export default class Main extends React.Component {
     this.state = {
       gamesPlayedCnt: null,
       lastGames: [],
-      gamesPlayedCntUser: 0,
+      gamesPlayedCntUser: null,
       loading: true,
-      user: null
+      authenticated: null
     }
     this.handlePlayPressed = this.handlePlayPressed.bind(this)
-    this.updateStatistics = this.updateStatistics.bind(this)
+    this.updateScreen = this.updateScreen.bind(this)
   }
 
   async componentDidMount () {
-    const user = firebase.auth().currentUser
-    this.setState({ user })
-    await this.updateStatistics(user)
+    await this.updateScreen()
     this.props.navigation.addListener(
       'willFocus',
       () => {
         this.setState({ loading: true })
-        const user = this.state.user ? this.state.user : firebase.auth().currentUser
-        this.setState({ user }, () => {
-          this.updateStatistics(this.state.user)
-        })
+        this.updateScreen()
       }
     )
   }
 
-  updateStatistics (user) {
-    return Promise.all([
-      WebAPI.countGamesPlayedToday(),
-      WebAPI.getLastPlayedGames(),
-      WebAPI.countUserPlayedToday(user ? user.uid : undefined)
-    ]).then((results) => {
-      this.setState({
-        gamesPlayedCnt: results[0].result,
-        lastGames: results[1].result,
-        gamesPlayedCntUser: results[2].result,
-        loading: false
+  updateScreen () {
+    const user = firebase.auth().currentUser
+    if (user) {
+      return Promise.all([
+        WebAPI.countGamesPlayedToday(),
+        WebAPI.getLastPlayedGames(),
+        WebAPI.countUserPlayedToday()
+      ]).then((results) => {
+        this.setState({
+          gamesPlayedCnt: results[0].result,
+          lastGames: results[1].result,
+          gamesPlayedCntUser: results[2].result,
+          loading: false,
+          authenticated: true
+        })
+      }).catch((error) => {
+        console.log(error)
       })
-    }).catch((error) => {
-      console.log(error)
-    })
+    } else {
+      return Promise.all([
+        WebAPI.countGamesPlayedToday(),
+        WebAPI.getLastPlayedGames()
+      ]).then((results) => {
+        this.setState({
+          gamesPlayedCnt: results[0].result,
+          lastGames: results[1].result,
+          gamesPlayedCntUser: 0,
+          loading: false,
+          authenticated: false
+        })
+      }).catch((error) => {
+        console.log(error)
+      })
+    }
   }
 
   handlePlayPressed () {
@@ -69,9 +83,11 @@ export default class Main extends React.Component {
           </Text>
         </View>
         <ScrollView style={{ marginTop: 10, marginBottom: 10 }}>
+          {this.state.authenticated &&
           <View style={{ marginTop: 10 }}>
             <Text style={globalStyles.tableHeader}>Your Played Games Today: {this.state.gamesPlayedCntUser}</Text>
           </View>
+          }
           <View style={{ marginTop: 10 }}>
             <Text style={globalStyles.tableHeader}>Total Played Games Today: {this.state.gamesPlayedCnt}</Text>
           </View>
