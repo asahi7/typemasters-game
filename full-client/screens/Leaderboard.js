@@ -1,7 +1,6 @@
 import React from 'react'
 import { LinearGradient } from 'expo'
 import { View, Text, AsyncStorage, ScrollView } from 'react-native'
-import firebase from 'firebase'
 import WebAPI from '../WebAPI'
 import Loading from './Loading'
 import Commons from '../Commons'
@@ -17,25 +16,21 @@ export default class Leaderboard extends React.Component {
       bestResults: [],
       bestAvgResults: []
     }
-    this.updateStatistics = this.updateStatistics.bind(this)
+    this.updateScreen = this.updateScreen.bind(this)
   }
 
   async componentDidMount () {
-    const user = firebase.auth().currentUser
-    this.setState({ user })
-    await this.updateStatistics(user)
+    await this.updateScreen()
     this.props.navigation.addListener(
       'willFocus',
       () => {
-        if (this.state.user) {
-          this.setState({ loading: true })
-          this.updateStatistics(this.state.user)
-        }
+        this.setState({ loading: true })
+        this.updateScreen()
       }
     )
   }
 
-  updateStatistics (user) {
+  updateScreen () {
     return AsyncStorage.getItem('textLanguage').then((value) => {
       if (!value) {
         this.setState({
