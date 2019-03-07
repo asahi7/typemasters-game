@@ -130,7 +130,9 @@ class Room {
         console.log('Clients in the room to be removed: ')
         console.log(clients)
         clients.forEach(function (socketId) {
-          io.sockets.sockets[socketId].leave(this.uuid)
+          if (io.sockets.sockets[socketId]) {
+            io.sockets.sockets[socketId].leave(this.uuid)
+          }
         })
       }
     })
