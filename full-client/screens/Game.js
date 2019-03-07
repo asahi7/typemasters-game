@@ -66,6 +66,7 @@ export default class Game extends React.Component {
   }
 
   componentWillUnmount () {
+    this.dicsonnectPlayer()
     BackHandler.removeEventListener('hardwareBackPress', () => { this.dicsonnectPlayer() })
   }
 
