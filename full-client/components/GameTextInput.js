@@ -1,11 +1,13 @@
 import React from 'react'
 import { StyleSheet, View, TextInput } from 'react-native'
+import _ from 'lodash'
 
 export default class GameTextInput extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      wordIndex: 0
+      wordIndex: 0,
+      correctInput: true
     }
     this.handleUserInput = this.handleUserInput.bind(this)
     this.isNotLastMatchingWordOfText = this.isNotLastMatchingWordOfText.bind(this)
@@ -30,7 +32,8 @@ export default class GameTextInput extends React.Component {
   setInitialState() {
     this._textInput.setNativeProps({text: ''})
     this.setState({
-      wordIndex: 0
+      wordIndex: 0,
+      correctInput: true
     })
   }
 
@@ -38,8 +41,17 @@ export default class GameTextInput extends React.Component {
   textInputValue = null
 
   handleUserInput (input) {
+    const word = this.props.textArray[this.state.wordIndex]
+    if(_.startsWith(word, input)) {
+      this.setState({
+        correctInput: true
+      })
+    } else {
+      this.setState({
+        correctInput: false
+      })
+    }
     if (this.isNotLastMatchingWordOfText(input) || this.isLastMatchingWordOfText(input)) {
-      const word = this.props.textArray[this.state.wordIndex]
       this._textInput.clear()
       this.textInputValue = null
       this.props.handler(word.length, this.props.textArray.slice(this.state.wordIndex + 1).join(' '))
@@ -67,7 +79,7 @@ export default class GameTextInput extends React.Component {
     return (
       <View style={styles.textInput}>
         <TextInput
-          style={styles.textInputStyle}
+          style={[styles.textInputStyle, this.state.correctInput ? styles.correctTextInput : styles.incorrectTextInput]}
           autoCapitalize='none'
           placeholder='Start typing here..'
           onChangeText={this.handleUserInput}
@@ -89,7 +101,12 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 5,
     height: 40,
-    borderColor: '#449eb2',
-    borderWidth: 1
+    borderWidth: 2
+  },
+  correctTextInput: {
+    borderColor: '#4ce300'
+  },
+  incorrectTextInput: {
+    borderColor: '#ff0000'
   }
 })
