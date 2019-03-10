@@ -119,6 +119,7 @@ io.on('connection', function (socket) {
           room.setCharsCount(socket.id, data.chars)
           const cpm = room.countCpm(data.chars)
           room.updatePlayerCpm(socket.id, cpm)
+          room.updateAccuracy(socket.id, data.accuracy)
         }
         // Player has finished race in time
         if (data.chars === room.totalChars && !room.isWinner(socket.id)) {
@@ -221,8 +222,8 @@ function playGame (room) {
               cpm: player.cpm,
               isWinner: player.isWinner,
               position: player.position,
-              points: 0, // TODO(aibek): compute points for current game
-              accuracy: 0 // TODO(aibek): compute accuracy
+              points: 0, // TODO(aibek): compute points for game
+              accuracy: player.accuracy
             }, { transaction: t }))
           }
         })

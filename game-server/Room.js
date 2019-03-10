@@ -31,6 +31,7 @@ class Room {
           uid,
           isWinner: false,
           position: 0,
+          accuracy: 100,
           chars: 0
         }
     })
@@ -54,6 +55,10 @@ class Room {
 
   updatePlayerCpm (socketId, cpm) {
     this.players[socketId].cpm = cpm
+  }
+
+  updateAccuracy (socketId, accuracy) {
+    this.players[socketId].accuracy = accuracy
   }
 
   isWinner (socketId) {

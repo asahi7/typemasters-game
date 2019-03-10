@@ -34,7 +34,8 @@ export default class Game extends React.Component {
       cpm: 0,
       modalVisible: false,
       modalText: '',
-      authenticated: null
+      authenticated: null,
+      accuracy: 100
     }
     this.setSocketBehavior = this.setSocketBehavior.bind(this)
     this.sendRaceData = this.sendRaceData.bind(this)
@@ -47,6 +48,7 @@ export default class Game extends React.Component {
     this.dicsonnectPlayer = this.dicsonnectPlayer.bind(this)
     this.setModalVisible = this.setModalVisible.bind(this)
     this.gameInputHandler = this.gameInputHandler.bind(this)
+    this.accuracyHandler = this.accuracyHandler.bind(this)
   }
 
   componentDidMount () {
@@ -186,6 +188,7 @@ export default class Game extends React.Component {
   sendRaceData () {
     socket.emit('racedata', {
       chars: this.state.chars,
+      accuracy: this.state.accuracy,
       room: {
         uuid: this.state.uuid
       }
@@ -244,6 +247,14 @@ export default class Game extends React.Component {
     })
   }
 
+  accuracyHandler (totalCharsInput, correctCharsInput) {
+    if (this.state.gamePlaying) {
+      this.setState({
+        accuracy: Math.round(correctCharsInput * 100 / totalCharsInput)
+      })
+    }
+  }
+
   render () {
     return (
       <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
@@ -267,6 +278,7 @@ export default class Game extends React.Component {
               <View
                 style={styles.gameStatusBarItem}><Text>You are {this.state.position} out of {this.state.numOfPlayers}</Text></View>
               <View style={styles.gameStatusBarItem}><Text>Your CPM: {this.state.cpm}</Text></View>
+              <View style={styles.gameStatusBarItem}><Text>Your accuracy: {this.state.accuracy}</Text></View>
               {!this.state.authenticated &&
               <View style={{ marginTop: 10 }}>
                 <Text style={[globalStyles.normalText, { color: 'red' }]}>*Sign in to save your progress.</Text>
@@ -282,7 +294,7 @@ export default class Game extends React.Component {
           </View>
         </Modal>
         <View style={styles.gameStatusBar}>
-          <View style={styles.gameStatusBarItem}>
+          <View style={[styles.gameStatusBarItem, { borderLeftWidth: 0 }]}>
             {this.state.gamePlaying === true
               ? <TouchableOpacity
                 style={[styles.playButton, styles.playButtonBgStop]}
@@ -298,12 +310,13 @@ export default class Game extends React.Component {
               </TouchableOpacity>}
           </View>
           <View
-            style={styles.gameStatusBarItem}><Text>{this.state.position}/{this.state.numOfPlayers}</Text></View>
+            style={styles.gameStatusBarItem}><Text>{this.state.position}/{this.state.numOfPlayers} position</Text></View>
           <View
-            style={styles.gameStatusBarItem}><Text>Time: {Math.round(this.state.timeLeft)}</Text></View>
-          <View style={styles.gameStatusBarItem}><Text>CPM: {this.state.cpm}</Text></View>
+            style={styles.gameStatusBarItem}><Text>{Math.round(this.state.timeLeft)} left</Text></View>
+          <View style={styles.gameStatusBarItem}><Text>{this.state.cpm} cpm</Text></View>
+          <View style={[styles.gameStatusBarItem, { borderRightWidth: 0 }]}><Text>{this.state.accuracy ? this.state.accuracy : 100}% accuracy</Text></View>
         </View>
-        <GameTextInput textArray={this.state.textArray} handler={this.gameInputHandler} refresh={this.state.gamePlaying} />
+        <GameTextInput textArray={this.state.textArray} handler={this.gameInputHandler} refresh={this.state.gamePlaying} accuracyHandler={this.accuracyHandler} />
         <ScrollView style={styles.raceTextView}>
           <Text style={styles.raceText}>{this.state.text}</Text>
         </ScrollView>
@@ -333,12 +346,18 @@ const styles = StyleSheet.create({
     color: '#fff'
   },
   gameStatusBar: {
-    flex: 0.3,
+    flex: 0.1,
     flexDirection: 'row',
-    marginTop: 10
+    marginTop: 50,
+    marginBottom: 30
   },
   gameStatusBarItem: {
-    flex: 1,
+    paddingLeft: 3,
+    paddingRight: 3,
+    borderRightWidth: 1,
+    borderRightColor: '#7f1717',
+    borderLeftWidth: 1,
+    borderLeftColor: '#7f1717',
     alignItems: 'center',
     justifyContent: 'center'
   },
