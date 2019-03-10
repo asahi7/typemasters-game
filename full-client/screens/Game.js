@@ -5,7 +5,6 @@ import {
   TouchableHighlight,
   View,
   Modal,
-  TextInput,
   TouchableOpacity,
   ScrollView,
   BackHandler,
@@ -18,6 +17,7 @@ import Config from '../config/Config'
 import { LinearGradient } from 'expo'
 import Commons from '../Commons'
 import globalStyles from '../styles'
+import GameTextInput from '../components/GameTextInput'
 
 let socket
 
@@ -26,7 +26,6 @@ export default class Game extends React.Component {
     super(props)
     this.state = {
       text: 'To start press Play',
-      input: '',
       chars: 0,
       numOfPlayers: 1,
       position: 1,
@@ -38,7 +37,6 @@ export default class Game extends React.Component {
       authenticated: null
     }
     this.setSocketBehavior = this.setSocketBehavior.bind(this)
-    this.handleUserInput = this.handleUserInput.bind(this)
     this.sendRaceData = this.sendRaceData.bind(this)
     this.playButtonPressed = this.playButtonPressed.bind(this)
     this.handlePlayGamePressed = this.handlePlayGamePressed.bind(this)
@@ -48,6 +46,7 @@ export default class Game extends React.Component {
     this.setGameData = this.setGameData.bind(this)
     this.dicsonnectPlayer = this.dicsonnectPlayer.bind(this)
     this.setModalVisible = this.setModalVisible.bind(this)
+    this.gameInputHandler = this.gameInputHandler.bind(this)
   }
 
   componentDidMount () {
@@ -151,8 +150,11 @@ export default class Game extends React.Component {
 
         socket.on('gamestarted', (data) => {
           console.log('Game started')
+          const textArray = data.text.split(' ')
           this.setState({
+            textArray,
             text: data.text,
+            wordIndex: 0,
             uuid: data.room,
             numOfPlayers: data.players.length,
             chars: 0
@@ -191,7 +193,7 @@ export default class Game extends React.Component {
   }
 
   setGameData (data, isGameEnded) {
-    console.log(data)
+    // console.log(data)
     const isWinner = _.find(data.players, { 'id': this.state.socketId }).isWinner
     this.setState({
       timeLeft: data.timeLeft / 1000,
@@ -235,23 +237,11 @@ export default class Game extends React.Component {
     clearInterval(this.state.intervalId)
   }
 
-  handleUserInput (input) {
+  gameInputHandler (chars, text) {
     this.setState({
-      input
+      chars: this.state.chars + chars,
+      text
     })
-    if (input.charAt(input.length - 1) !== ' ') {
-      return
-    }
-    input = input.slice(0, input.length - 1)
-    const splitted = this.state.text.split(' ')
-    const word = splitted[0]
-    if (input === word) {
-      this.setState({
-        text: splitted.slice(1).join(' '),
-        input: '',
-        chars: (this.state.chars + word.length)
-      })
-    }
   }
 
   render () {
@@ -313,15 +303,7 @@ export default class Game extends React.Component {
             style={styles.gameStatusBarItem}><Text>Time: {Math.round(this.state.timeLeft)}</Text></View>
           <View style={styles.gameStatusBarItem}><Text>CPM: {this.state.cpm}</Text></View>
         </View>
-        <View style={styles.textInput}>
-          <TextInput
-            style={styles.textInputStyle}
-            autoCapitalize='none'
-            placeholder='Start typing here..'
-            onChangeText={this.handleUserInput}
-            value={this.state.input}
-          />
-        </View>
+        <GameTextInput textArray={this.state.textArray} handler={this.gameInputHandler} refresh={this.state.gamePlaying} />
         <ScrollView style={styles.raceTextView}>
           <Text style={styles.raceText}>{this.state.text}</Text>
         </ScrollView>
@@ -359,19 +341,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center'
-  },
-  textInput: {
-    flex: 0.1,
-    flexDirection: 'row',
-    alignItems: 'stretch',
-    margin: 10
-  },
-  textInputStyle: {
-    flex: 1,
-    padding: 5,
-    height: 40,
-    borderColor: '#449eb2',
-    borderWidth: 1
   },
   raceTextView: {
     flex: 3,
