@@ -128,6 +128,15 @@ export default {
     return fetch(`${Config.WEB_SERVER_API}/statistics/getAverageAccuracy?language=${language}&uid=${uid}`).then(parseJSON)
   },
 
+  getAllCpmHistory: (uid, language) => {
+    const options = {
+      method: 'GET'
+    }
+    return attachToken(options).then(options => {
+      return fetch(`${Config.WEB_SERVER_API}/statistics/getAllCpmHistory?language=${language}&uid=${uid}`, options).then(parseJSON)
+    })
+  },
+
   getLastAverageAccuracy: (uid, language) => {
     return fetch(`${Config.WEB_SERVER_API}/statistics/getLastAverageAccuracy?language=${language}&uid=${uid}`).then(parseJSON)
   },

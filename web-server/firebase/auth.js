@@ -18,8 +18,6 @@ firebaseAdmin.initializeApp({
 */
 const EXCLUDED_ROUTES_FROM_VERIFICATION = [
   '/users',
-  '/users/signin',
-  '/users/signup',
   '/users/getNickname',
   '/statistics/getAverageCpm',
   '/statistics/getRaceCount',
@@ -37,6 +35,7 @@ const EXCLUDED_ROUTES_FROM_VERIFICATION = [
   '/leaderboard/getBestAvgResults',
   '/leaderboard/getBestTodayResults'
 ]
+// TODO(aibek): some of the routes should be checked for token
 
 /**
  * A middleware to check user's authentication

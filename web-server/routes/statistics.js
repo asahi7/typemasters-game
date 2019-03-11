@@ -327,4 +327,40 @@ router.get('/getLastAverageAccuracy', [
   })
 })
 
+// TODO(aibek): timezone is not correct for client
+router.get('/getAllCpmHistory', [
+  query('uid').isAlphanumeric().isLength({ min: 1 }),
+  query('language').isAlpha().isLength({ min: 1, max: 2 })
+], async (req, res) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() })
+  }
+  return models.RacePlayer.findAll({
+    include: [
+      {
+        model: models.Race,
+        attributes: ['date'],
+        required: true,
+        include: [
+          {
+            model: models.Text, attributes: [], required: true, where: { language: req.query.language }
+          }
+        ]
+      }
+    ],
+    includeIgnoreAttributes: false,
+    where: { userUid: req.query.uid },
+    attributes: [[models.sequelize.fn('AVG', models.sequelize.col('cpm')), 'cpm'], [models.sequelize.fn('DATE_FORMAT', models.sequelize.col('race.date'), '%Y-%m-%d'), 'date']],
+    group: [models.sequelize.fn('DATE_FORMAT', models.sequelize.col('race.date'), '%Y-%m-%d')],
+    order: [[models.sequelize.col('date'), 'ASC']],
+    limit: 100
+  }).then((results) => {
+    if (!results) {
+      res.send({ result: null })
+    }
+    return res.send({ result: results })
+  })
+})
+
 module.exports = router

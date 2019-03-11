@@ -10,6 +10,7 @@ import PersonalPage from './screens/PersonalPage'
 import Settings from './screens/Settings'
 import About from './screens/About'
 import AuthLoading from './screens/AuthLoading'
+import PersonalCharts from './screens/PersonalCharts'
 
 const MainStack = createStackNavigator({
   Main: {
@@ -29,6 +30,12 @@ const MainStack = createStackNavigator({
 const PersonalPageStack = createStackNavigator({
   PersonalPage: {
     screen: PersonalPage,
+    navigationOptions: ({ navigation }) => ({
+      header: null
+    })
+  },
+  PersonalCharts: {
+    screen: PersonalCharts,
     navigationOptions: ({ navigation }) => ({
       header: null
     })

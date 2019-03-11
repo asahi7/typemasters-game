@@ -183,6 +183,13 @@ export default class PersonalPage extends React.Component {
           </View>
           <View style={globalStyles.normalButton}>
             <Button
+              onPress={() => this.props.navigation.navigate('PersonalCharts')}
+              title='Show charts'
+              color='#841584'
+            />
+          </View>
+          <View style={globalStyles.normalButton}>
+            <Button
               onPress={this.handleSignOut}
               title='Sign out'
               color='#841584'
