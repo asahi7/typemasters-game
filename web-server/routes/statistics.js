@@ -5,7 +5,6 @@ const { query, validationResult } = require('express-validator/check')
 const _ = require('lodash')
 const Op = models.sequelize.Op
 
-// TODO(aibek): not correct query
 router.get('/getLatestAverageCpm', [
   query('uid').isAlphanumeric().isLength({ min: 1 }),
   query('language').isAlpha().isLength({ min: 1, max: 2 })
@@ -14,19 +13,32 @@ router.get('/getLatestAverageCpm', [
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() })
   }
-  // TODO(aibek): check for security issues and convert to sequelize in future
-  models.sequelize.query(
-    `SELECT AVG(cpm) AS avg FROM race_players AS rp 
-    JOIN races AS r ON rp.raceId = r.id 
-    JOIN texts AS t ON t.id = r.textId 
-    WHERE t.language='${req.query.language}' AND rp.userUid='${req.query.uid}'
-    ORDER BY rp.id DESC LIMIT 10`,
-    { type: models.sequelize.QueryTypes.SELECT }).then((result) => {
-    return res.send({ result: Math.round(result[0].avg) })
+  return models.RacePlayer.findAll({
+    include: [
+      {
+        model: models.Race,
+        attributes: [],
+        required: true,
+        include: [{
+          model: models.Text, attributes: [], required: true, where: { language: req.query.language }
+        }]
+      }
+    ],
+    where: { userUid: req.query.uid },
+    order: [['id', 'DESC']],
+    limit: 10,
+    attributes: ['cpm']
+  }).then((results) => {
+    const sum = _.sumBy(results, (o) => {
+      return o.cpm
+    })
+    const average = (sum / _.size(results))
+    return Math.round(average * 100) / 100
+  }).then(avg => {
+    return res.send({ result: avg })
   })
 })
 
-// TODO(aibek): not correct query
 router.get('/getAverageCpm', [
   query('uid').isAlphanumeric().isLength({ min: 1 }),
   query('language').isAlpha().isLength({ min: 1, max: 2 })
@@ -35,24 +47,27 @@ router.get('/getAverageCpm', [
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() })
   }
-  return models.Race.findAll({
+  return models.RacePlayer.findAll({
     include: [
       {
-        model: models.Text, attributes: [], where: { language: req.query.language }
-      },
-      {
-        model: models.RacePlayer, attributes: ['cpm'], where: { userUid: req.query.uid }
+        model: models.Race,
+        attributes: [],
+        required: true,
+        include: [{
+          model: models.Text, attributes: [], required: true, where: { language: req.query.language }
+        }]
       }
     ],
-    attributes: ['id']
+    where: { userUid: req.query.uid },
+    attributes: ['cpm']
   }).then((results) => {
     const sum = _.sumBy(results, (o) => {
-      return o.racePlayers[0].cpm
+      return o.cpm
     })
     const average = (sum / _.size(results))
     return Math.round(average * 100) / 100
   }).then(avg => {
-    return res.send({ result: Math.round(avg) })
+    return res.send({ result: avg })
   })
 })
 
