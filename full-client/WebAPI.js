@@ -124,6 +124,14 @@ export default {
     return fetch(`${Config.WEB_SERVER_API}/leaderboard/getBestTodayResults?language=${language}`).then(parseJSON)
   },
 
+  getAverageAccuracy: (uid, language) => {
+    return fetch(`${Config.WEB_SERVER_API}/statistics/getAverageAccuracy?language=${language}&uid=${uid}`).then(parseJSON)
+  },
+
+  getLastAverageAccuracy: (uid, language) => {
+    return fetch(`${Config.WEB_SERVER_API}/statistics/getLastAverageAccuracy?language=${language}&uid=${uid}`).then(parseJSON)
+  },
+
   getUserInfo: (uid) => {
     return attachToken().then(options => {
       return fetch(`${Config.WEB_SERVER_API}/users?uid=${uid}`, options).then(parseJSON)

@@ -55,7 +55,9 @@ export default class PersonalPage extends React.Component {
         WebAPI.getLastPlayedGame(user.uid, this.state.language),
         WebAPI.getBestResult(user.uid, this.state.language),
         WebAPI.getGamesWon(user.uid, this.state.language),
-        WebAPI.getFirstRace(user.uid, this.state.language)
+        WebAPI.getFirstRace(user.uid, this.state.language),
+        WebAPI.getAverageAccuracy(user.uid, this.state.language),
+        WebAPI.getLastAverageAccuracy(user.uid, this.state.language)
       ]).then((results) => {
         this.setState({
           totalRaces: results[0].result,
@@ -63,9 +65,12 @@ export default class PersonalPage extends React.Component {
           lastAvgCpm: results[2].result,
           lastPlayed: (results[3].result !== null ? results[3].result.date : null),
           lastScore: (results[3].result !== null ? results[3].result.cpm : null),
+          lastAccuracy: (results[3].result !== null ? results[3].result.accuracy : null),
           bestResult: results[4].result,
           gamesWon: results[5].result,
           firstRaceData: results[6].result,
+          avgAccuracy: results[7].result,
+          lastAvgAccuracy: results[8].result,
           loading: false
         })
       }).catch((error) => {
@@ -129,8 +134,16 @@ export default class PersonalPage extends React.Component {
               <Text style={globalStyles.column}>{this.state.avgCpm} cpm</Text>
             </View>
             <View style={globalStyles.row}>
+              <Text style={globalStyles.column}>Average accuracy:</Text>
+              <Text style={globalStyles.column}>{this.state.avgAccuracy}%</Text>
+            </View>
+            <View style={globalStyles.row}>
               <Text style={globalStyles.column}>Average cpm (10 games):</Text>
               <Text style={globalStyles.column}>{this.state.lastAvgCpm} cpm</Text>
+            </View>
+            <View style={globalStyles.row}>
+              <Text style={globalStyles.column}>Average accuracy (10 games):</Text>
+              <Text style={globalStyles.column}>{this.state.lastAvgAccuracy}%</Text>
             </View>
             <View style={globalStyles.row}>
               <Text style={globalStyles.column}>Games won:</Text>
@@ -147,6 +160,10 @@ export default class PersonalPage extends React.Component {
             <View style={globalStyles.row}>
               <Text style={globalStyles.column}>Last game:</Text>
               <Text style={globalStyles.column}>{this.state.lastScore} cpm</Text>
+            </View>
+            <View style={globalStyles.row}>
+              <Text style={globalStyles.column}>Accuracy of last game:</Text>
+              <Text style={globalStyles.column}>{this.state.lastAccuracy}%</Text>
             </View>
             { this.state.firstRaceData &&
               <View style={globalStyles.row}>

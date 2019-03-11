@@ -5,6 +5,7 @@ const { query, validationResult } = require('express-validator/check')
 const _ = require('lodash')
 const Op = models.sequelize.Op
 
+// TODO(aibek): not correct query
 router.get('/getLatestAverageCpm', [
   query('uid').isAlphanumeric().isLength({ min: 1 }),
   query('language').isAlpha().isLength({ min: 1, max: 2 })
@@ -25,6 +26,7 @@ router.get('/getLatestAverageCpm', [
   })
 })
 
+// TODO(aibek): not correct query
 router.get('/getAverageCpm', [
   query('uid').isAlphanumeric().isLength({ min: 1 }),
   query('language').isAlpha().isLength({ min: 1, max: 2 })
@@ -113,7 +115,7 @@ router.get('/getLastPlayedGame', [
         model: models.Text, attributes: [], where: { language: req.query.language }
       },
       {
-        model: models.RacePlayer, attributes: ['cpm'], where: { userUid: req.query.uid }
+        model: models.RacePlayer, attributes: ['cpm', 'accuracy'], where: { userUid: req.query.uid }
       }
     ],
     order: [['date', 'DESC']]
@@ -124,7 +126,8 @@ router.get('/getLastPlayedGame', [
     return res.send({
       result: {
         date: result.get('date'),
-        cpm: result.racePlayers[0].cpm
+        cpm: result.racePlayers[0].cpm,
+        accuracy: result.racePlayers[0].accuracy
       }
     })
   })
@@ -138,22 +141,25 @@ router.get('/getBestResult', [
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() })
   }
-  return models.Race.findOne({
+  // TODO(aibek): check other queries and in case make it like this one.
+  return models.RacePlayer.findOne({
     include: [
       {
-        model: models.Text, attributes: [], where: { language: req.query.language }
-      },
-      {
-        model: models.RacePlayer, attributes: ['cpm'], where: { userUid: req.query.uid }
+        model: models.Race,
+        attributes: [],
+        required: true,
+        include: [
+          { model: models.Text, attributes: [], where: { language: req.query.language }, required: true }
+        ]
       }
     ],
-    order: [[models.RacePlayer, 'cpm', 'DESC']]
-  }).then(function (race) {
-    if (!race) {
+    where: { userUid: req.query.uid },
+    order: [['cpm', 'DESC']]
+  }).then((result) => {
+    if (!result) {
       return res.send({ result: null })
     }
-    race = race.toJSON()
-    return res.send({ result: _.get(race, 'racePlayers[0].cpm') })
+    return res.send({ result: result.cpm })
   })
 })
 
@@ -243,6 +249,66 @@ router.get('/getLastPlayedGames', async (req, res) => {
     limit: 10
   }).then((result) => {
     return res.send({ result })
+  })
+})
+
+router.get('/getAverageAccuracy', [
+  query('uid').isAlphanumeric().isLength({ min: 1 }),
+  query('language').isAlpha().isLength({ min: 1, max: 2 })
+], async (req, res) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() })
+  }
+  return models.Race.findAll({
+    include: [
+      {
+        model: models.Text, attributes: [], where: { language: req.query.language }
+      },
+      {
+        model: models.RacePlayer, attributes: ['accuracy'], where: { userUid: req.query.uid }
+      }
+    ],
+    attributes: ['id']
+  }).then((results) => {
+    const sum = _.sumBy(results, (o) => {
+      return o.racePlayers[0].accuracy
+    })
+    const average = (sum / _.size(results))
+    return average
+  }).then(avg => {
+    return res.send({ result: Math.round(avg) })
+  })
+})
+
+router.get('/getLastAverageAccuracy', [
+  query('uid').isAlphanumeric().isLength({ min: 1 }),
+  query('language').isAlpha().isLength({ min: 1, max: 2 })
+], async (req, res) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() })
+  }
+  return models.Race.findAll({
+    include: [
+      {
+        model: models.Text, attributes: [], where: { language: req.query.language }
+      },
+      {
+        model: models.RacePlayer, attributes: ['accuracy'], where: { userUid: req.query.uid }
+      }
+    ],
+    attributes: ['id', 'date'],
+    order: [['date', 'DESC']],
+    limit: 10
+  }).then((results) => {
+    const sum = _.sumBy(results, (o) => {
+      return o.racePlayers[0].accuracy
+    })
+    const average = (sum / _.size(results))
+    return average
+  }).then(avg => {
+    return res.send({ result: Math.round(avg) })
   })
 })
 
