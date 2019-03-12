@@ -68,7 +68,7 @@ export default class PersonalCharts extends React.Component {
         </View>
         <ScrollView style={{ marginTop: 10, marginBottom: 10 }}>
           <View style={{ marginTop: 10 }}>
-            <Text style={globalStyles.tableHeader}>Last 100 Games</Text>
+            <Text style={globalStyles.tableHeader}>Last 100 Days</Text>
             <PureChart data={this.data} type='line' />
           </View>
         </ScrollView>

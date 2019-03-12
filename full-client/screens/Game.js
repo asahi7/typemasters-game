@@ -4,7 +4,6 @@ import {
   Text,
   TouchableHighlight,
   View,
-  Modal,
   TouchableOpacity,
   ScrollView,
   BackHandler,
@@ -18,6 +17,7 @@ import { LinearGradient } from 'expo'
 import Commons from '../Commons'
 import globalStyles from '../styles'
 import GameTextInput from '../components/GameTextInput'
+import GameEndModal from '../components/GameEndModal'
 
 let socket
 
@@ -258,41 +258,12 @@ export default class Game extends React.Component {
   render () {
     return (
       <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
-        <Modal
-          visible={this.state.modalVisible}
-          transparent
-          onRequestClose={() => {}}
-        >
-          <View style={{ flex: 1,
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: '#00000080' }}>
-            <View style={{ backgroundColor: '#fff',
-              padding: 20,
-              width: 300,
-              height: 300,
-              alignItems: 'center',
-              justifyContent: 'center' }}>
-              <Text style={{ color: 'red', fontSize: 20 }}>{this.state.modalText}</Text>
-              <View
-                style={styles.gameStatusBarItem}><Text>You are {this.state.position} out of {this.state.numOfPlayers}</Text></View>
-              <View style={styles.gameStatusBarItem}><Text>Your CPM: {this.state.cpm}</Text></View>
-              <View style={styles.gameStatusBarItem}><Text>Your accuracy: {this.state.accuracy}</Text></View>
-              {!this.state.authenticated &&
-              <View style={{ marginTop: 10 }}>
-                <Text style={[globalStyles.normalText, { color: 'red' }]}>*Sign in to save your progress.</Text>
-              </View>
-              }
-              <TouchableHighlight
-                onPress={() => {
-                  this.setModalVisible(!this.state.modalVisible)
-                }}>
-                <Text style={{ color: 'red', fontSize: 20 }}>Close [X]</Text>
-              </TouchableHighlight>
-            </View>
-          </View>
-        </Modal>
+        {this.state.modalVisible &&
+        <GameEndModal modalText={this.state.modalText} position={this.state.position}
+          numOfPlayers={this.state.numOfPlayers} cpm={this.state.cpm}
+          accuracy={this.state.accuracy} authenticated={this.state.authenticated} closeModalHandler={() => {
+            this.setModalVisible(false)
+          }} />}
         <View style={styles.gameStatusBar}>
           <View style={[styles.gameStatusBarItem, { borderLeftWidth: 0 }]}>
             {this.state.gamePlaying === true
@@ -314,9 +285,12 @@ export default class Game extends React.Component {
           <View
             style={styles.gameStatusBarItem}><Text>{Math.round(this.state.timeLeft)} left</Text></View>
           <View style={styles.gameStatusBarItem}><Text>{this.state.cpm} cpm</Text></View>
-          <View style={[styles.gameStatusBarItem, { borderRightWidth: 0 }]}><Text>{this.state.accuracy ? this.state.accuracy : 100}% accuracy</Text></View>
+          <View
+            style={[styles.gameStatusBarItem, { borderRightWidth: 0 }]}><Text>{this.state.accuracy ? this.state.accuracy : 100}%
+            accuracy</Text></View>
         </View>
-        <GameTextInput textArray={this.state.textArray} handler={this.gameInputHandler} refresh={this.state.gamePlaying} accuracyHandler={this.accuracyHandler} />
+        <GameTextInput textArray={this.state.textArray} handler={this.gameInputHandler} refresh={this.state.gamePlaying}
+          accuracyHandler={this.accuracyHandler} />
         <ScrollView style={styles.raceTextView}>
           <Text style={styles.raceText}>{this.state.text}</Text>
         </ScrollView>
