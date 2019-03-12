@@ -1,5 +1,6 @@
 import React from 'react'
 import { StyleSheet, Text, TouchableHighlight, View, Modal } from 'react-native'
+import { AdMobBanner } from 'expo'
 import globalStyles from '../styles'
 
 export default class GameEndModal extends React.Component {
@@ -23,6 +24,10 @@ export default class GameEndModal extends React.Component {
               <Text style={[globalStyles.normalText, { color: 'red' }]}>*Sign in to save your progress.</Text>
             </View>
             }
+            <AdMobBanner
+              bannerSize='mediumRectangle'
+              adUnitID='ca-app-pub-1048218245279838/9133509327'
+              onDidFailToReceiveAdWithError={(error) => { console.log(error) }} />
             <TouchableHighlight
               onPress={this.props.closeModalHandler}>
               <Text style={{ color: 'red', fontSize: 20 }}>Close [X]</Text>
@@ -45,8 +50,8 @@ const styles = StyleSheet.create({
   modalStyle: {
     backgroundColor: '#fff',
     padding: 20,
-    width: 300,
-    height: 300,
+    width: 320,
+    height: 500,
     alignItems: 'center',
     justifyContent: 'center'
   },
