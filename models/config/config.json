@@ -10,7 +10,7 @@
     "username": "admin",
     "password": "newpass123",
     "database": "typemasters",
-    "host": "aabewsxt9qrzxr.c9doslkpys3h.us-east-2.rds.amazonaws.com:3306",
+    "host": "aabewsxt9qrzxr.c9doslkpys3h.us-east-2.rds.amazonaws.com",
     "dialect": "mysql"
   }
 }
