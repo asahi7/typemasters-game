@@ -19,6 +19,10 @@ import globalStyles from '../styles'
 import GameTextInput from '../components/GameTextInput'
 import GameEndModal from '../components/GameEndModal'
 
+const env = process.env.REACT_NATIVE_ENV || 'dev'
+
+console.log(env)
+
 let socket
 
 export default class Game extends React.Component {
@@ -138,7 +142,7 @@ export default class Game extends React.Component {
 
   setSocketBehavior (idToken) {
     // TODO(aibek): study about reconnect behavior
-    socket = io.connect(Config.GAME_SERVER_API, { reconnect: false })
+    socket = io.connect(Config[env].GAME_SERVER_API, { reconnect: false })
     socket.on('connect', () => {
       socket.emit('authentication', { token: idToken })
       socket.on('authenticated', () => {

@@ -1,6 +1,9 @@
 import firebase from 'firebase'
 import Config from './config/Config'
 
+const env = process.env.REACT_NATIVE_ENV || 'dev'
+console.log(env)
+
 function parseJSON (response) {
   if (response.status >= 400) {
     return response.json().then((error) => {
@@ -50,7 +53,7 @@ export default {
       method: 'POST'
     }
     return attachToken(options).then(options => {
-      return fetch(`${Config.WEB_SERVER_API}/users/saveNickname?nickname=${nickname}`, options).then(parseJSON)
+      return fetch(`${Config[env].WEB_SERVER_API}/users/saveNickname?nickname=${nickname}`, options).then(parseJSON)
     })
   },
 
@@ -59,7 +62,7 @@ export default {
       method: 'POST'
     }
     return attachToken(options).then(options => {
-      return fetch(`${Config.WEB_SERVER_API}/users/saveCountry?country=${country}`, options).then(parseJSON)
+      return fetch(`${Config[env].WEB_SERVER_API}/users/saveCountry?country=${country}`, options).then(parseJSON)
     })
   },
 
@@ -68,64 +71,64 @@ export default {
       method: 'POST'
     }
     return attachToken(options).then(options => {
-      return fetch(`${Config.WEB_SERVER_API}/users/createUserIfNotExists`, options).then(parseJSON)
+      return fetch(`${Config[env].WEB_SERVER_API}/users/createUserIfNotExists`, options).then(parseJSON)
     })
   },
 
   getRaceCount: (uid, language) => {
-    return fetch(`${Config.WEB_SERVER_API}/statistics/getRaceCount?uid=${uid}&language=${language}`).then(parseJSON)
+    return fetch(`${Config[env].WEB_SERVER_API}/statistics/getRaceCount?uid=${uid}&language=${language}`).then(parseJSON)
   },
 
   getAverageCpm: (uid, language) => {
-    return fetch(`${Config.WEB_SERVER_API}/statistics/getAverageCpm?uid=${uid}&language=${language}`).then(parseJSON)
+    return fetch(`${Config[env].WEB_SERVER_API}/statistics/getAverageCpm?uid=${uid}&language=${language}`).then(parseJSON)
   },
 
   getLatestAverageCpm: (uid, language) => {
-    return fetch(`${Config.WEB_SERVER_API}/statistics/getLatestAverageCpm?uid=${uid}&language=${language}`).then(parseJSON)
+    return fetch(`${Config[env].WEB_SERVER_API}/statistics/getLatestAverageCpm?uid=${uid}&language=${language}`).then(parseJSON)
   },
 
   getFirstRace: (uid, language) => {
-    return fetch(`${Config.WEB_SERVER_API}/statistics/getFirstRace?uid=${uid}&language=${language}`).then(parseJSON)
+    return fetch(`${Config[env].WEB_SERVER_API}/statistics/getFirstRace?uid=${uid}&language=${language}`).then(parseJSON)
   },
 
   getLastPlayedGame: (uid, language) => {
-    return fetch(`${Config.WEB_SERVER_API}/statistics/getLastPlayedGame?uid=${uid}&language=${language}`).then(parseJSON)
+    return fetch(`${Config[env].WEB_SERVER_API}/statistics/getLastPlayedGame?uid=${uid}&language=${language}`).then(parseJSON)
   },
 
   getBestResult: (uid, language) => {
-    return fetch(`${Config.WEB_SERVER_API}/statistics/getBestResult?uid=${uid}&language=${language}`).then(parseJSON)
+    return fetch(`${Config[env].WEB_SERVER_API}/statistics/getBestResult?uid=${uid}&language=${language}`).then(parseJSON)
   },
 
   getGamesWon: (uid, language) => {
-    return fetch(`${Config.WEB_SERVER_API}/statistics/getGamesWon?uid=${uid}&language=${language}`).then(parseJSON)
+    return fetch(`${Config[env].WEB_SERVER_API}/statistics/getGamesWon?uid=${uid}&language=${language}`).then(parseJSON)
   },
 
   getBestResults: (language) => {
-    return fetch(`${Config.WEB_SERVER_API}/leaderboard/getBestResults?language=${language}`).then(parseJSON)
+    return fetch(`${Config[env].WEB_SERVER_API}/leaderboard/getBestResults?language=${language}`).then(parseJSON)
   },
 
   getBestAvgResults: (language) => {
-    return fetch(`${Config.WEB_SERVER_API}/leaderboard/getBestAvgResults?language=${language}`).then(parseJSON)
+    return fetch(`${Config[env].WEB_SERVER_API}/leaderboard/getBestAvgResults?language=${language}`).then(parseJSON)
   },
 
   countGamesPlayedToday: () => {
-    return fetch(`${Config.WEB_SERVER_API}/statistics/countGamesPlayedToday`).then(parseJSON)
+    return fetch(`${Config[env].WEB_SERVER_API}/statistics/countGamesPlayedToday`).then(parseJSON)
   },
 
   getLastPlayedGames: () => {
-    return fetch(`${Config.WEB_SERVER_API}/statistics/getLastPlayedGames`).then(parseJSON)
+    return fetch(`${Config[env].WEB_SERVER_API}/statistics/getLastPlayedGames`).then(parseJSON)
   },
 
   countUserPlayedToday: (uid) => {
-    return fetch(`${Config.WEB_SERVER_API}/statistics/countUserPlayedToday?uid=${uid}`).then(parseJSON)
+    return fetch(`${Config[env].WEB_SERVER_API}/statistics/countUserPlayedToday?uid=${uid}`).then(parseJSON)
   },
 
   getBestTodayResults: (language) => {
-    return fetch(`${Config.WEB_SERVER_API}/leaderboard/getBestTodayResults?language=${language}`).then(parseJSON)
+    return fetch(`${Config[env].WEB_SERVER_API}/leaderboard/getBestTodayResults?language=${language}`).then(parseJSON)
   },
 
   getAverageAccuracy: (uid, language) => {
-    return fetch(`${Config.WEB_SERVER_API}/statistics/getAverageAccuracy?language=${language}&uid=${uid}`).then(parseJSON)
+    return fetch(`${Config[env].WEB_SERVER_API}/statistics/getAverageAccuracy?language=${language}&uid=${uid}`).then(parseJSON)
   },
 
   getAllCpmHistory: (uid, language) => {
@@ -133,17 +136,17 @@ export default {
       method: 'GET'
     }
     return attachToken(options).then(options => {
-      return fetch(`${Config.WEB_SERVER_API}/statistics/getAllCpmHistory?language=${language}&uid=${uid}`, options).then(parseJSON)
+      return fetch(`${Config[env].WEB_SERVER_API}/statistics/getAllCpmHistory?language=${language}&uid=${uid}`, options).then(parseJSON)
     })
   },
 
   getLastAverageAccuracy: (uid, language) => {
-    return fetch(`${Config.WEB_SERVER_API}/statistics/getLastAverageAccuracy?language=${language}&uid=${uid}`).then(parseJSON)
+    return fetch(`${Config[env].WEB_SERVER_API}/statistics/getLastAverageAccuracy?language=${language}&uid=${uid}`).then(parseJSON)
   },
 
   getUserInfo: (uid) => {
     return attachToken().then(options => {
-      return fetch(`${Config.WEB_SERVER_API}/users?uid=${uid}`, options).then(parseJSON)
+      return fetch(`${Config[env].WEB_SERVER_API}/users?uid=${uid}`, options).then(parseJSON)
     })
   }
 }
