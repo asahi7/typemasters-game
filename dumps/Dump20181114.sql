@@ -1,4 +1,4 @@
-CREATE DATABASE  IF NOT EXISTS `typemasters` /*!40100 DEFAULT CHARACTER SET latin1 */;
+CREATE DATABASE  IF NOT EXISTS `typemasters` /*!40100 DEFAULT CHARACTER SET utf8_general_ci */;
 USE `typemasters`;
 -- MySQL dump 10.13  Distrib 5.7.17, for macos10.12 (x86_64)
 --

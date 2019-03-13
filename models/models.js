@@ -1,9 +1,9 @@
 const Sequelize = require('sequelize')
-require('dotenv').config()
+const config = require('./config/config.json')[process.env.NODE_ENV || 'dev'];
 
-const sequelize = new Sequelize('typemasters', process.env.DB_USER, process.env.DB_PASS, {
-  host: process.env.DB_HOST,
-  dialect: 'mysql',
+const sequelize = new Sequelize('typemasters', config.username, config.password, {
+  host: config.host,
+  dialect: config.dialect,
   operatorsAliases: false,
   pool: {
     max: 5,
