@@ -5,6 +5,6 @@ export default {
   },
   prod: {
     WEB_SERVER_API: 'http://3.18.147.114:80',
-    GAME_SERVER_API: 'http://13.58.228.142:80'
+    GAME_SERVER_API: 'http://13.58.228.142:8080'
   }
 }

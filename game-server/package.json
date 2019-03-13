@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "PORT=3000 node index.js",
-    "prod-start": "PORT=80 node index.js"
+    "prod-start": "PORT=8080 node index.js"
   },
   "repository": {
     "type": "git",
