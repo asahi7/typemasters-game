@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "PORT=3001 node ./bin/www",
-    "prod-start": "PORT=8080 node ./bin/www"
+    "prod-start": "PORT=8080 NODE_ENV=prod node ./bin/www"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
