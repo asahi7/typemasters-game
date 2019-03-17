@@ -26,7 +26,7 @@ export default class PersonalPage extends React.Component {
   }
 
   async componentDidMount () {
-    this.updateTextLanguageState()
+    await this.updateTextLanguageState()
     NetInfo.isConnected.fetch().then(isConnected => {
       console.log('User is ' + (isConnected ? 'online' : 'offline'))
       if (!isConnected) {
@@ -65,9 +65,9 @@ export default class PersonalPage extends React.Component {
     )
   }
 
-  updateScreen () {
+  async updateScreen () {
     console.log('update screen!')
-    this.updateTextLanguageState()
+    await this.updateTextLanguageState()
     if (this.online) {
       this.getApiDataOnline(firebase.auth().currentUser)
     } else {
@@ -138,9 +138,7 @@ export default class PersonalPage extends React.Component {
     if (isConnected) {
       this.online = true
       this.dropdown.alertWithType('success', 'Success', 'Back online')
-      if (!this.state.userData) {
-        this.getApiDataOnline(firebase.auth().currentUser)
-      }
+      this.getApiDataOnline(firebase.auth().currentUser)
     } else {
       this.online = false
       this.dropdown.alertWithType('warn', 'Warning', 'No internet connection')

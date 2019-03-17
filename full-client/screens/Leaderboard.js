@@ -1,31 +1,59 @@
 import React from 'react'
 import { LinearGradient } from 'expo'
-import { View, Text, AsyncStorage, ScrollView } from 'react-native'
+import { View, Text, AsyncStorage, ScrollView, NetInfo } from 'react-native'
 import WebAPI from '../WebAPI'
 import Loading from './Loading'
 import Commons from '../Commons'
 import globalStyles from '../styles'
 import moment from 'moment'
+import DropdownAlert from 'react-native-dropdownalert'
 
 export default class Leaderboard extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      language: null,
+      textLanguage: null,
       loading: true,
-      bestResults: [],
-      bestAvgResults: [],
-      bestTodayResults: []
+      data: {
+        bestResults: [],
+        bestAvgResults: [],
+        bestTodayResults: []
+      }
     }
     this.updateScreen = this.updateScreen.bind(this)
+    this.getPersistentDataOffline = this.getPersistentDataOffline.bind(this)
+    this.handleConnectivityChange = this.handleConnectivityChange.bind(this)
+    this.getApiDataOnline = this.getApiDataOnline.bind(this)
+    this.updateTextLanguageState = this.updateTextLanguageState.bind(this)
   }
 
   async componentDidMount () {
-    await this.updateScreen()
+    await this.updateTextLanguageState()
+    NetInfo.isConnected.fetch().then(isConnected => {
+      console.log('User is ' + (isConnected ? 'online' : 'offline'))
+      if (!isConnected) {
+        this.online = false
+        this.getPersistentDataOffline().then(() => {
+          this.setState({
+            loading: false
+          })
+        })
+      } else {
+        this.online = true
+        this.getApiDataOnline().then(() => {
+          this.setState({
+            loading: false
+          })
+        })
+      }
+    })
+    NetInfo.isConnected.addEventListener(
+      'connectionChange',
+      this.handleConnectivityChange
+    )
     this.willFocusSubscription = this.props.navigation.addListener(
       'willFocus',
       () => {
-        this.setState({ loading: true })
         this.updateScreen()
       }
     )
@@ -33,35 +61,87 @@ export default class Leaderboard extends React.Component {
 
   componentWillUnmount () {
     this.willFocusSubscription.remove()
+    NetInfo.isConnected.removeEventListener(
+      'connectionChange',
+      this.handleConnectivityChange
+    )
   }
 
-  updateScreen () {
-    return AsyncStorage.getItem('textLanguage').then((value) => {
+  async updateScreen () {
+    console.log('update screen!')
+    await this.updateTextLanguageState()
+    if (this.online) {
+      this.getApiDataOnline()
+    } else {
+      this.getPersistentDataOffline()
+    }
+  }
+
+  getPersistentDataOffline () {
+    return AsyncStorage.getItem('leaderboard-data').then((value) => {
       if (!value) {
         this.setState({
-          language: 'en'
+          data: {
+            bestResults: [],
+            bestAvgResults: [],
+            bestTodayResults: []
+          }
         })
       } else {
+        const data = JSON.parse(value)
         this.setState({
-          language: value.toLowerCase()
+          data
         })
       }
-    }).then(() => {
-      return Promise.all([
-        WebAPI.getBestResults(this.state.language),
-        WebAPI.getBestAvgResults(this.state.language),
-        WebAPI.getBestTodayResults(this.state.language)
-      ]).then((results) => {
-        this.setState({
-          bestResults: results[0],
-          bestAvgResults: results[1],
-          bestTodayResults: results[2],
-          loading: false
-        })
-      }).catch((error) => {
-        console.log(error)
-      })
     })
+  }
+
+  getApiDataOnline () {
+    let data = {}
+    return Promise.all([
+      WebAPI.getBestResults(this.state.textLanguage),
+      WebAPI.getBestAvgResults(this.state.textLanguage),
+      WebAPI.getBestTodayResults(this.state.textLanguage)
+    ]).then((results) => {
+      data = {
+        bestResults: results[0],
+        bestAvgResults: results[1],
+        bestTodayResults: results[2]
+      }
+    }).then(() => {
+      return AsyncStorage.setItem('leaderboard-data', JSON.stringify(data)).then(() => {
+        this.setState({
+          data
+        })
+      })
+    }).catch((error) => {
+      console.log(error)
+    })
+  }
+
+  handleConnectivityChange (isConnected) {
+    if (isConnected) {
+      this.online = true
+      this.dropdown.alertWithType('success', 'Success', 'Back online')
+      this.getApiDataOnline()
+    } else {
+      this.online = false
+      this.dropdown.alertWithType('warn', 'Warning', 'No internet connection')
+    }
+  }
+
+  async updateTextLanguageState () {
+    const textLanguage = await AsyncStorage.getItem('textLanguage')
+    if (!textLanguage) {
+      this.setState({
+        textLanguage: 'en'
+      })
+      await AsyncStorage.setItem('textLanguage', 'en')
+    } else {
+      this.setState({
+        textLanguage: textLanguage
+      })
+    }
   }
 
   render () {
@@ -76,7 +156,7 @@ export default class Leaderboard extends React.Component {
         <ScrollView style={{ marginTop: 10, marginBottom: 10 }}>
           <View style={{ marginTop: 10 }}>
             <Text style={globalStyles.tableHeader}>Best Today Results By CPM</Text>
-            {this.state.bestTodayResults.map((result, i) => {
+            {this.state.data.bestTodayResults.map((result, i) => {
               return (
                 <View style={globalStyles.row} key={i}>
                   <Text style={globalStyles.column}>{result.user.nickname}</Text>
@@ -88,7 +168,7 @@ export default class Leaderboard extends React.Component {
           </View>
           <View style={{ marginTop: 10 }}>
             <Text style={globalStyles.tableHeader}>Best Average Results By CPM</Text>
-            {this.state.bestAvgResults.map((result, i) => {
+            {this.state.data.bestAvgResults.map((result, i) => {
               return (
                 <View style={globalStyles.row} key={i}>
                   <Text style={globalStyles.column}>{result.user.nickname}</Text>
@@ -100,7 +180,7 @@ export default class Leaderboard extends React.Component {
           </View>
           <View style={{ marginTop: 10 }}>
             <Text style={globalStyles.tableHeader}>Best Results By CPM</Text>
-            {this.state.bestResults.map((result, i) => {
+            {this.state.data.bestResults.map((result, i) => {
               return (
                 <View style={globalStyles.row} key={i}>
                   <Text style={globalStyles.column}>{result.user.nickname}</Text>
@@ -112,6 +192,7 @@ export default class Leaderboard extends React.Component {
             })}
           </View>
         </ScrollView>
+        <DropdownAlert ref={(ref) => { this.dropdown = ref }} />
       </LinearGradient>
     )
   }

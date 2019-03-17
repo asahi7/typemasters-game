@@ -59,7 +59,7 @@ export default class Settings extends React.Component {
   }
 
   async componentDidMount () {
-    this.updateTextLanguageState()
+    await this.updateTextLanguageState()
     NetInfo.isConnected.fetch().then(isConnected => {
       console.log('User is ' + (isConnected ? 'online' : 'offline'))
       if (!isConnected) {
@@ -98,10 +98,10 @@ export default class Settings extends React.Component {
     )
   }
 
-  updateScreen () {
-    this.updateTextLanguageState()
-    this.setState({ errorMessage: null })
+  async updateScreen () {
     console.log('update screen!')
+    await this.updateTextLanguageState()
+    this.setState({ errorMessage: null })
     if (this.online) {
       this.getApiDataOnline()
     } else {
@@ -154,9 +154,7 @@ export default class Settings extends React.Component {
     if (isConnected) {
       this.online = true
       this.dropdown.alertWithType('success', 'Success', 'Back online')
-      if (!this.state.userData) {
-        this.getApiDataOnline()
-      }
+      this.getApiDataOnline()
     } else {
       this.online = false
       this.dropdown.alertWithType('warn', 'Warning', 'No internet connection')
