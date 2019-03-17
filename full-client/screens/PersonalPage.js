@@ -67,6 +67,7 @@ export default class PersonalPage extends React.Component {
 
   updateScreen () {
     console.log('update screen!')
+    this.updateTextLanguageState()
     if (this.online) {
       this.getApiDataOnline(firebase.auth().currentUser)
     } else {
@@ -75,7 +76,7 @@ export default class PersonalPage extends React.Component {
   }
 
   getPersistentDataOffline () {
-    return AsyncStorage.getItem('userData').then((value) => {
+    return AsyncStorage.getItem('personalPage-userData').then((value) => {
       if (!value) {
         this.setState({
           userData: null
@@ -123,12 +124,7 @@ export default class PersonalPage extends React.Component {
         }
       })
     }).then(() => {
-      return AsyncStorage.setItem('userData', JSON.stringify(userData)).then(() => {
-        console.log(userData)
-        console.log(JSON.stringify(userData))
-        AsyncStorage.getItem('userData').then((value) => {
-          console.log(JSON.parse(value))
-        })
+      return AsyncStorage.setItem('personalPage-userData', JSON.stringify(userData)).then(() => {
         this.setState({
           userData
         })
@@ -157,10 +153,10 @@ export default class PersonalPage extends React.Component {
       this.setState({
         textLanguage: 'en'
       })
-      await AsyncStorage.setItem('textLanguage', 'EN')
+      await AsyncStorage.setItem('textLanguage', 'en')
     } else {
       this.setState({
-        textLanguage: textLanguage.toLowerCase()
+        textLanguage: textLanguage
       })
     }
   }
