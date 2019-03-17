@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, ActivityIndicator } from 'react-native'
+import { View, Text, ActivityIndicator, AsyncStorage } from 'react-native'
 import firebase from 'firebase'
 import globalStyles from '../styles'
 
@@ -14,6 +14,9 @@ export default class AuthLoading extends React.Component {
   componentDidMount () {
     // Every time user's log in state changes, this will be triggered.
     firebase.auth().onAuthStateChanged((user) => {
+      if (!user) {
+        AsyncStorage.clear()
+      }
       this.props.navigation.navigate(user ? 'PersonalPage' : 'Auth')
     })
   }

@@ -24,13 +24,17 @@ export default class Main extends React.Component {
 
   async componentDidMount () {
     await this.updateScreen()
-    this.props.navigation.addListener(
+    this.willFocusSubscription = this.props.navigation.addListener(
       'willFocus',
       () => {
         this.setState({ loading: true })
         this.updateScreen()
       }
     )
+  }
+
+  componentWillUnmount () {
+    this.willFocusSubscription.remove()
   }
 
   updateScreen () {

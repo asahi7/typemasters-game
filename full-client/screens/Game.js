@@ -21,8 +21,6 @@ import GameEndModal from '../components/GameEndModal'
 
 const env = process.env.REACT_NATIVE_ENV || 'dev'
 
-console.log(env)
-
 let socket
 
 export default class Game extends React.Component {
