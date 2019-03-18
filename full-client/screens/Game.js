@@ -20,6 +20,9 @@ import GameTextInput from '../components/GameTextInput'
 import GameEndModal from '../components/GameEndModal'
 import DropdownAlert from 'react-native-dropdownalert'
 
+import enOff from '../offline_texts/en'
+import kzOff from '../offline_texts/kz'
+
 const env = process.env.REACT_NATIVE_ENV || 'dev'
 
 let socket
@@ -55,6 +58,9 @@ export default class Game extends React.Component {
 
     this.handleConnectivityChange = this.handleConnectivityChange.bind(this)
     this.updateTextLanguageState = this.updateTextLanguageState.bind(this)
+    this.countCpm = this.countCpm.bind(this)
+    this.setOfflineGameData = this.setOfflineGameData.bind(this)
+    this.handlePlayGamePressedOffline = this.handlePlayGamePressedOffline.bind(this)
   }
 
   async componentDidMount () {
@@ -90,8 +96,7 @@ export default class Game extends React.Component {
     } else {
       this.online = false
       this.dropdown.alertWithType('warn', 'Warning', 'No internet connection')
-      if (this.state.gamePlaying) {
-        // TODO(aibek): the result is still saved on the server side
+      if (this.state.gamePlaying && !this.state.offlineMode) {
         this.dicsonnectPlayer()
       }
     }
@@ -136,14 +141,77 @@ export default class Game extends React.Component {
    * If it is on, the player gets disconnected, otherwise a new game is started.
    * */
   playButtonPressed () {
-    if (this.state.gamePlaying === true) {
+    if (this.state.gamePlaying && this.state.offlineMode) {
+      this.cleanGameData()
+      return
+    } else if (this.state.gamePlaying) {
       this.dicsonnectPlayer()
+      return
+    }
+    if (this.online === false) {
+      this.updateTextLanguageState().then(() => {
+        this.handlePlayGamePressedOffline()
+      })
     } else {
-      // TODO(aibek): will act as a promise?
       this.updateTextLanguageState().then(() => {
         this.handlePlayGamePressed()
       })
     }
+  }
+
+  handlePlayGamePressedOffline () {
+    console.log('Game started in offline mode ' + this.state.textLanguage)
+    let data = null
+    if (this.state.textLanguage === 'en') {
+      data = enOff.data
+    } else if (this.state.textLanguage === 'kz') {
+      data = kzOff.data
+    }
+    if (!data) {
+      this.dropdown.alertWithType('warn', 'Warning', 'No texts with desired language are present')
+      this.setState({ gamePlaying: false })
+      return
+    }
+    const text = data[_.random(_.size(data) - 1)]
+    if (!text) {
+      this.dropdown.alertWithType('warn', 'Warning', 'No texts exists in selected language during offline mode')
+      this.setState({ gamePlaying: false })
+    } else {
+      const textArray = text.text.split(' ')
+      this.setState({
+        gamePlaying: true,
+        textArray,
+        text: text.text,
+        wordIndex: 0,
+        uuid: data.room,
+        numOfPlayers: 1,
+        chars: 0,
+        startTime: Date.now(),
+        endTime: text.duration * 1000 + Date.now(),
+        offlineMode: true
+      }, () => {
+        const timer = setTimeout(this.cleanGameData, text.duration * 1000)
+        const intervalId = setInterval(this.setOfflineGameData, 500)
+        this.setState({
+          intervalId,
+          timer
+        })
+      })
+    }
+  }
+
+  setOfflineGameData () {
+    this.setState({
+      timeLeft: (this.state.endTime - Date.now()) / 1000,
+      cpm: this.countCpm(this.state.chars),
+      position: 1
+    })
+  }
+
+  countCpm (chars) {
+    const interval = Date.now() - this.state.startTime
+    const intervalMinutes = interval / (1000 * 60)
+    return Math.round(chars / intervalMinutes)
   }
 
   /**
@@ -152,7 +220,7 @@ export default class Game extends React.Component {
    */
   handlePlayGamePressed () {
     const { currentUser } = firebase.auth()
-    this.setState({ gamePlaying: true })
+    this.setState({ gamePlaying: true, offlineMode: false })
     if (currentUser) {
       this.setState({ authenticated: true })
       currentUser.getIdToken(true).then((idToken) => {
@@ -265,11 +333,16 @@ export default class Game extends React.Component {
   }
 
   cleanGameData () {
+    if (this.state.offlineMode) {
+      clearTimeout(this.state.timer)
+    }
     this.setState({
       gamePlaying: false,
       chars: 0
     })
-    clearInterval(this.state.intervalId)
+    if (this.state.intervalId) {
+      clearInterval(this.state.intervalId)
+    }
   }
 
   gameInputHandler (chars, text) {
@@ -371,7 +444,8 @@ const styles = StyleSheet.create({
   raceTextView: {
     flex: 3,
     flexDirection: 'column',
-    padding: 10
+    padding: 10,
+    paddingBottom: 30
   },
   raceText: {
     fontSize: 20
