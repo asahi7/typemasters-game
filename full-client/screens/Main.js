@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, NetInfo, AsyncStorage } from 'react-native'
 import { LinearGradient } from 'expo'
 import globalStyles from '../styles'
 import Commons from '../Commons'
@@ -7,27 +7,55 @@ import WebAPI from '../WebAPI'
 import Loading from './Loading'
 import moment from 'moment'
 import firebase from 'firebase'
+import DropdownAlert from 'react-native-dropdownalert'
 
 export default class Main extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      gamesPlayedCnt: null,
-      lastGames: [],
-      gamesPlayedCntUser: null,
+      data: {
+        gamesPlayedCnt: null,
+        lastGames: [],
+        gamesPlayedCntUser: null
+      },
       loading: true,
       authenticated: null
     }
     this.handlePlayPressed = this.handlePlayPressed.bind(this)
     this.updateScreen = this.updateScreen.bind(this)
+    this.getPersistentDataOffline = this.getPersistentDataOffline.bind(this)
+    this.handleConnectivityChange = this.handleConnectivityChange.bind(this)
+    this.getApiDataOnline = this.getApiDataOnline.bind(this)
+    this.updateTextLanguageState = this.updateTextLanguageState.bind(this)
   }
 
   async componentDidMount () {
-    await this.updateScreen()
+    await this.updateTextLanguageState()
+    NetInfo.isConnected.fetch().then(isConnected => {
+      console.log('User is ' + (isConnected ? 'online' : 'offline'))
+      if (!isConnected) {
+        this.online = false
+        this.getPersistentDataOffline().then(() => {
+          this.setState({
+            loading: false
+          })
+        })
+      } else {
+        this.online = true
+        this.getApiDataOnline().then(() => {
+          this.setState({
+            loading: false
+          })
+        })
+      }
+    })
+    NetInfo.isConnected.addEventListener(
+      'connectionChange',
+      this.handleConnectivityChange
+    )
     this.willFocusSubscription = this.props.navigation.addListener(
       'willFocus',
       () => {
-        this.setState({ loading: true })
         this.updateScreen()
       }
     )
@@ -35,9 +63,44 @@ export default class Main extends React.Component {
 
   componentWillUnmount () {
     this.willFocusSubscription.remove()
+    NetInfo.isConnected.removeEventListener(
+      'connectionChange',
+      this.handleConnectivityChange
+    )
   }
 
-  updateScreen () {
+  async updateScreen () {
+    console.log('update screen!')
+    await this.updateTextLanguageState()
+    this.setState({ errorMessage: null })
+    if (this.online) {
+      this.getApiDataOnline()
+    } else {
+      this.getPersistentDataOffline()
+    }
+  }
+
+  getPersistentDataOffline () {
+    return AsyncStorage.getItem('main-data').then((value) => {
+      if (!value) {
+        this.setState({
+          data: {
+            gamesPlayedCnt: null,
+            lastGames: [],
+            gamesPlayedCntUser: null
+          }
+        })
+      } else {
+        const data = JSON.parse(value)
+        this.setState({
+          data
+        })
+      }
+    })
+  }
+
+  getApiDataOnline () {
+    let data = {}
     const user = firebase.auth().currentUser
     if (user) {
       return Promise.all([
@@ -45,12 +108,17 @@ export default class Main extends React.Component {
         WebAPI.getLastPlayedGames(),
         WebAPI.countUserPlayedToday(user.uid)
       ]).then((results) => {
-        this.setState({
+        data = {
           gamesPlayedCnt: results[0].result,
           lastGames: results[1].result,
-          gamesPlayedCntUser: results[2].result,
-          loading: false,
-          authenticated: true
+          gamesPlayedCntUser: results[2].result
+        }
+      }).then(() => {
+        return AsyncStorage.setItem('main-data', JSON.stringify(data)).then(() => {
+          this.setState({
+            data,
+            authenticated: true
+          })
         })
       }).catch((error) => {
         console.log(error)
@@ -60,15 +128,46 @@ export default class Main extends React.Component {
         WebAPI.countGamesPlayedToday(),
         WebAPI.getLastPlayedGames()
       ]).then((results) => {
-        this.setState({
+        data = {
           gamesPlayedCnt: results[0].result,
           lastGames: results[1].result,
-          gamesPlayedCntUser: 0,
-          loading: false,
-          authenticated: false
+          gamesPlayedCntUser: 0
+        }
+      }).then(() => {
+        return AsyncStorage.setItem('main-data', JSON.stringify(data)).then(() => {
+          this.setState({
+            data,
+            authenticated: false
+          })
         })
       }).catch((error) => {
         console.log(error)
+      })
+    }
+  }
+
+  handleConnectivityChange (isConnected) {
+    if (isConnected) {
+      this.online = true
+      this.dropdown.alertWithType('success', 'Success', 'Back online')
+      this.getApiDataOnline()
+    } else {
+      this.online = false
+      this.dropdown.alertWithType('warn', 'Warning', 'No internet connection')
+    }
+  }
+
+  async updateTextLanguageState () {
+    const textLanguage = await AsyncStorage.getItem('textLanguage')
+    console.log('lang ' + textLanguage)
+    if (!textLanguage) {
+      this.setState({
+        textLanguage: 'en'
+      })
+      await AsyncStorage.setItem('textLanguage', 'en')
+    } else {
+      this.setState({
+        textLanguage: textLanguage.toLowerCase()
       })
     }
   }
@@ -86,20 +185,21 @@ export default class Main extends React.Component {
               Compete With Others And Increase Your Typing Speed!
           </Text>
         </View>
-        <ScrollView style={{ marginTop: 10, marginBottom: 10 }}>
+        {!this.state.data && <View><Text style={globalStyles.tableHeader}>No data available, check your internet connection</Text></View>}
+        {this.state.data && <ScrollView style={{ marginTop: 10, marginBottom: 10 }}>
           {this.state.authenticated &&
           <View style={{ marginTop: 10 }}>
-            <Text style={globalStyles.tableHeader}>Your Played Games Today: {this.state.gamesPlayedCntUser}</Text>
+            <Text style={globalStyles.tableHeader}>Your Played Games Today: {this.state.data.gamesPlayedCntUser}</Text>
           </View>
           }
           <View style={{ marginTop: 10 }}>
-            <Text style={globalStyles.tableHeader}>Total Played Games Today: {this.state.gamesPlayedCnt}</Text>
+            <Text style={globalStyles.tableHeader}>Total Played Games Today: {this.state.data.gamesPlayedCnt}</Text>
           </View>
           {/* TODO(aibek): fill out last played games from API */}
           <View style={{ marginTop: 20 }}>
             <Text style={globalStyles.tableHeader}>Last Games Today</Text>
             {
-              this.state.lastGames.map((result, i) => {
+              this.state.data.lastGames.map((result, i) => {
                 return (
                   <View style={globalStyles.row} key={i}>
                     <Text style={globalStyles.column}>{result.user.nickname}</Text>
@@ -123,7 +223,8 @@ export default class Main extends React.Component {
             <Text style={[globalStyles.normalText, { color: 'red' }]}>*Sign in to save your progress.</Text>
           </View>
           }
-        </ScrollView>
+        </ScrollView>}
+        <DropdownAlert ref={(ref) => { this.dropdown = ref }} />
       </LinearGradient>
     )
   }
