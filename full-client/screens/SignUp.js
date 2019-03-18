@@ -1,10 +1,11 @@
 import React from 'react'
-import { StyleSheet, Text, TextInput, Button, View } from 'react-native'
+import { StyleSheet, Text, TextInput, Button, View, NetInfo } from 'react-native'
 import firebase from 'firebase'
 import { LinearGradient } from 'expo'
 import WebAPI from '../WebAPI'
 import Commons from '../Commons'
 import globalStyles from '../styles'
+import DropdownAlert from 'react-native-dropdownalert'
 
 export default class SignUp extends React.Component {
   constructor (props) {
@@ -15,17 +16,54 @@ export default class SignUp extends React.Component {
       errorMessage: null
     }
     this.handleSignUp = this.handleSignUp.bind(this)
+    this.handleConnectivityChange = this.handleConnectivityChange.bind(this)
+  }
+
+  async componentDidMount () {
+    NetInfo.isConnected.fetch().then(isConnected => {
+      console.log('User is ' + (isConnected ? 'online' : 'offline'))
+      if (!isConnected) {
+        this.online = false
+      } else {
+        this.online = true
+      }
+    })
+    NetInfo.isConnected.addEventListener(
+      'connectionChange',
+      this.handleConnectivityChange
+    )
+  }
+
+  componentWillUnmount () {
+    NetInfo.isConnected.removeEventListener(
+      'connectionChange',
+      this.handleConnectivityChange
+    )
+  }
+
+  handleConnectivityChange (isConnected) {
+    if (isConnected) {
+      this.online = true
+      this.dropdown.alertWithType('success', 'Success', 'Back online')
+    } else {
+      this.online = false
+      this.dropdown.alertWithType('warn', 'Warning', 'No internet connection')
+    }
   }
 
   handleSignUp () {
-    firebase
-      .auth()
-      .createUserWithEmailAndPassword(this.state.email, this.state.password)
-      .then((authInfo) => {
-        return WebAPI.createUserIfNotExists(authInfo.user.email, authInfo.user.uid)
-      })
-      .then(() => this.props.navigation.navigate('PersonalPage'))
-      .catch(error => this.setState({ errorMessage: error.message }))
+    if (this.online) {
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(this.state.email, this.state.password)
+        .then((authInfo) => {
+          return WebAPI.createUserIfNotExists(authInfo.user.email, authInfo.user.uid)
+        })
+        .then(() => this.props.navigation.navigate('PersonalPage'))
+        .catch(error => this.setState({ errorMessage: error.message }))
+    } else {
+      this.dropdown.alertWithType('warn', 'Warning', 'No internet connection. Please try later')
+    }
   }
 
   render () {
@@ -65,6 +103,7 @@ export default class SignUp extends React.Component {
             color={Commons.buttonColor}
           />
         </View>
+        <DropdownAlert ref={(ref) => { this.dropdown = ref }} />
       </LinearGradient>
     )
   }

@@ -71,7 +71,7 @@ export default class Settings extends React.Component {
         })
       } else {
         this.online = true
-        this.getApiDataOnline(firebase.auth().currentUser).then(() => {
+        this.getApiDataOnline().then(() => {
           this.setState({
             loading: false
           })
@@ -146,6 +146,9 @@ export default class Settings extends React.Component {
     } else {
       this.setState({
         authenticated: false
+      })
+      return new Promise((resolve, reject) => {
+        resolve()
       })
     }
   }
