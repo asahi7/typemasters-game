@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
   BackHandler,
-  AsyncStorage
+  AsyncStorage, NetInfo
 } from 'react-native'
 import firebase from 'firebase'
 import io from 'socket.io-client'
@@ -18,6 +18,7 @@ import Commons from '../Commons'
 import globalStyles from '../styles'
 import GameTextInput from '../components/GameTextInput'
 import GameEndModal from '../components/GameEndModal'
+import DropdownAlert from 'react-native-dropdownalert'
 
 const env = process.env.REACT_NATIVE_ENV || 'dev'
 
@@ -51,26 +52,64 @@ export default class Game extends React.Component {
     this.setModalVisible = this.setModalVisible.bind(this)
     this.gameInputHandler = this.gameInputHandler.bind(this)
     this.accuracyHandler = this.accuracyHandler.bind(this)
+
+    this.handleConnectivityChange = this.handleConnectivityChange.bind(this)
+    this.updateTextLanguageState = this.updateTextLanguageState.bind(this)
   }
 
-  componentDidMount () {
+  async componentDidMount () {
     BackHandler.addEventListener('hardwareBackPress', () => { this.dicsonnectPlayer() })
-    AsyncStorage.getItem('textLanguage').then((value) => {
-      if (!value) {
-        this.setState({
-          language: 'en'
-        })
+    await this.updateTextLanguageState()
+    NetInfo.isConnected.fetch().then(isConnected => {
+      console.log('User is ' + (isConnected ? 'online' : 'offline'))
+      if (!isConnected) {
+        this.online = false
       } else {
-        this.setState({
-          language: value.toLowerCase()
-        })
+        this.online = true
       }
     })
+    NetInfo.isConnected.addEventListener(
+      'connectionChange',
+      this.handleConnectivityChange
+    )
   }
 
   componentWillUnmount () {
     this.dicsonnectPlayer()
     BackHandler.removeEventListener('hardwareBackPress', () => { this.dicsonnectPlayer() })
+    NetInfo.isConnected.removeEventListener(
+      'connectionChange',
+      this.handleConnectivityChange
+    )
+  }
+
+  handleConnectivityChange (isConnected) {
+    if (isConnected) {
+      this.online = true
+      this.dropdown.alertWithType('success', 'Success', 'Back online')
+    } else {
+      this.online = false
+      this.dropdown.alertWithType('warn', 'Warning', 'No internet connection')
+      if (this.state.gamePlaying) {
+        // TODO(aibek): the result is still saved on the server side
+        this.dicsonnectPlayer()
+      }
+    }
+  }
+
+  async updateTextLanguageState () {
+    const textLanguage = await AsyncStorage.getItem('textLanguage')
+    console.log('lang ' + textLanguage)
+    if (!textLanguage) {
+      this.setState({
+        textLanguage: 'en'
+      })
+      await AsyncStorage.setItem('textLanguage', 'en')
+    } else {
+      this.setState({
+        textLanguage: textLanguage.toLowerCase()
+      })
+    }
   }
 
   /**
@@ -100,17 +139,8 @@ export default class Game extends React.Component {
     if (this.state.gamePlaying === true) {
       this.dicsonnectPlayer()
     } else {
-      AsyncStorage.getItem('textLanguage').then((value) => {
-        if (!value) {
-          this.setState({
-            language: 'en'
-          })
-        } else {
-          this.setState({
-            language: value.toLowerCase()
-          })
-        }
-      }).then(() => {
+      // TODO(aibek): will act as a promise?
+      this.updateTextLanguageState().then(() => {
         this.handlePlayGamePressed()
       })
     }
@@ -140,13 +170,13 @@ export default class Game extends React.Component {
 
   setSocketBehavior (idToken) {
     // TODO(aibek): study about reconnect behavior
-    socket = io.connect(Config[env].GAME_SERVER_API, { reconnect: false })
+    socket = io.connect(Config[env].GAME_SERVER_API, { reconnection: false })
     socket.on('connect', () => {
       socket.emit('authentication', { token: idToken })
       socket.on('authenticated', () => {
         console.log('Asking for a new game..')
         console.log(socket.id)
-        socket.emit('newgame', { language: this.state.language })
+        socket.emit('newgame', { language: this.state.textLanguage })
         this.setState({
           text: 'Loading..',
           socketId: socket.id
@@ -302,6 +332,7 @@ export default class Game extends React.Component {
           }} style={{ marginBottom: 20 }}>
           <Text>Show Modal</Text>
         </TouchableHighlight>
+        <DropdownAlert ref={(ref) => { this.dropdown = ref }} />
       </LinearGradient>
     )
   }

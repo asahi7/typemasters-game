@@ -140,7 +140,17 @@ io.on('connection', function (socket) {
     }
   })
 
-  socket.on('disconnect', function () {
+  socket.on('disconnect', function (reason) {
+    console.log('disconnected because: ' + reason)
+    if (reason === 'transport error' || reason === 'ping timeout') {
+      const room = _.find(startedGames, (room) => {
+        return room.containsPlayer(socket._serverData.uid)
+      })
+      if (room) {
+        console.log('Player is being removed: ' + socket.id + ' from room:' + room.uuid)
+        room.setPlayerDisconnected(socket.id)
+      }
+    }
     console.log('Player disconnected: ' + socket.id)
   })
 })
