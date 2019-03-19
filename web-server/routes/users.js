@@ -71,7 +71,7 @@ const countryList = ['Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', '
   'Uzbekistan', 'Venezuela', 'Vietnam', 'Virgin Islands (US)', 'Yemen', 'Zambia', 'Zimbabwe']
 
 router.post('/saveCountry', [
-  query('country').isAlphanumeric().isLength({ min: 3 })
+  query('country').isAscii().isLength({ min: 3 })
 ], async (req, res) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {

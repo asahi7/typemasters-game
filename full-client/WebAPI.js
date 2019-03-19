@@ -6,9 +6,13 @@ console.log(env)
 
 function parseJSON (response) {
   if (response.status >= 400) {
-    return response.json().then((error) => {
-      console.log(error)
-      throw new Error(error.message)
+    console.log(JSON.stringify(response))
+
+    return response.json().then((res) => {
+      console.log(res)
+      let error = new Error(response.status)
+      error.err = res
+      throw error
     })
   }
   const contentType = response.headers.get('Content-Type')

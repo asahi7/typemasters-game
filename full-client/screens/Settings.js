@@ -180,6 +180,7 @@ export default class Settings extends React.Component {
   }
 
   saveSettings () {
+    this.setState({ errorMessage: null })
     AsyncStorage.setItem('textLanguage', this.state.textLanguage)
     if (this.online) {
       if (this.state.authenticated) {
@@ -192,16 +193,14 @@ export default class Settings extends React.Component {
                 nickname: nicknameInput
               }
             })
-          }).catch(err => {
-            console.log(err.message)
-            this.setState({ errorMessage: err.message })
+          }).catch((error) => {
+            this.setState({ errorMessage: error.err.errors[0].msg + ' in ' + error.err.errors[0].param })
           })
         }
         // TODO(aibek): might be unnecessary call when no change happens
         if (this.state.userData.country !== 'Select') {
-          WebAPI.saveCountry(this.state.userData.country).catch(err => {
-            console.log(err.message)
-            this.setState({ errorMessage: err.message })
+          WebAPI.saveCountry(this.state.userData.country).catch(error => {
+            this.setState({ errorMessage: error.err.errors[0].msg + ' in ' + error.err.errors[0].param })
           })
         }
         this.setState({ nicknameInput: '' })
