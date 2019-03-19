@@ -20,8 +20,7 @@ import GameTextInput from '../components/GameTextInput'
 import GameEndModal from '../components/GameEndModal'
 import DropdownAlert from 'react-native-dropdownalert'
 
-import enOff from '../offline_texts/en'
-import kzOff from '../offline_texts/kz'
+import * as offlineTexts from '../offline_texts'
 
 const env = process.env.REACT_NATIVE_ENV || 'dev'
 
@@ -161,12 +160,7 @@ export default class Game extends React.Component {
 
   handlePlayGamePressedOffline () {
     console.log('Game started in offline mode ' + this.state.textLanguage)
-    let data = null
-    if (this.state.textLanguage === 'en') {
-      data = enOff.data
-    } else if (this.state.textLanguage === 'kz') {
-      data = kzOff.data
-    }
+    const data = _.get(offlineTexts[this.state.textLanguage], 'data')
     if (!data) {
       this.dropdown.alertWithType('warn', 'Warning', 'No texts with desired language are present')
       this.setState({ gamePlaying: false })
