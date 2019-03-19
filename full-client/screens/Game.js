@@ -60,6 +60,7 @@ export default class Game extends React.Component {
     this.countCpm = this.countCpm.bind(this)
     this.setOfflineGameData = this.setOfflineGameData.bind(this)
     this.handlePlayGamePressedOffline = this.handlePlayGamePressedOffline.bind(this)
+    this.finishOfflineGame = this.finishOfflineGame.bind(this)
   }
 
   async componentDidMount () {
@@ -149,6 +150,7 @@ export default class Game extends React.Component {
     }
     if (this.online === false) {
       this.updateTextLanguageState().then(() => {
+        this.dropdown.alertWithType('info', 'Info', 'Playing in offline mode')
         this.handlePlayGamePressedOffline()
       })
     } else {
@@ -182,9 +184,10 @@ export default class Game extends React.Component {
         chars: 0,
         startTime: Date.now(),
         endTime: text.duration * 1000 + Date.now(),
-        offlineMode: true
+        offlineMode: true,
+        totalChars: text.text.replace(/\s/g, '').length
       }, () => {
-        const timer = setTimeout(this.cleanGameData, text.duration * 1000)
+        const timer = setTimeout(this.finishOfflineGame, text.duration * 1000)
         const intervalId = setInterval(this.setOfflineGameData, 500)
         this.setState({
           intervalId,
@@ -194,12 +197,30 @@ export default class Game extends React.Component {
     }
   }
 
+  finishOfflineGame () {
+    const isWinner = this.state.chars === this.state.totalChars
+    if (isWinner) {
+      this.setState({
+        modalText: 'You are the winner!'
+      })
+    } else {
+      this.setState({
+        modalText: 'Time is up!'
+      })
+    }
+    this.setModalVisible(true)
+    this.cleanGameData()
+  }
+
   setOfflineGameData () {
     this.setState({
       timeLeft: (this.state.endTime - Date.now()) / 1000,
       cpm: this.countCpm(this.state.chars),
       position: 1
     })
+    if (this.state.chars === this.state.totalChars) {
+      this.finishOfflineGame()
+    }
   }
 
   countCpm (chars) {
@@ -336,6 +357,9 @@ export default class Game extends React.Component {
     })
     if (this.state.intervalId) {
       clearInterval(this.state.intervalId)
+    }
+    if (this.state.timer) {
+      clearTimeout(this.state.timer)
     }
   }
 
