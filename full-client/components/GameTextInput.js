@@ -44,6 +44,9 @@ export default class GameTextInput extends React.Component {
 
   // References https://github.com/facebook/react-native/issues/20119#issuecomment-421994973
   handleUserInput (input) {
+    if (!this.props.textArray || _.isEmpty(this.props.textArray)) {
+      return
+    }
     const word = this.props.textArray[this.wordIndex]
     if (!this.lastInputBackspace) {
       this.totalInputChars = this.totalInputChars + 1
