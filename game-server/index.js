@@ -158,12 +158,19 @@ io.on('connection', function (socket) {
 async function createNewRoom (socket, data) {
   const room = new Room()
   console.log('Socket: ' + socket.id + ' created room: ' + room.uuid)
-  const text = await models.Text.findOne({
+  let text = await models.Text.findOne({
     where: { language: data.language },
     order: [
       models.sequelize.fn('RAND')
     ]
   })
+  if (!text) {
+    text = {
+      text: ':( We are sorry! No text was found. Please, contact our developers team.',
+      duration: 30,
+      id: -1
+    }
+  }
   room.language = data.language
   room.text = text.text
   room.computeChars()
@@ -221,25 +228,28 @@ function playGame (room) {
     console.log('Game ended for room: ' + room.uuid)
     sendGameData(room, 'gameended')
     delete startedGames[room.uuid]
-    models.sequelize.transaction((t) => {
-      return models.Race.create({ textId: room.textId }, { transaction: t }).then((race) => {
-        const playerPromises = []
-        _.forEach(room.players, (player, key) => {
-          if ((!player.disconnected || player.isWinner) && player.socket._serverData.uid !== -1) {
-            playerPromises.push(models.RacePlayer.create({
-              userUid: player.socket._serverData.uid,
-              raceId: race.id,
-              cpm: player.cpm,
-              isWinner: player.isWinner,
-              position: player.position,
-              points: 0, // TODO(aibek): compute points for game
-              accuracy: player.accuracy
-            }, { transaction: t }))
-          }
+    // Means that the text was not present in DB, then do not save the game data
+    if (room.textId !== -1) {
+      models.sequelize.transaction((t) => {
+        return models.Race.create({ textId: room.textId }, { transaction: t }).then((race) => {
+          const playerPromises = []
+          _.forEach(room.players, (player, key) => {
+            if ((!player.disconnected || player.isWinner) && player.socket._serverData.uid !== -1) {
+              playerPromises.push(models.RacePlayer.create({
+                userUid: player.socket._serverData.uid,
+                raceId: race.id,
+                cpm: player.cpm,
+                isWinner: player.isWinner,
+                position: player.position,
+                points: 0, // TODO(aibek): compute points for game
+                accuracy: player.accuracy
+              }, { transaction: t }))
+            }
+          })
+          return Promise.all(playerPromises)
         })
-        return Promise.all(playerPromises)
       })
-    })
+    }
     room.removeRoomParticipants(io)
     room.closeSockets()
   } else {
