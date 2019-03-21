@@ -12,6 +12,7 @@ import About from './screens/About'
 import AuthLoading from './screens/AuthLoading'
 import PersonalCharts from './screens/PersonalCharts'
 import EmailVerificationPage from './screens/EmailVerificationPage'
+import ForgotPassword from './screens/ForgotPassword'
 
 const MainStack = createStackNavigator({
   Main: {
@@ -58,6 +59,12 @@ const AuthStack = createStackNavigator({
   },
   EmailVerificationPage: {
     screen: EmailVerificationPage,
+    navigationOptions: ({ navigation }) => ({
+      header: null
+    })
+  },
+  ForgotPassword: {
+    screen: ForgotPassword,
     navigationOptions: ({ navigation }) => ({
       header: null
     })

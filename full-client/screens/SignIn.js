@@ -116,6 +116,13 @@ export default class SignIn extends React.Component {
             color={Commons.buttonColor}
           />
         </View>
+        <View style={globalStyles.normalButton}>
+          <Button
+            onPress={() => this.props.navigation.navigate('ForgotPassword')}
+            title='Forgot password?'
+            color={Commons.buttonColor}
+          />
+        </View>
         <DropdownAlert ref={(ref) => { this.dropdown = ref }} />
       </LinearGradient>
     )
