@@ -11,6 +11,7 @@ import Settings from './screens/Settings'
 import About from './screens/About'
 import AuthLoading from './screens/AuthLoading'
 import PersonalCharts from './screens/PersonalCharts'
+import EmailVerificationPage from './screens/EmailVerificationPage'
 
 const MainStack = createStackNavigator({
   Main: {
@@ -51,6 +52,12 @@ const AuthStack = createStackNavigator({
   },
   SignIn: {
     screen: SignIn,
+    navigationOptions: ({ navigation }) => ({
+      header: null
+    })
+  },
+  EmailVerificationPage: {
+    screen: EmailVerificationPage,
     navigationOptions: ({ navigation }) => ({
       header: null
     })

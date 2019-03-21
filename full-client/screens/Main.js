@@ -102,7 +102,7 @@ export default class Main extends React.Component {
   getApiDataOnline () {
     let data = {}
     const user = firebase.auth().currentUser
-    if (user) {
+    if (user && user.emailVerified) {
       return Promise.all([
         WebAPI.countGamesPlayedToday(),
         WebAPI.getLastPlayedGames(),

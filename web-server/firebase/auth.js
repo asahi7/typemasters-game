@@ -87,7 +87,15 @@ const firebaseAddUserMiddleware = async (req, res, next) => {
  * A method to create a user in a database using firebase middleware.
  */
 async function addUser (payload) {
-  await models.User.create({ uid: payload.uid, email: payload.email })
+  await models.User.findOrCreate({
+    where: {
+      email: payload.email
+    },
+    defaults: {
+      uid: payload.uid,
+      email: payload.email
+    }
+  })
 }
 
 module.exports = {

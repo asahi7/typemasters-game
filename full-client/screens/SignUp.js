@@ -2,7 +2,6 @@ import React from 'react'
 import { StyleSheet, Text, TextInput, Button, View, NetInfo } from 'react-native'
 import firebase from 'firebase'
 import { LinearGradient } from 'expo'
-import WebAPI from '../WebAPI'
 import Commons from '../Commons'
 import globalStyles from '../styles'
 import DropdownAlert from 'react-native-dropdownalert'
@@ -55,11 +54,9 @@ export default class SignUp extends React.Component {
     if (this.online) {
       firebase
         .auth()
-        .createUserWithEmailAndPassword(this.state.email, this.state.password)
-        .then((authInfo) => {
-          return WebAPI.createUserIfNotExists(authInfo.user.email, authInfo.user.uid)
+        .createUserWithEmailAndPassword(this.state.email, this.state.password).then((authObj) => {
+          authObj.user.sendEmailVerification()
         })
-        .then(() => this.props.navigation.navigate('PersonalPage'))
         .catch(error => this.setState({ errorMessage: error.message }))
     } else {
       this.dropdown.alertWithType('warn', 'Warning', 'No internet connection. Please try later')

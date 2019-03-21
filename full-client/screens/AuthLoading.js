@@ -2,6 +2,7 @@ import React from 'react'
 import { View, Text, ActivityIndicator, AsyncStorage } from 'react-native'
 import firebase from 'firebase'
 import globalStyles from '../styles'
+import WebAPI from '../WebAPI'
 
 export default class AuthLoading extends React.Component {
   constructor (props) {
@@ -17,7 +18,18 @@ export default class AuthLoading extends React.Component {
       if (!user) {
         AsyncStorage.clear()
       }
-      this.props.navigation.navigate(user ? 'PersonalPage' : 'Auth')
+      if (user && user.emailVerified) {
+        console.log('User is verified')
+        WebAPI.createUserIfNotExists(user.email, user.uid).then(() => {
+          this.props.navigation.navigate('PersonalPage')
+        })
+      } else if (user && !user.emailVerified) {
+        console.log('User is not verified redirecting to EmailVerificationPage')
+        this.props.navigation.navigate('EmailVerificationPage')
+      } else {
+        console.log('User is not present')
+        this.props.navigation.navigate('SignIn')
+      }
     })
   }
 

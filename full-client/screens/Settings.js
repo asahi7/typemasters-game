@@ -127,7 +127,7 @@ export default class Settings extends React.Component {
   getApiDataOnline () {
     let userData = {}
     const user = firebase.auth().currentUser
-    if (user) {
+    if (user && user.emailVerified) {
       return WebAPI.getUserInfo(user.uid).then((result) => {
         userData = {
           nickname: result.nickname,
@@ -239,68 +239,71 @@ export default class Settings extends React.Component {
             Settings
           </Text>
         </View>
-        {!this.state.userData && <View><Text style={globalStyles.tableHeader}>No data available, check your internet connection</Text></View>}
-        {this.state.userData && <ScrollView style={{ marginTop: 10, marginBottom: 10 }} keyboardShouldPersistTaps={'always'}>
-          {this.state.errorMessage &&
-          <Text style={{ color: 'red' }}>
-            {this.state.errorMessage}
-          </Text>
-          }
-          <View style={{ marginTop: 10 }}>
-            {this.state.authenticated &&
-            <View style={globalStyles.row}>
-              <Text style={globalStyles.column}>Your nickname:</Text>
-              <Text style={globalStyles.column}>{this.state.userData.nickname ? this.state.userData.nickname : 'Not specified'}</Text>
-            </View>
+        {!this.state.userData &&
+        <View><Text style={globalStyles.tableHeader}>No data available, check your internet connection</Text></View>}
+        <ScrollView style={{ marginTop: 10, marginBottom: 10 }} keyboardShouldPersistTaps={'always'}>
+          {this.state.userData && <View>
+            {this.state.errorMessage &&
+            <Text style={{ color: 'red' }}>
+              {this.state.errorMessage}
+            </Text>
             }
-            {this.state.authenticated &&
-            <View style={globalStyles.row}>
-              <Text style={globalStyles.column}>Change nickname:</Text>
-              <View style={globalStyles.column}>
-                <TextInput
-                  style={styles.textInput}
-                  autoCapitalize='none'
-                  placeholder='Your nickname'
-                  onChangeText={this.handleNicknameInput}
-                  value={this.state.nicknameInput}
-                />
+            <View style={{ marginTop: 10 }}>
+              {this.state.authenticated &&
+              <View style={globalStyles.row}>
+                <Text style={globalStyles.column}>Your nickname:</Text>
+                <Text
+                  style={globalStyles.column}>{this.state.userData.nickname ? this.state.userData.nickname : 'Not specified'}</Text>
               </View>
-            </View>
-            }
-            <View style={globalStyles.row}>
-              <Text style={globalStyles.column}>Typing language:</Text>
-              {this.state.textLanguage &&
-              <Picker selectedValue={this.state.textLanguage}
-                prompt='Select your preferred typing language'
-                style={[{ width: 150 }, styles.column]}
-                onValueChange={this.textLanguageSelected}>
-                <Picker.Item value='ar' label='Arabic' />
-                <Picker.Item value='en' label='English' />
-                <Picker.Item value='fr' label='French' />
-                <Picker.Item value='de' label='German' />
-                <Picker.Item value='kz' label='Kazakh' />
-                <Picker.Item value='ko' label='Korean' />
-                <Picker.Item value='pt' label='Portuguese' />
-                <Picker.Item value='ru' label='Russian' />
-                <Picker.Item value='es' label='Spanish' />
-                <Picker.Item value='tr' label='Turkish' />
-              </Picker>
+              }
+              {this.state.authenticated &&
+              <View style={globalStyles.row}>
+                <Text style={globalStyles.column}>Change nickname:</Text>
+                <View style={globalStyles.column}>
+                  <TextInput
+                    style={styles.textInput}
+                    autoCapitalize='none'
+                    placeholder='Your nickname'
+                    onChangeText={this.handleNicknameInput}
+                    value={this.state.nicknameInput}
+                  />
+                </View>
+              </View>
+              }
+              {this.state.authenticated &&
+              <View style={globalStyles.row}>
+                <Text style={globalStyles.column}>County:</Text>
+                <Picker selectedValue={this.state.userData.country ? this.state.userData.country : 'Select'}
+                  style={[{ width: 150 }, styles.column]}
+                  onValueChange={this.countrySelected}>
+                  {countryList.map((country) => {
+                    return <Picker.Item value={country} label={country} key={country} />
+                  })}
+                </Picker>
+              </View>
               }
             </View>
-            {this.state.authenticated &&
-            <View style={globalStyles.row}>
-              <Text style={globalStyles.column}>County:</Text>
-              <Picker selectedValue={this.state.userData.country ? this.state.userData.country : 'Select'}
-                style={[{ width: 150 }, styles.column]}
-                onValueChange={this.countrySelected}>
-                {countryList.map((country) => {
-                  return <Picker.Item value={country} label={country} key={country} />
-                })}
-              </Picker>
-            </View>
+          </View>}
+          <View style={globalStyles.row}>
+            <Text style={globalStyles.column}>Typing language:</Text>
+            {this.state.textLanguage &&
+            <Picker selectedValue={this.state.textLanguage}
+              prompt='Select your preferred typing language'
+              style={[{ width: 150 }, styles.column]}
+              onValueChange={this.textLanguageSelected}>
+              <Picker.Item value='ar' label='Arabic' />
+              <Picker.Item value='en' label='English' />
+              <Picker.Item value='fr' label='French' />
+              <Picker.Item value='de' label='German' />
+              <Picker.Item value='kz' label='Kazakh' />
+              <Picker.Item value='ko' label='Korean' />
+              <Picker.Item value='pt' label='Portuguese' />
+              <Picker.Item value='ru' label='Russian' />
+              <Picker.Item value='es' label='Spanish' />
+              <Picker.Item value='tr' label='Turkish' />
+            </Picker>
             }
           </View>
-
           <View style={globalStyles.normalButton}>
             <Button
               onPress={this.saveSettings}
@@ -308,7 +311,7 @@ export default class Settings extends React.Component {
               color={Commons.buttonColor}
             />
           </View>
-        </ScrollView>}
+        </ScrollView>
         <DropdownAlert ref={(ref) => { this.dropdown = ref }} />
       </LinearGradient>
     )

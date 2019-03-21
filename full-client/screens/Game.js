@@ -236,7 +236,7 @@ export default class Game extends React.Component {
   handlePlayGamePressed () {
     const { currentUser } = firebase.auth()
     this.setState({ gamePlaying: true, offlineMode: false })
-    if (currentUser) {
+    if (currentUser && currentUser.emailVerified) {
       this.setState({ authenticated: true })
       currentUser.getIdToken(true).then((idToken) => {
         this.setSocketBehavior(idToken)

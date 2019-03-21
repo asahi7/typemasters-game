@@ -57,11 +57,17 @@ export default class SignIn extends React.Component {
       firebase
         .auth()
         .signInWithEmailAndPassword(email, password)
-        .then((authInfo) => {
-          return WebAPI.createUserIfNotExists(authInfo.user.email, authInfo.user.uid)
-        })
-        .then(() => {
-          this.props.navigation.navigate('PersonalPage')
+        .then((authObj) => {
+          console.log('Signed in')
+          if (authObj.user && !authObj.user.emailVerified) {
+            this.props.navigation.navigate('EmailVerificationPage')
+          } else if (authObj.user) {
+            WebAPI.createUserIfNotExists(authObj.user.email, authObj.user.uid).then(() => {
+              this.props.navigation.navigate('PersonalPage')
+            }).catch(error => {
+              console.log(error)
+            })
+          }
         })
         .catch(error => this.setState({ errorMessage: error.message }))
     } else {
