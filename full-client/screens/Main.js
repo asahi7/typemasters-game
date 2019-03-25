@@ -1,6 +1,6 @@
 import React from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, NetInfo, AsyncStorage } from 'react-native'
-import { LinearGradient } from 'expo'
+import { LinearGradient, Localization } from 'expo'
 import globalStyles from '../styles'
 import Commons from '../Commons'
 import WebAPI from '../WebAPI'
@@ -8,6 +8,37 @@ import Loading from './Loading'
 import moment from 'moment'
 import firebase from 'firebase'
 import DropdownAlert from 'react-native-dropdownalert'
+import i18n from 'i18n-js'
+
+const en = {
+  header: 'Compete With Others And Increase Your Typing Speed!',
+  nodata: 'We are sorry, but it seems no data is available, check your internet connection',
+  yourgamescount: 'You Played Games Today',
+  totalgamescount: 'Total Played Games Today',
+  lastgames: 'Last Games Today',
+  chooselangtext: 'Choose your typing language and',
+  playbutton: 'PLAY',
+  signintosave: '*Sign in to save your progress.',
+  backonline: 'Back online',
+  nointernet: 'No internet connection'
+}
+const ru = {
+  header: 'Повысьте свою скорость печатания, соревнуясь с другими',
+  nodata: 'Извините, но необходимые данные не могут быть найдены, проверьте свое интернет подключение',
+  yourgamescount: 'Количестов игр за сегодня сыгранных вами',
+  totalgamescount: 'Количество всех игр за сегодня',
+  lastgames: 'Последние игры',
+  chooselangtext: 'Выберите подходящий язык для печатания и',
+  playbutton: 'ИГРАЙТЕ',
+  signintosave: '*Авторизуйтесь для сохранения вашего прогресса',
+  backonline: 'Снова онлайн',
+  nointernet: 'Проблема с подключением к сети интернета'
+}
+
+// TODO(aibek): check if async call is needed for Android in order to detect language change
+i18n.fallbacks = true
+i18n.translations = { en, ru, kk: ru }
+i18n.locale = Localization.locale
 
 export default class Main extends React.Component {
   constructor (props) {
@@ -149,11 +180,11 @@ export default class Main extends React.Component {
   handleConnectivityChange (isConnected) {
     if (isConnected) {
       this.online = true
-      this.dropdown.alertWithType('success', 'Success', 'Back online')
+      this.dropdown.alertWithType('success', 'Success', i18n.t('backonline'))
       this.getApiDataOnline()
     } else {
       this.online = false
-      this.dropdown.alertWithType('warn', 'Warning', 'No internet connection')
+      this.dropdown.alertWithType('warn', 'Warning', i18n.t('nointernet'))
     }
   }
 
@@ -182,22 +213,23 @@ export default class Main extends React.Component {
       <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
         <View style={{ marginTop: 30 }}>
           <Text style={globalStyles.header}>
-              Compete With Others And Increase Your Typing Speed!
+            {i18n.t('header')}
+
           </Text>
         </View>
-        {!this.state.data && <View><Text style={globalStyles.tableHeader}>No data available, check your internet connection</Text></View>}
+        {!this.state.data && <View><Text style={globalStyles.tableHeader}>{i18n.t('nodata')}</Text></View>}
         {this.state.data && <ScrollView style={{ marginTop: 10, marginBottom: 10 }}>
           {this.state.authenticated &&
           <View style={{ marginTop: 10 }}>
-            <Text style={globalStyles.tableHeader}>Your Played Games Today: {this.state.data.gamesPlayedCntUser}</Text>
+            <Text style={globalStyles.tableHeader}>{i18n.t('yourgamescount')}: {this.state.data.gamesPlayedCntUser}</Text>
           </View>
           }
           <View style={{ marginTop: 10 }}>
-            <Text style={globalStyles.tableHeader}>Total Played Games Today: {this.state.data.gamesPlayedCnt}</Text>
+            <Text style={globalStyles.tableHeader}>{i18n.t('totalgamescount')}: {this.state.data.gamesPlayedCnt}</Text>
           </View>
           {/* TODO(aibek): fill out last played games from API */}
           <View style={{ marginTop: 20 }}>
-            <Text style={globalStyles.tableHeader}>Last Games Today</Text>
+            <Text style={globalStyles.tableHeader}>{i18n.t('lastgames')}</Text>
             {
               this.state.data.lastGames.map((result, i) => {
                 return (
@@ -213,14 +245,14 @@ export default class Main extends React.Component {
           </View>
           {/* TODO(aibek): add link to settings for language */}
           <View style={{ marginTop: 20, alignItems: 'center' }}>
-            <Text style={globalStyles.normalText}>Choose your typing language and</Text>
+            <Text style={globalStyles.normalText}>{i18n.t('chooselangtext')}</Text>
             <TouchableOpacity style={styles.playButton} onPress={this.handlePlayPressed}>
-              <Text style={styles.playButtonText}>PLAY</Text>
+              <Text style={styles.playButtonText}>{i18n.t('playbutton')}</Text>
             </TouchableOpacity>
           </View>
           {!this.state.authenticated &&
           <View style={{ marginTop: 10 }}>
-            <Text style={[globalStyles.normalText, { color: 'red' }]}>*Sign in to save your progress.</Text>
+            <Text style={[globalStyles.normalText, { color: 'red' }]}>{i18n.t('signintosave')}</Text>
           </View>
           }
         </ScrollView>}
@@ -236,11 +268,13 @@ const styles = StyleSheet.create({
     borderColor: '#7f1717',
     alignItems: 'center',
     justifyContent: 'center',
-    width: 150,
+    minWidth: 150,
     height: 100,
     marginTop: 10,
     backgroundColor: '#ed4747',
-    borderRadius: 10
+    borderRadius: 10,
+    paddingLeft: 5,
+    paddingRight: 5
   },
   playButtonText: {
     color: '#fff',

@@ -200,6 +200,8 @@ export default class Settings extends React.Component {
         // TODO(aibek): might be unnecessary call when no change happens
         if (this.state.userData.country !== 'Select') {
           WebAPI.saveCountry(this.state.userData.country).catch(error => {
+            // TODO(aibek): bug with error's different signature
+            console.log(JSON.stringify(error))
             this.setState({ errorMessage: error.err.errors[0].msg + ' in ' + error.err.errors[0].param })
           })
         }
