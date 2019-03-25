@@ -150,11 +150,11 @@ export default class Main extends React.Component {
   handleConnectivityChange (isConnected) {
     if (isConnected) {
       this.online = true
-      this.dropdown.alertWithType('success', 'Success', i18n.t('common.backonline'))
+      this.dropdown.alertWithType('success', i18n.t('common.success'), i18n.t('common.backOnline'))
       this.getApiDataOnline()
     } else {
       this.online = false
-      this.dropdown.alertWithType('warn', 'Warning', i18n.t('common.nointernet'))
+      this.dropdown.alertWithType('warn', i18n.t('common.warn'), i18n.t('common.noInternet'))
     }
   }
 
@@ -187,19 +187,19 @@ export default class Main extends React.Component {
 
           </Text>
         </View>
-        {!this.state.data && <View><Text style={globalStyles.tableHeader}>{i18n.t('common.nodata')}</Text></View>}
+        {!this.state.data && <View><Text style={globalStyles.tableHeader}>{i18n.t('common.noData')}</Text></View>}
         {this.state.data && <ScrollView style={{ marginTop: 10, marginBottom: 10 }}>
           {this.state.authenticated &&
           <View style={{ marginTop: 10 }}>
-            <Text style={globalStyles.tableHeader}>{i18n.t('main.yourgamescount')}: {this.state.data.gamesPlayedCntUser}</Text>
+            <Text style={globalStyles.tableHeader}>{i18n.t('main.yourGamesCount')}: {this.state.data.gamesPlayedCntUser}</Text>
           </View>
           }
           <View style={{ marginTop: 10 }}>
-            <Text style={globalStyles.tableHeader}>{i18n.t('main.totalgamescount')}: {this.state.data.gamesPlayedCnt}</Text>
+            <Text style={globalStyles.tableHeader}>{i18n.t('main.totalGamesCount')}: {this.state.data.gamesPlayedCnt}</Text>
           </View>
           {/* TODO(aibek): fill out last played games from API */}
           <View style={{ marginTop: 20 }}>
-            <Text style={globalStyles.tableHeader}>{i18n.t('main.lastgames')}</Text>
+            <Text style={globalStyles.tableHeader}>{i18n.t('main.lastGames')}</Text>
             {
               this.state.data.lastGames.map((result, i) => {
                 return (
@@ -215,14 +215,14 @@ export default class Main extends React.Component {
           </View>
           {/* TODO(aibek): add link to settings for language */}
           <View style={{ marginTop: 20, alignItems: 'center' }}>
-            <Text style={globalStyles.normalText}>{i18n.t('main.chooselangtext')}</Text>
+            <Text style={globalStyles.normalText}>{i18n.t('main.chooseLangText')}</Text>
             <TouchableOpacity style={styles.playButton} onPress={this.handlePlayPressed}>
-              <Text style={styles.playButtonText}>{i18n.t('main.playbutton')}</Text>
+              <Text style={styles.playButtonText}>{i18n.t('main.playButton')}</Text>
             </TouchableOpacity>
           </View>
           {!this.state.authenticated &&
           <View style={{ marginTop: 10 }}>
-            <Text style={[globalStyles.normalText, { color: 'red' }]}>{i18n.t('main.signintosave')}</Text>
+            <Text style={[globalStyles.normalText, { color: 'red' }]}>{i18n.t('main.signInToSave')}</Text>
           </View>
           }
         </ScrollView>}

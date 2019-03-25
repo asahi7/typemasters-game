@@ -123,11 +123,11 @@ export default class Leaderboard extends React.Component {
   handleConnectivityChange (isConnected) {
     if (isConnected) {
       this.online = true
-      this.dropdown.alertWithType('success', 'Success', i18n.t('common.backonline'))
+      this.dropdown.alertWithType('success', i18n.t('common.success'), i18n.t('common.backOnline'))
       this.getApiDataOnline()
     } else {
       this.online = false
-      this.dropdown.alertWithType('warn', 'Warning', i18n.t('common.nointernet'))
+      this.dropdown.alertWithType('warn', i18n.t('common.warn'), i18n.t('common.noInternet'))
     }
   }
 
@@ -156,7 +156,7 @@ export default class Leaderboard extends React.Component {
         </View>
         <ScrollView style={{ marginTop: 10, marginBottom: 10 }}>
           <View style={{ marginTop: 10 }}>
-            <Text style={globalStyles.tableHeader}>{i18n.t('leaderboard.besttodaybycpm')}</Text>
+            <Text style={globalStyles.tableHeader}>{i18n.t('leaderboard.bestTodayByCpm')}</Text>
             {this.state.data.bestTodayResults.map((result, i) => {
               return (
                 <View style={globalStyles.row} key={i}>
@@ -168,7 +168,7 @@ export default class Leaderboard extends React.Component {
             })}
           </View>
           <View style={{ marginTop: 10 }}>
-            <Text style={globalStyles.tableHeader}>{i18n.t('leaderboard.besttodaybyavgcpm')}</Text>
+            <Text style={globalStyles.tableHeader}>{i18n.t('leaderboard.bestTodayByAvgCpm')}</Text>
             {this.state.data.bestAvgResults.map((result, i) => {
               return (
                 <View style={globalStyles.row} key={i}>
@@ -180,7 +180,7 @@ export default class Leaderboard extends React.Component {
             })}
           </View>
           <View style={{ marginTop: 10 }}>
-            <Text style={globalStyles.tableHeader}>{i18n.t('leaderboard.bestbycpm')}</Text>
+            <Text style={globalStyles.tableHeader}>{i18n.t('leaderboard.bestByCpm')}</Text>
             {this.state.data.bestResults.map((result, i) => {
               return (
                 <View style={globalStyles.row} key={i}>

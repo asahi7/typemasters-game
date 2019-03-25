@@ -8,6 +8,7 @@ import Commons from '../Commons'
 import globalStyles from '../styles'
 import moment from 'moment'
 import DropdownAlert from 'react-native-dropdownalert'
+import i18n from 'i18n-js'
 
 export default class PersonalPage extends React.Component {
   constructor (props) {
@@ -137,11 +138,11 @@ export default class PersonalPage extends React.Component {
   handleConnectivityChange (isConnected) {
     if (isConnected) {
       this.online = true
-      this.dropdown.alertWithType('success', 'Success', 'Back online')
+      this.dropdown.alertWithType('success', i18n.t('common.success'), i18n.t('common.backOnline'))
       this.getApiDataOnline(firebase.auth().currentUser)
     } else {
       this.online = false
-      this.dropdown.alertWithType('warn', 'Warning', 'No internet connection')
+      this.dropdown.alertWithType('warn', i18n.t('common.warn'), i18n.t('common.noInternet'))
     }
   }
 
@@ -167,7 +168,7 @@ export default class PersonalPage extends React.Component {
         console.log(error)
       })
     } else {
-      this.dropdown.alertWithType('error', 'Error', 'Can not sign out during offline mode')
+      this.dropdown.alertWithType('error', i18n.t('common.error'), i18n.t('personalPage.cantSignOutOffline'))
     }
   }
 
@@ -177,29 +178,29 @@ export default class PersonalPage extends React.Component {
       <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
         <View style={{ marginTop: 30 }}>
           <Text style={globalStyles.header}>
-            Personal Page
+            {i18n.t('personalPage.header')}
           </Text>
         </View>
-        {!this.state.userData && <View><Text style={globalStyles.tableHeader}>No data available, check your internet connection</Text></View>}
+        {!this.state.userData && <View><Text style={globalStyles.tableHeader}>{i18n.t('common.noData')}</Text></View>}
         {this.state.userData &&
         <ScrollView style={{ marginTop: 10, marginBottom: 10 }}>
           <View style={{ marginTop: 10 }}>
-            <Text style={globalStyles.tableHeader}>General</Text>
+            <Text style={globalStyles.tableHeader}>{i18n.t('personalPage.general')}:</Text>
             {this.state.userData.userInfo && this.state.userData.userInfo.nickname &&
             <View style={globalStyles.row}>
-              <Text style={globalStyles.column}>Nickname:</Text>
+              <Text style={globalStyles.column}>{i18n.t('personalPage.nickname')}:</Text>
               <Text style={globalStyles.column}>{this.state.userData.userInfo.nickname}</Text>
             </View>
             }
             {this.state.userData.userInfo && this.state.userData.userInfo.email &&
             <View style={globalStyles.row}>
-              <Text style={globalStyles.column}>Email:</Text>
+              <Text style={globalStyles.column}>{i18n.t('personalPage.email')}:</Text>
               <Text style={globalStyles.column}>{this.state.userData.userInfo.email}</Text>
             </View>
             }
             {this.state.userData.userInfo && this.state.userData.userInfo.country &&
             <View style={globalStyles.row}>
-              <Text style={globalStyles.column}>Country:</Text>
+              <Text style={globalStyles.column}>{i18n.t('personalPage.country')}:</Text>
               <Text style={globalStyles.column}>{this.state.userData.userInfo.country}</Text>
             </View>
             }
@@ -208,78 +209,77 @@ export default class PersonalPage extends React.Component {
               <Text style={globalStyles.column}>{this.state.userData.userInfo && this.state.userData.userInfo.uid}</Text>
             </View>
             <View style={globalStyles.row}>
-              <Text style={globalStyles.column}>Typing language:</Text>
+              <Text style={globalStyles.column}>{i18n.t('personalPage.typingLanguage')}:</Text>
               <Text style={globalStyles.column}>{this.state.textLanguage}</Text>
             </View>
             <View style={globalStyles.row}>
-              <Text style={globalStyles.column}>Total games:</Text>
+              <Text style={globalStyles.column}>{i18n.t('personalPage.totalGames')}:</Text>
               <Text style={globalStyles.column}>{this.state.userData.totalRaces}</Text>
             </View>
             <View style={globalStyles.row}>
-              <Text style={globalStyles.column}>Average cpm:</Text>
+              <Text style={globalStyles.column}>{i18n.t('personalPage.averageCpm')}:</Text>
               <Text style={globalStyles.column}>{this.state.userData.avgCpm} cpm</Text>
             </View>
             <View style={globalStyles.row}>
-              <Text style={globalStyles.column}>Average accuracy:</Text>
+              <Text style={globalStyles.column}>{i18n.t('personalPage.averageAccuracy')}:</Text>
               <Text style={globalStyles.column}>{this.state.userData.avgAccuracy}%</Text>
             </View>
             <View style={globalStyles.row}>
-              <Text style={globalStyles.column}>Average cpm (10 games):</Text>
+              <Text style={globalStyles.column}>{i18n.t('personalPage.averageCpm10')}:</Text>
               <Text style={globalStyles.column}>{this.state.userData.lastAvgCpm} cpm</Text>
             </View>
             <View style={globalStyles.row}>
-              <Text style={globalStyles.column}>Average accuracy (10 games):</Text>
+              <Text style={globalStyles.column}>{i18n.t('personalPage.averageAccuracy10')}:</Text>
               <Text style={globalStyles.column}>{this.state.userData.lastAvgAccuracy}%</Text>
             </View>
             <View style={globalStyles.row}>
-              <Text style={globalStyles.column}>Games won:</Text>
+              <Text style={globalStyles.column}>{i18n.t('personalPage.gamesWon')}:</Text>
               <Text style={globalStyles.column}>{this.state.userData.gamesWon}</Text>
             </View>
             <View style={globalStyles.row}>
-              <Text style={globalStyles.column}>Best result:</Text>
+              <Text style={globalStyles.column}>{i18n.t('personalPage.bestResult')}:</Text>
               <Text style={globalStyles.column}>{this.state.userData.bestResult} cpm</Text>
             </View>
             <View style={globalStyles.row}>
-              <Text style={globalStyles.column}>Last game:</Text>
+              <Text style={globalStyles.column}>{i18n.t('personalPage.lastGame')}:</Text>
               <Text style={globalStyles.column}>{moment(this.state.userData.lastPlayed).format('HH:mm, D MMMM, YYYY')}</Text>
             </View>
             <View style={globalStyles.row}>
-              <Text style={globalStyles.column}>Last game:</Text>
+              <Text style={globalStyles.column}>{i18n.t('personalPage.lastGame')}:</Text>
               <Text style={globalStyles.column}>{this.state.userData.lastScore} cpm</Text>
             </View>
             <View style={globalStyles.row}>
-              <Text style={globalStyles.column}>Accuracy of last game:</Text>
+              <Text style={globalStyles.column}>{i18n.t('personalPage.lastGameAccuracy')}:</Text>
               <Text style={globalStyles.column}>{this.state.userData.lastAccuracy}%</Text>
             </View>
             {this.state.userData.firstRaceData &&
             <View style={globalStyles.row}>
-              <Text style={globalStyles.column}>First game:</Text>
+              <Text style={globalStyles.column}>{i18n.t('personalPage.firstGame')}:</Text>
               <Text style={globalStyles.column}>{this.state.userData.firstRaceData.racePlayers[0].cpm} cpm</Text>
             </View>
             }
             {this.state.userData.firstRaceData &&
             <View style={globalStyles.row}>
-              <Text style={globalStyles.column}>First game:</Text>
+              <Text style={globalStyles.column}>{i18n.t('personalPage.firstGame')}:</Text>
               <Text
                 style={globalStyles.column}>{moment(this.state.userData.firstRaceData.date).format('HH:mm, D MMMM, YYYY')}</Text>
             </View>
             }
           </View>
           <View style={{ marginTop: 10 }}>
-            <Text style={[globalStyles.normalText, { color: 'red' }]}>*Data may not update instantly after the
-              race.</Text>
+            <Text style={[globalStyles.normalText, { color: 'red' }]}>{i18n.t('personalPage.dataMayNotUpdate')}</Text>
           </View>
           <View style={globalStyles.normalButton}>
             <Button
               onPress={() => this.props.navigation.navigate('PersonalCharts')}
-              title='Show charts'
+              title={i18n.t('personalPage.showCharts')}
               color='#841584'
             />
           </View>
           <View style={globalStyles.normalButton}>
             <Button
               onPress={this.handleSignOut}
-              title='Sign out'
+              title={i18n.t('personalPage.signOut')}
               color={Commons.buttonColor}
             />
           </View>
