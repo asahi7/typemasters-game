@@ -3,6 +3,7 @@ import { Text, View } from 'react-native'
 import { LinearGradient } from 'expo'
 import Commons from '../Commons'
 import globalStyles from '../styles'
+import i18n from 'i18n-js'
 
 export default class About extends React.Component {
   render () {
@@ -10,7 +11,7 @@ export default class About extends React.Component {
       <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
         <View style={{ marginTop: 30 }}>
           <Text style={globalStyles.header}>
-            About
+            {i18n.t('about.header')}
           </Text>
         </View>
       </LinearGradient>

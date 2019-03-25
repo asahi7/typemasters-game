@@ -60,6 +60,9 @@ const en = {
     selectTypingLanguage: 'Select your preferred typing language',
     save: 'Save',
     saveSettingsOffline: 'No internet connection. Typing laguage successfully updated'
+  },
+  about: {
+    header: 'About'
   }
 }
 const ru = {
@@ -119,6 +122,9 @@ const ru = {
     selectTypingLanguage: 'Выберите свой предпочитаемый язык печатания',
     save: 'Сохранить',
     saveSettingsOffline: 'Нет подключения к сети интернет. Язык печатания был обновлен'
+  },
+  about: {
+    header: 'О нас'
   }
 }
 
