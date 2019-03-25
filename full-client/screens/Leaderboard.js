@@ -7,6 +7,7 @@ import Commons from '../Commons'
 import globalStyles from '../styles'
 import moment from 'moment'
 import DropdownAlert from 'react-native-dropdownalert'
+import i18n from 'i18n-js'
 
 export default class Leaderboard extends React.Component {
   constructor (props) {
@@ -122,11 +123,11 @@ export default class Leaderboard extends React.Component {
   handleConnectivityChange (isConnected) {
     if (isConnected) {
       this.online = true
-      this.dropdown.alertWithType('success', 'Success', 'Back online')
+      this.dropdown.alertWithType('success', 'Success', i18n.t('common.backonline'))
       this.getApiDataOnline()
     } else {
       this.online = false
-      this.dropdown.alertWithType('warn', 'Warning', 'No internet connection')
+      this.dropdown.alertWithType('warn', 'Warning', i18n.t('common.nointernet'))
     }
   }
 
@@ -150,12 +151,12 @@ export default class Leaderboard extends React.Component {
       <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
         <View style={{ marginTop: 30 }}>
           <Text style={globalStyles.header}>
-            Leaderboard
+            {i18n.t('leaderboard.header')}
           </Text>
         </View>
         <ScrollView style={{ marginTop: 10, marginBottom: 10 }}>
           <View style={{ marginTop: 10 }}>
-            <Text style={globalStyles.tableHeader}>Best Today Results By CPM</Text>
+            <Text style={globalStyles.tableHeader}>{i18n.t('leaderboard.besttodaybycpm')}</Text>
             {this.state.data.bestTodayResults.map((result, i) => {
               return (
                 <View style={globalStyles.row} key={i}>
@@ -167,7 +168,7 @@ export default class Leaderboard extends React.Component {
             })}
           </View>
           <View style={{ marginTop: 10 }}>
-            <Text style={globalStyles.tableHeader}>Best Average Results By CPM</Text>
+            <Text style={globalStyles.tableHeader}>{i18n.t('leaderboard.besttodaybyavgcpm')}</Text>
             {this.state.data.bestAvgResults.map((result, i) => {
               return (
                 <View style={globalStyles.row} key={i}>
@@ -179,7 +180,7 @@ export default class Leaderboard extends React.Component {
             })}
           </View>
           <View style={{ marginTop: 10 }}>
-            <Text style={globalStyles.tableHeader}>Best Results By CPM</Text>
+            <Text style={globalStyles.tableHeader}>{i18n.t('leaderboard.bestbycpm')}</Text>
             {this.state.data.bestResults.map((result, i) => {
               return (
                 <View style={globalStyles.row} key={i}>
