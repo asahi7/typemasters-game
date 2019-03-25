@@ -18,6 +18,7 @@ import firebase from 'firebase'
 import Commons from '../Commons'
 import globalStyles from '../styles'
 import DropdownAlert from 'react-native-dropdownalert'
+import i18n from 'i18n-js'
 
 const countryList = ['Select', 'Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Anguilla', 'Antigua &amp; Barbuda', 'Argentina', 'Armenia', 'Aruba', 'Australia', 'Austria', 'Azerbaijan', 'Bahamas',
   'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Belize', 'Benin', 'Bermuda', 'Bhutan', 'Bolivia', 'Bosnia &amp; Herzegovina', 'Botswana', 'Brazil', 'British Virgin Islands',
@@ -156,11 +157,11 @@ export default class Settings extends React.Component {
   handleConnectivityChange (isConnected) {
     if (isConnected) {
       this.online = true
-      this.dropdown.alertWithType('success', 'Success', 'Back online')
+      this.dropdown.alertWithType('success', i18n.t('common.success'), i18n.t('common.backonline'))
       this.getApiDataOnline()
     } else {
       this.online = false
-      this.dropdown.alertWithType('warn', 'Warning', 'No internet connection')
+      this.dropdown.alertWithType('warn', i18n.t('common.warning'), i18n.t('common.nointernet'))
     }
   }
 
@@ -194,6 +195,7 @@ export default class Settings extends React.Component {
               }
             })
           }).catch((error) => {
+            // TODO(aibek): add i18n
             this.setState({ errorMessage: error.err.errors[0].msg + ' in ' + error.err.errors[0].param })
           })
         }
@@ -202,13 +204,14 @@ export default class Settings extends React.Component {
           WebAPI.saveCountry(this.state.userData.country).catch(error => {
             // TODO(aibek): bug with error's different signature
             console.log(JSON.stringify(error))
+            // TODO(aibek): add i18n
             this.setState({ errorMessage: error.err.errors[0].msg + ' in ' + error.err.errors[0].param })
           })
         }
         this.setState({ nicknameInput: '' })
       }
     } else {
-      this.dropdown.alertWithType('warn', 'Warning', 'No internet connection. Typing laguage successfully updated')
+      this.dropdown.alertWithType('warn', i18n.t('common.warning'), i18n.t('settings.saveSettingsOffline'))
     }
     Keyboard.dismiss()
   }
@@ -238,11 +241,11 @@ export default class Settings extends React.Component {
       <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
         <View style={{ marginTop: 30 }}>
           <Text style={globalStyles.header}>
-            Settings
+            {i18n.t('settings.header')}
           </Text>
         </View>
         {!this.state.userData &&
-        <View><Text style={globalStyles.tableHeader}>No data available, check your internet connection</Text></View>}
+        <View><Text style={globalStyles.tableHeader}>{i18n.t('common.noData')}</Text></View>}
         <ScrollView style={{ marginTop: 10, marginBottom: 10 }} keyboardShouldPersistTaps={'always'}>
           {this.state.userData && <View>
             {this.state.errorMessage &&
@@ -253,19 +256,19 @@ export default class Settings extends React.Component {
             <View style={{ marginTop: 10 }}>
               {this.state.authenticated &&
               <View style={globalStyles.row}>
-                <Text style={globalStyles.column}>Your nickname:</Text>
+                <Text style={globalStyles.column}>{i18n.t('settings.yourNickname')}:</Text>
                 <Text
-                  style={globalStyles.column}>{this.state.userData.nickname ? this.state.userData.nickname : 'Not specified'}</Text>
+                  style={globalStyles.column}>{this.state.userData.nickname ? this.state.userData.nickname : i18n.t('settings.notSpecified')}</Text>
               </View>
               }
               {this.state.authenticated &&
               <View style={globalStyles.row}>
-                <Text style={globalStyles.column}>Change nickname:</Text>
+                <Text style={globalStyles.column}>{i18n.t('settings.changeNickname')}:</Text>
                 <View style={globalStyles.column}>
                   <TextInput
                     style={styles.textInput}
                     autoCapitalize='none'
-                    placeholder='Your nickname'
+                    placeholder={i18n.t('settings.yourNicknameInput')}
                     onChangeText={this.handleNicknameInput}
                     value={this.state.nicknameInput}
                   />
@@ -274,7 +277,7 @@ export default class Settings extends React.Component {
               }
               {this.state.authenticated &&
               <View style={globalStyles.row}>
-                <Text style={globalStyles.column}>County:</Text>
+                <Text style={globalStyles.column}>{i18n.t('settings.country')}:</Text>
                 <Picker selectedValue={this.state.userData.country ? this.state.userData.country : 'Select'}
                   style={[{ width: 150 }, styles.column]}
                   onValueChange={this.countrySelected}>
@@ -287,10 +290,10 @@ export default class Settings extends React.Component {
             </View>
           </View>}
           <View style={globalStyles.row}>
-            <Text style={globalStyles.column}>Typing language:</Text>
+            <Text style={globalStyles.column}>{i18n.t('settings.typingLanguage')}:</Text>
             {this.state.textLanguage &&
             <Picker selectedValue={this.state.textLanguage}
-              prompt='Select your preferred typing language'
+              prompt={i18n.t('settings.selectTypingLanguage')}
               style={[{ width: 150 }, styles.column]}
               onValueChange={this.textLanguageSelected}>
               <Picker.Item value='ar' label='Arabic' />
@@ -309,7 +312,7 @@ export default class Settings extends React.Component {
           <View style={globalStyles.normalButton}>
             <Button
               onPress={this.saveSettings}
-              title='Save'
+              title={i18n.t('settings.save')}
               color={Commons.buttonColor}
             />
           </View>

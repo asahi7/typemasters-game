@@ -48,6 +48,18 @@ const en = {
     showCharts: 'Show charts',
     signOut: 'Sign out',
     dataMayNotUpdate: '*Data may not update instantly after the race.'
+  },
+  settings: {
+    header: 'Settings',
+    notSpecified: 'Not Specified',
+    changeNickname: 'Change nickname',
+    yourNickname: 'Your nickname',
+    yourNicknameInput: 'Your nickname',
+    country: 'Country',
+    typingLanguage: 'Typing language',
+    selectTypingLanguage: 'Select your preferred typing language',
+    save: 'Save',
+    saveSettingsOffline: 'No internet connection. Typing laguage successfully updated'
   }
 }
 const ru = {
@@ -95,6 +107,18 @@ const ru = {
     showCharts: 'Показать графики',
     signOut: 'Выйти',
     dataMayNotUpdate: '*Данные могут обновляться не сразу.'
+  },
+  settings: {
+    header: 'Настройки',
+    notSpecified: 'Не указано',
+    changeNickname: 'Поменять ник',
+    yourNickname: 'Ваш ник',
+    yourNicknameInput: 'Ваш ник',
+    country: 'Страна',
+    typingLanguage: 'Язык печатания',
+    selectTypingLanguage: 'Выберите свой предпочитаемый язык печатания',
+    save: 'Сохранить',
+    saveSettingsOffline: 'Нет подключения к сети интернет. Язык печатания был обновлен'
   }
 }
 
