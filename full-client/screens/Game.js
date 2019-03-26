@@ -11,9 +11,9 @@ import {
 } from 'react-native'
 import firebase from 'firebase'
 import io from 'socket.io-client'
+import { AdMobBanner, LinearGradient } from 'expo'
 import _ from 'lodash'
 import Config from '../config/Config'
-import { LinearGradient } from 'expo'
 import Commons from '../Commons'
 import globalStyles from '../styles'
 import GameTextInput from '../components/GameTextInput'
@@ -380,14 +380,18 @@ export default class Game extends React.Component {
   }
 
   render () {
+    const admobBanner = <AdMobBanner
+      bannerSize='mediumRectangle'
+      adUnitID='ca-app-pub-1048218245279838/9133509327'
+      onDidFailToReceiveAdWithError={(error) => { console.log(error) }} />
     return (
       <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
-        {this.state.modalVisible &&
-        <GameEndModal modalText={this.state.modalText} position={this.state.position}
+        <GameEndModal admobBanner={admobBanner} modalText={this.state.modalText} position={this.state.position}
           numOfPlayers={this.state.numOfPlayers} cpm={this.state.cpm}
-          accuracy={this.state.accuracy} authenticated={this.state.authenticated} closeModalHandler={() => {
+          accuracy={this.state.accuracy} authenticated={this.state.authenticated} visible={this.state.modalVisible} closeModalHandler={() => {
             this.setModalVisible(false)
-          }} />}
+          }}
+        />
         <View style={styles.gameStatusBar}>
           <View style={[styles.gameStatusBarItem, { borderLeftWidth: 0 }]}>
             {this.state.gamePlaying === true

@@ -1,6 +1,5 @@
 import React from 'react'
 import { StyleSheet, Text, TouchableHighlight, View, Modal } from 'react-native'
-import { AdMobBanner } from 'expo'
 import globalStyles from '../styles'
 import i18n from 'i18n-js'
 
@@ -8,7 +7,7 @@ export default class GameEndModal extends React.Component {
   render () {
     return (
       <Modal
-        visible
+        visible={this.props.visible}
         transparent
         onRequestClose={this.props.closeModalHandler}
       >
@@ -16,8 +15,7 @@ export default class GameEndModal extends React.Component {
           <View style={styles.modalStyle}>
             <Text style={styles.modalHeader}>{this.props.modalText}</Text>
             <View
-              style={styles.modalItem}><Text>{i18n.t('game.youAre')} {this.props.position} {i18n.t('game.outOf')}
-                {this.props.numOfPlayers}</Text></View>
+              style={styles.modalItem}><Text>{i18n.t('game.youAre')} {this.props.position} {i18n.t('game.outOf')} {this.props.numOfPlayers}</Text></View>
             <View style={styles.modalItem}><Text>{i18n.t('game.yourCpm')}: {this.props.cpm}</Text></View>
             <View style={styles.modalItem}><Text>{i18n.t('game.yourAccuracy')}: {this.props.accuracy}</Text></View>
             {!this.props.authenticated &&
@@ -25,10 +23,7 @@ export default class GameEndModal extends React.Component {
               <Text style={[globalStyles.normalText, { color: 'red' }]}>{i18n.t('common.signInToSave')}</Text>
             </View>
             }
-            <AdMobBanner
-              bannerSize='mediumRectangle'
-              adUnitID='ca-app-pub-1048218245279838/9133509327'
-              onDidFailToReceiveAdWithError={(error) => { console.log(error) }} />
+            {this.props.admobBanner}
             <TouchableHighlight
               onPress={this.props.closeModalHandler}>
               <Text style={{ color: 'red', fontSize: 20 }}>{i18n.t('game.close')} [X]</Text>
