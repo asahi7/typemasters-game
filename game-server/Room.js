@@ -37,6 +37,27 @@ class Room {
     })
   }
 
+  createBots (count) {
+    console.log('number of bots to be created: ' + count)
+    for (let i = 1; i <= count; i++) {
+      Object.assign(this.players, {
+        // negative socket.id is for bots
+        [-i]:
+          {
+            cpm: 0,
+            isWinner: false,
+            position: 0,
+            accuracy: 100,
+            chars: 0,
+            // followings are only for bots
+            socket: null,
+            isBot: true,
+            id: -i
+          }
+      })
+    }
+  }
+
   containsPlayer (uid) {
     if (_.find(this.players, ['uid', uid]) !== undefined) {
       return true
@@ -80,14 +101,14 @@ class Room {
 
   closeSockets () {
     _.forEach(this.players, (player) => {
-      player.socket.disconnect(true)
+      if (player.socket) { player.socket.disconnect(true) }
     })
   }
 
   allDisconnected () {
     let result = true
     _.forEach(this.players, (player) => {
-      if (player.socket.connected) {
+      if (player.socket && player.socket.connected) {
         result = false
       }
     })
@@ -98,6 +119,23 @@ class Room {
     const interval = Date.now() - this.startTime
     const intervalMinutes = interval / (1000 * 60)
     return chars / intervalMinutes
+  }
+
+  updateBots () {
+    _.forEach(this.players, (player) => {
+      const chars = player.chars + _.random(0, 2)
+      if (player.isBot && !player.isWinner) {
+        const accuracy = _.random(60, 100)
+        this.setCharsCount(player.id, chars)
+        const cpm = this.countCpm(chars)
+        this.updatePlayerCpm(player.id, cpm)
+        this.updateAccuracy(player.id, accuracy)
+      }
+      // Bot has finished race in time
+      if (player.isBot && chars >= this.totalChars && !this.isWinner(player.id)) {
+        this.setWinner(player.id)
+      }
+    })
   }
 
   /*

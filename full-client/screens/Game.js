@@ -312,7 +312,6 @@ export default class Game extends React.Component {
   }
 
   setGameData (data, isGameEnded) {
-    // console.log(data)
     const isWinner = _.find(data.players, { 'id': this.state.socketId }).isWinner
     this.setState({
       timeLeft: data.timeLeft / 1000,

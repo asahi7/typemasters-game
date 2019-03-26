@@ -199,6 +199,9 @@ function startGame (item) {
       room.closeSockets()
       return
     }
+    if (room.countPlayers() <= 2) {
+      room.createBots(_.random(0, MAXIMUM_PLAYERS_IN_ROOM - 2))
+    }
     room.started = true
     startedGames[room.uuid] = room
     room.startTime = Date.now()
@@ -234,7 +237,7 @@ function playGame (room) {
         return models.Race.create({ textId: room.textId }, { transaction: t }).then((race) => {
           const playerPromises = []
           _.forEach(room.players, (player, key) => {
-            if ((!player.disconnected || player.isWinner) && player.socket._serverData.uid !== -1) {
+            if (!player.isBot && (!player.disconnected || player.isWinner) && player.socket._serverData.uid !== -1) {
               playerPromises.push(models.RacePlayer.create({
                 userUid: player.socket._serverData.uid,
                 raceId: race.id,
@@ -273,6 +276,7 @@ function sendGameData (room, call) {
     if (timeLeft < 0) {
       timeLeft = 0
     }
+    room.updateBots()
     room.updatePositions()
     const data = {
       room: room.uuid,
