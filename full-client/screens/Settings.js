@@ -277,7 +277,7 @@ export default class Settings extends React.Component {
               }
               {this.state.authenticated &&
               <View style={globalStyles.row}>
-                <Text style={globalStyles.column}>{i18n.t('settings.country')}:</Text>
+                <Text style={globalStyles.column}>{i18n.t('common.country')}:</Text>
                 <Picker selectedValue={this.state.userData.country ? this.state.userData.country : 'Select'}
                   style={[{ width: 150 }, styles.column]}
                   onValueChange={this.countrySelected}>

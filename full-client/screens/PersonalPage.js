@@ -194,13 +194,13 @@ export default class PersonalPage extends React.Component {
             }
             {this.state.userData.userInfo && this.state.userData.userInfo.email &&
             <View style={globalStyles.row}>
-              <Text style={globalStyles.column}>{i18n.t('personalPage.email')}:</Text>
+              <Text style={globalStyles.column}>{i18n.t('common.email')}:</Text>
               <Text style={globalStyles.column}>{this.state.userData.userInfo.email}</Text>
             </View>
             }
             {this.state.userData.userInfo && this.state.userData.userInfo.country &&
             <View style={globalStyles.row}>
-              <Text style={globalStyles.column}>{i18n.t('personalPage.country')}:</Text>
+              <Text style={globalStyles.column}>{i18n.t('common.country')}:</Text>
               <Text style={globalStyles.column}>{this.state.userData.userInfo.country}</Text>
             </View>
             }

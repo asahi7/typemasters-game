@@ -10,7 +10,10 @@ const en = {
     noInternet: 'No internet connection',
     warn: 'Warning',
     success: 'Success',
-    error: 'Error'
+    error: 'Error',
+    info: 'Info',
+    email: 'Email',
+    country: 'Country'
   },
   main: {
     header: 'Compete With Others And Increase Your Typing Speed!',
@@ -32,8 +35,7 @@ const en = {
     cantSignOutOffline: 'Can not sign out during offline mode',
     general: 'General',
     nickname: 'Nickname',
-    email: 'Email',
-    country: 'Country',
+
     typingLanguage: 'Typing language',
     totalGames: 'Total games',
     averageCpm: 'Average cpm',
@@ -55,7 +57,6 @@ const en = {
     changeNickname: 'Change nickname',
     yourNickname: 'Your nickname',
     yourNicknameInput: 'Your nickname',
-    country: 'Country',
     typingLanguage: 'Typing language',
     selectTypingLanguage: 'Select your preferred typing language',
     save: 'Save',
@@ -70,6 +71,14 @@ const en = {
     signIn: 'Sign in',
     sendLink: 'Send a new link?',
     signOut: 'Sign out'
+  },
+  forgotPassword: {
+    header: 'Password Reset Page',
+    linkSent: 'The link was successfully sent',
+    somethingWrong: 'Something is not correct. Please try again',
+    text: 'Input your email and we will send you the reset link',
+    resetPassword: 'Reset password',
+    returnSignIn: 'Return to sign in page'
   }
 }
 const ru = {
@@ -79,7 +88,10 @@ const ru = {
     noInternet: 'Проблема с подключением к сети интернета',
     warn: 'Внимание',
     success: 'Отлично',
-    error: 'Ошибка'
+    error: 'Ошибка',
+    info: 'Информация',
+    email: 'Электронный адрес',
+    country: 'Страна'
   },
   main: {
     header: 'Повысьте свою скорость печатания, соревнуясь с другими',
@@ -101,8 +113,6 @@ const ru = {
     cantSignOutOffline: 'Невозможно выйти из аккаунта во время оффлайн режима',
     general: 'Общее',
     nickname: 'Ник',
-    email: 'Электронный адрес',
-    country: 'Страна',
     typingLanguage: 'Язык печатания',
     totalGames: 'Количество игр',
     averageCpm: 'Средний cpm',
@@ -124,7 +134,6 @@ const ru = {
     changeNickname: 'Поменять ник',
     yourNickname: 'Ваш ник',
     yourNicknameInput: 'Ваш ник',
-    country: 'Страна',
     typingLanguage: 'Язык печатания',
     selectTypingLanguage: 'Выберите свой предпочитаемый язык печатания',
     save: 'Сохранить',
@@ -139,6 +148,14 @@ const ru = {
     signIn: 'Войти',
     sendLink: 'Отправить новую ссылку?',
     signOut: 'Выйти'
+  },
+  forgotPassword: {
+    header: 'Страница восстановления пароля',
+    linkSent: 'Ссылка была успешно отправлена на ваш электронный адрес',
+    somethingWrong: 'Что-то пошло не так. Пожалуйста попробуйте снова',
+    text: 'Введите свой email и мы отправим вам ссылку для восстановления',
+    resetPassword: 'Сбросить пароль',
+    returnSignIn: 'Обратно на страницу входа'
   }
 }
 

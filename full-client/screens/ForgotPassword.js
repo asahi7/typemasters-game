@@ -6,6 +6,7 @@ import Commons from '../Commons'
 import globalStyles from '../styles'
 import Loading from './Loading'
 import DropdownAlert from 'react-native-dropdownalert'
+import i18n from 'i18n-js'
 
 export default class ForgotPassword extends React.Component {
   constructor (props) {
@@ -19,10 +20,10 @@ export default class ForgotPassword extends React.Component {
   sendResetLink () {
     const auth = firebase.auth()
     auth.sendPasswordResetEmail(this.state.email).then(() => {
-      this.dropdown.alertWithType('info', 'Info', 'The link was successfully sent')
+      this.dropdown.alertWithType('info', i18n.t('common.info'), i18n.t('forgotPassowrd.linkSent'))
     }).catch((error) => {
       // TODO(aibek): handle better
-      this.dropdown.alertWithType('error', 'Error', 'Something is not correct. Please try again')
+      this.dropdown.alertWithType('error', i18n.t('common.error'), i18n.t('forgotPassword.somethingWrong'))
       console.log(error)
     })
   }
@@ -33,28 +34,28 @@ export default class ForgotPassword extends React.Component {
       <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
         <View style={{ marginTop: 30 }}>
           <Text style={globalStyles.header}>
-            Password Reset Page
+            {i18n.t('forgotPassword.header')}
           </Text>
         </View>
-        <Text style={globalStyles.normalText}>Input your email and we will send you the reset link</Text>
+        <Text style={globalStyles.normalText}>{i18n.t('forgotPassword.text')}</Text>
         <TextInput
           style={styles.textInput}
           autoCapitalize='none'
-          placeholder='Email'
+          placeholder={i18n.t('common.email')}
           onChangeText={email => this.setState({ email })}
           value={this.state.email}
         />
         <View style={globalStyles.normalButton}>
           <Button
             onPress={this.sendResetLink}
-            title='Reset password'
+            title={i18n.t('forgotPassword.resetPassword')}
             color={Commons.buttonColor}
           />
         </View>
         <View style={globalStyles.normalButton}>
           <Button
             onPress={() => { this.props.navigation.navigate('SignIn') }}
-            title='Return to sign in page'
+            title={i18n.t('forgotPassword.returnSignIn')}
             color={Commons.buttonColor}
           />
         </View>
