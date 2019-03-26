@@ -103,8 +103,13 @@ const en = {
   },
   loading: {
     loading: 'Loading'
+  },
+  personalCharts: {
+    header: 'Personal Charts',
+    last100Days: 'Last 100 Days'
   }
 }
+
 const ru = {
   common: {
     noData: 'Извините, но необходимые данные не могут быть найдены, проверьте свое интернет подключение',
@@ -204,6 +209,10 @@ const ru = {
   },
   loading: {
     loading: 'Загрузка'
+  },
+  personalCharts: {
+    header: 'Графики',
+    last100Days: 'Последние 100 дней'
   }
 }
 

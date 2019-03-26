@@ -8,6 +8,7 @@ import Commons from '../Commons'
 import globalStyles from '../styles'
 import PureChart from 'react-native-pure-chart'
 import DropdownAlert from 'react-native-dropdownalert'
+import i18n from 'i18n-js'
 
 export default class PersonalCharts extends React.Component {
   constructor (props) {
@@ -112,11 +113,11 @@ export default class PersonalCharts extends React.Component {
   handleConnectivityChange (isConnected) {
     if (isConnected) {
       this.online = true
-      this.dropdown.alertWithType('success', 'Success', 'Back online')
+      this.dropdown.alertWithType('success', i18n.t('common.success'), i18n.t('common.backOnline'))
       this.getApiDataOnline()
     } else {
       this.online = false
-      this.dropdown.alertWithType('warn', 'Warning', 'No internet connection')
+      this.dropdown.alertWithType('warn', i18n.t('common.warn'), i18n.t('common.noInternet'))
     }
   }
 
@@ -140,12 +141,12 @@ export default class PersonalCharts extends React.Component {
       <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
         <View style={{ marginTop: 30 }}>
           <Text style={globalStyles.header}>
-            Personal Charts
+            {i18n.t('personalCharts.header')}
           </Text>
         </View>
         <ScrollView style={{ marginTop: 10, marginBottom: 10 }}>
           <View style={{ marginTop: 10 }}>
-            <Text style={globalStyles.tableHeader}>Last 100 Days</Text>
+            <Text style={globalStyles.tableHeader}>{i18n.t('personalCharts.last100Days')}</Text>
             <PureChart data={this.state.data} type='line' />
           </View>
         </ScrollView>
