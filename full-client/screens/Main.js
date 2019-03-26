@@ -204,8 +204,8 @@ export default class Main extends React.Component {
               this.state.data.lastGames.map((result, i) => {
                 return (
                   <View style={globalStyles.row} key={i}>
-                    <Text style={globalStyles.column}>{result.user.nickname}</Text>
-                    <Text style={globalStyles.column}>{result.user.country}</Text>
+                    <Text style={globalStyles.column}>{result.user.nickname ? result.user.nickname : 'noname'}</Text>
+                    <Text style={globalStyles.column}>{result.user.country ? result.user.country : 'not specified'}</Text>
                     <Text style={globalStyles.column}>{result.cpm}</Text>
                     <Text style={globalStyles.column}>{moment(result.race.date).fromNow()}</Text>
                   </View>

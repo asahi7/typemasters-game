@@ -160,8 +160,8 @@ export default class Leaderboard extends React.Component {
             {this.state.data.bestTodayResults.map((result, i) => {
               return (
                 <View style={globalStyles.row} key={i}>
-                  <Text style={globalStyles.column}>{result.user.nickname}</Text>
-                  <Text style={globalStyles.column}>{result.user.country}</Text>
+                  <Text style={globalStyles.column}>{result.user.nickname ? result.user.nickname : 'noname'}</Text>
+                  <Text style={globalStyles.column}>{result.user.country ? result.user.country : 'not specified'}</Text>
                   <Text style={globalStyles.column}>{result.cpm}</Text>
                 </View>
               )
@@ -172,8 +172,8 @@ export default class Leaderboard extends React.Component {
             {this.state.data.bestAvgResults.map((result, i) => {
               return (
                 <View style={globalStyles.row} key={i}>
-                  <Text style={globalStyles.column}>{result.user.nickname}</Text>
-                  <Text style={globalStyles.column}>{result.user.country}</Text>
+                  <Text style={globalStyles.column}>{result.user.nickname ? result.user.nickname : 'noname'}</Text>
+                  <Text style={globalStyles.column}>{result.user.country ? result.user.country : 'not specified'}</Text>
                   <Text style={globalStyles.column}>{result.avg}</Text>
                 </View>
               )
@@ -184,8 +184,8 @@ export default class Leaderboard extends React.Component {
             {this.state.data.bestResults.map((result, i) => {
               return (
                 <View style={globalStyles.row} key={i}>
-                  <Text style={globalStyles.column}>{result.user.nickname}</Text>
-                  <Text style={globalStyles.column}>{result.user.country}</Text>
+                  <Text style={globalStyles.column}>{result.user.nickname ? result.user.nickname : 'noname'}</Text>
+                  <Text style={globalStyles.column}>{result.user.country ? result.user.country : 'not specified'}</Text>
                   <Text style={globalStyles.column}>{result.cpm}</Text>
                   <Text style={globalStyles.column}>{moment(result.race.date).format('HH:mm, D MMMM, YYYY')}</Text>
                 </View>
