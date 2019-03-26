@@ -88,7 +88,7 @@ io.on('connection', function (socket) {
           startingGamesLock.acquire(room.uuid, function () {
             if (socket._serverData.uid && socket._serverData.uid !== -1 && room.containsPlayer(socket._serverData.uid)) {
               console.log('New player: + ' + socket.id + ' deleted the same player from same room with uid: ' + socket._serverData.uid)
-              room.removePlayer(socket._serverData.uid)
+              room.removePlayer(socket._serverData.uid, io)
             }
             if (room.started === false && room.countPlayers() < MAXIMUM_PLAYERS_IN_ROOM) {
               room.addPlayer(socket)

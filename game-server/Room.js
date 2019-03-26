@@ -65,9 +65,10 @@ class Room {
     return false
   }
 
-  removePlayer (uid) {
+  removePlayer (uid, io) {
     const socketId = _.findKey(this.players, ['uid', uid])
     delete this.players[socketId]
+    if (io.sockets.connected[socketId]) { io.sockets.connected[socketId].disconnect() }
   }
 
   setPlayerDisconnected (socketId) {
