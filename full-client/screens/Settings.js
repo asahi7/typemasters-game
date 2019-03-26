@@ -157,7 +157,7 @@ export default class Settings extends React.Component {
   handleConnectivityChange (isConnected) {
     if (isConnected) {
       this.online = true
-      this.dropdown.alertWithType('success', i18n.t('common.success'), i18n.t('common.backonline'))
+      this.dropdown.alertWithType('success', i18n.t('common.success'), i18n.t('common.backOnline'))
       this.getApiDataOnline()
     } else {
       this.online = false

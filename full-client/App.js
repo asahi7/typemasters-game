@@ -63,6 +63,13 @@ const en = {
   },
   about: {
     header: 'About'
+  },
+  emailVerification: {
+    header: 'Please verify your email',
+    text: 'An email verification link has been sent to your email, please click on it in order to verify your email and finish the registration.\nAfter that you can sign in again',
+    signIn: 'Sign in',
+    sendLink: 'Send a new link?',
+    signOut: 'Sign out'
   }
 }
 const ru = {
@@ -125,6 +132,13 @@ const ru = {
   },
   about: {
     header: 'О нас'
+  },
+  emailVerification: {
+    header: 'Пожалуйста подтвердите свой email',
+    text: 'Ссылка для подтверждения вашего электронного адреса была отправлена, пожалуйста кликните на нее и закончите регистрацию.\nПосле этого вы сможете зайти в свой аккаунт',
+    signIn: 'Войти',
+    sendLink: 'Отправить новую ссылку?',
+    signOut: 'Выйти'
   }
 }
 

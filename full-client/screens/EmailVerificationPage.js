@@ -5,6 +5,7 @@ import { LinearGradient } from 'expo'
 import Commons from '../Commons'
 import globalStyles from '../styles'
 import Loading from './Loading'
+import i18n from 'i18n-js'
 
 // TODO(aibek): add offline mode
 export default class EmailVerificationPage extends React.Component {
@@ -58,31 +59,29 @@ export default class EmailVerificationPage extends React.Component {
       <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
         <View style={{ marginTop: 30 }}>
           <Text style={globalStyles.header}>
-            Please verify your email {this.state.user.email}
+            {i18n.t('emailVerification.header')} {this.state.user.email}
           </Text>
         </View>
-        <Text style={globalStyles.normalText}>An email verification link has been sent to your email,
-          please click on it in order to verify your email and finish the registration</Text>
-        <Text style={globalStyles.normalText}>After that you can sign in again</Text>
+        <Text style={globalStyles.normalText}>{i18n.t('emailVerification.text')}</Text>
         <View style={globalStyles.normalButton}>
           <Button
             style={globalStyles.normalButton}
             onPress={() => this.props.navigation.navigate('SignIn')}
-            title='Sign In'
+            title={i18n.t('emailVerification.signIn')}
             color={Commons.buttonColor}
           />
         </View>
         <View style={globalStyles.normalButton}>
           <Button
             onPress={this.sendNewLink}
-            title='Send a new link?'
+            title={i18n.t('emailVerification.sendLink')}
             color={Commons.buttonColor}
           />
         </View>
         <View style={globalStyles.normalButton}>
           <Button
             onPress={this.handleSignOut}
-            title='Sign out'
+            title={i18n.t('emailVerification.signOut')}
             color={Commons.buttonColor}
           />
         </View>
