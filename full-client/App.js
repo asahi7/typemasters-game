@@ -13,7 +13,8 @@ const en = {
     error: 'Error',
     info: 'Info',
     email: 'Email',
-    country: 'Country'
+    country: 'Country',
+    signInToSave: '*Sign in to save your progress.'
   },
   main: {
     header: 'Compete With Others And Increase Your Typing Speed!',
@@ -21,8 +22,7 @@ const en = {
     totalGamesCount: 'Total Played Games Today',
     lastGames: 'Last Games Today',
     chooseLangText: 'Choose your typing language and',
-    playButton: 'PLAY',
-    signInToSave: '*Sign in to save your progress.'
+    playButton: 'PLAY'
   },
   leaderboard: {
     header: 'Leaderboard',
@@ -79,6 +79,27 @@ const en = {
     text: 'Input your email and we will send you the reset link',
     resetPassword: 'Reset password',
     returnSignIn: 'Return to sign in page'
+  },
+  game: {
+    initText: 'To start press Play',
+    playingOffline: 'Playing in offline mode',
+    noTextsLang: 'No texts with desired language are present',
+    noTextsLangOffline: 'No texts exists in selected language during offline mode',
+    modal: {
+      winner: 'You are the winner!',
+      timeUp: 'Time is up!'
+    },
+    stop: 'Stop',
+    play: 'Play',
+    position: 'position',
+    accuracy: 'accuracy',
+    youAre: 'You are',
+    outOf: 'out of',
+    yourCpm: 'Your CPM',
+    yourAccuracy: 'Your accuracy',
+    close: 'Close',
+    startTypingHere: 'Start typing here..',
+    timeLeft: 'left'
   }
 }
 const ru = {
@@ -91,7 +112,8 @@ const ru = {
     error: 'Ошибка',
     info: 'Информация',
     email: 'Электронный адрес',
-    country: 'Страна'
+    country: 'Страна',
+    signInToSave: '*Авторизуйтесь для сохранения вашего прогресса'
   },
   main: {
     header: 'Повысьте свою скорость печатания, соревнуясь с другими',
@@ -99,8 +121,7 @@ const ru = {
     totalGamesCount: 'Количество всех игр за сегодня',
     lastGames: 'Последние игры',
     chooseLangText: 'Выберите подходящий язык для печатания и',
-    playButton: 'ИГРАЙТЕ',
-    signInToSave: '*Авторизуйтесь для сохранения вашего прогресса'
+    playButton: 'ИГРАЙТЕ'
   },
   leaderboard: {
     header: 'Статистика',
@@ -156,6 +177,27 @@ const ru = {
     text: 'Введите свой email и мы отправим вам ссылку для восстановления',
     resetPassword: 'Сбросить пароль',
     returnSignIn: 'Обратно на страницу входа'
+  },
+  game: {
+    initText: 'Нажмите Старт чтобы начать играть',
+    playingOffline: 'Игра в режиме оффлайн',
+    noTextsLang: 'К сожалению, у нас нет текста с выбранным языком',
+    noTextsLangOffline: 'К сожалению, у нас нет текста с выбранным языком в режиме оффлайн',
+    modal: {
+      winner: 'Вы победитель!',
+      timeUp: 'Время вышло!'
+    },
+    stop: 'Стоп',
+    play: 'Старт',
+    position: 'позиция',
+    accuracy: 'точность',
+    youAre: 'Вы',
+    outOf: 'из',
+    yourCpm: 'Ваш CPM',
+    yourAccuracy: 'Ваша точность',
+    close: 'Закрыть',
+    startTypingHere: 'Начните печатать..',
+    timeLeft: 'осталось'
   }
 }
 

@@ -1,6 +1,7 @@
 import React from 'react'
 import { StyleSheet, View, TextInput } from 'react-native'
 import _ from 'lodash'
+import i18n from 'i18n-js'
 
 export default class GameTextInput extends React.Component {
   constructor (props) {
@@ -97,7 +98,7 @@ export default class GameTextInput extends React.Component {
               this.lastInputBackspace = true
             }
           }}
-          placeholder='Start typing here..'
+          placeholder={i18n.t('game.startTypingHere')}
           onChangeText={this.handleUserInput}
           ref={input => { this._textInput = input }}
         />

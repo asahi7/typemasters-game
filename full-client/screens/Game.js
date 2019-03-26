@@ -19,6 +19,7 @@ import globalStyles from '../styles'
 import GameTextInput from '../components/GameTextInput'
 import GameEndModal from '../components/GameEndModal'
 import DropdownAlert from 'react-native-dropdownalert'
+import i18n from 'i18n-js'
 
 import * as offlineTexts from '../offline_texts'
 
@@ -30,7 +31,7 @@ export default class Game extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      text: 'To start press Play',
+      text: i18n.t('game.initText'),
       chars: 0,
       numOfPlayers: 1,
       position: 1,
@@ -92,10 +93,10 @@ export default class Game extends React.Component {
   handleConnectivityChange (isConnected) {
     if (isConnected) {
       this.online = true
-      this.dropdown.alertWithType('success', 'Success', 'Back online')
+      this.dropdown.alertWithType('success', i18n.t('common.success'), i18n.t('common.backOnline'))
     } else {
       this.online = false
-      this.dropdown.alertWithType('warn', 'Warning', 'No internet connection')
+      this.dropdown.alertWithType('warn', i18n.t('common.warn'), i18n.t('common.noInternet'))
       if (this.state.gamePlaying && !this.state.offlineMode) {
         this.dicsonnectPlayer()
       }
@@ -150,7 +151,7 @@ export default class Game extends React.Component {
     }
     if (this.online === false) {
       this.updateTextLanguageState().then(() => {
-        this.dropdown.alertWithType('info', 'Info', 'Playing in offline mode')
+        this.dropdown.alertWithType('info', i18n.t('game.info'), i18n.t('game.playingOffline'))
         this.handlePlayGamePressedOffline()
       })
     } else {
@@ -164,13 +165,13 @@ export default class Game extends React.Component {
     console.log('Game started in offline mode ' + this.state.textLanguage)
     const data = _.get(offlineTexts[this.state.textLanguage], 'data')
     if (!data) {
-      this.dropdown.alertWithType('warn', 'Warning', 'No texts with desired language are present')
+      this.dropdown.alertWithType('warn', i18n.t('common.warning'), i18n.t('game.noTextsLang'))
       this.setState({ gamePlaying: false })
       return
     }
     const text = data[_.random(_.size(data) - 1)]
     if (!text) {
-      this.dropdown.alertWithType('warn', 'Warning', 'No texts exists in selected language during offline mode')
+      this.dropdown.alertWithType('warn', i18n.t('common.warning'), i18n.t('game.noTextsLangOffline'))
       this.setState({ gamePlaying: false })
     } else {
       const textArray = text.text.split(' ')
@@ -201,11 +202,11 @@ export default class Game extends React.Component {
     const isWinner = this.state.chars === this.state.totalChars
     if (isWinner) {
       this.setState({
-        modalText: 'You are the winner!'
+        modalText: i18n.t('game.modal.winner')
       })
     } else {
       this.setState({
-        modalText: 'Time is up!'
+        modalText: i18n.t('game.modal.timeUp')
       })
     }
     this.setModalVisible(true)
@@ -321,11 +322,11 @@ export default class Game extends React.Component {
       if (isWinner === true || isGameEnded === true) {
         if (isWinner) {
           this.setState({
-            modalText: 'You are the winner!'
+            modalText: i18n.t('game.modal.winner')
           })
         } else if (isGameEnded) {
           this.setState({
-            modalText: 'Time is up!'
+            modalText: i18n.t('game.modal.timeUp')
           })
         }
         this.dicsonnectPlayer()
@@ -394,23 +395,23 @@ export default class Game extends React.Component {
                 style={[styles.playButton, styles.playButtonBgStop]}
                 onPress={this.playButtonPressed}
               >
-                <Text style={styles.playButtonText}>Stop</Text>
+                <Text style={styles.playButtonText}>{i18n.t('game.stop')}</Text>
               </TouchableOpacity>
               : <TouchableOpacity
                 style={[styles.playButton, styles.playButtonBgPlay]}
                 onPress={this.playButtonPressed}
               >
-                <Text style={styles.playButtonText}>Play</Text>
+                <Text style={styles.playButtonText}>{i18n.t('game.play')}</Text>
               </TouchableOpacity>}
           </View>
           <View
-            style={styles.gameStatusBarItem}><Text>{this.state.position}/{this.state.numOfPlayers} position</Text></View>
+            style={styles.gameStatusBarItem}><Text>{this.state.position}/{this.state.numOfPlayers} {i18n.t('game.position')}</Text></View>
           <View
-            style={styles.gameStatusBarItem}><Text>{Math.round(this.state.timeLeft)} left</Text></View>
+            style={styles.gameStatusBarItem}><Text>{Math.round(this.state.timeLeft)} {i18n.t('game.timeLeft')}</Text></View>
           <View style={styles.gameStatusBarItem}><Text>{this.state.cpm} cpm</Text></View>
           <View
             style={[styles.gameStatusBarItem, { borderRightWidth: 0 }]}><Text>{this.state.accuracy ? this.state.accuracy : 100}%
-            accuracy</Text></View>
+              {i18n.t('game.accuracy')}</Text></View>
         </View>
         <GameTextInput textArray={this.state.textArray} handler={this.gameInputHandler} refresh={this.state.gamePlaying}
           accuracyHandler={this.accuracyHandler} />

@@ -2,6 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, TouchableHighlight, View, Modal } from 'react-native'
 import { AdMobBanner } from 'expo'
 import globalStyles from '../styles'
+import i18n from 'i18n-js'
 
 export default class GameEndModal extends React.Component {
   render () {
@@ -15,13 +16,13 @@ export default class GameEndModal extends React.Component {
           <View style={styles.modalStyle}>
             <Text style={styles.modalHeader}>{this.props.modalText}</Text>
             <View
-              style={styles.modalItem}><Text>You are {this.props.position} out
-              of {this.props.numOfPlayers}</Text></View>
-            <View style={styles.modalItem}><Text>Your CPM: {this.props.cpm}</Text></View>
-            <View style={styles.modalItem}><Text>Your accuracy: {this.props.accuracy}</Text></View>
+              style={styles.modalItem}><Text>{i18n.t('game.youAre')} {this.props.position} {i18n.t('game.outOf')}
+                {this.props.numOfPlayers}</Text></View>
+            <View style={styles.modalItem}><Text>{i18n.t('game.yourCpm')}: {this.props.cpm}</Text></View>
+            <View style={styles.modalItem}><Text>{i18n.t('game.yourAccuracy')}: {this.props.accuracy}</Text></View>
             {!this.props.authenticated &&
             <View style={{ marginTop: 10 }}>
-              <Text style={[globalStyles.normalText, { color: 'red' }]}>*Sign in to save your progress.</Text>
+              <Text style={[globalStyles.normalText, { color: 'red' }]}>{i18n.t('common.signInToSave')}</Text>
             </View>
             }
             <AdMobBanner
@@ -30,7 +31,7 @@ export default class GameEndModal extends React.Component {
               onDidFailToReceiveAdWithError={(error) => { console.log(error) }} />
             <TouchableHighlight
               onPress={this.props.closeModalHandler}>
-              <Text style={{ color: 'red', fontSize: 20 }}>Close [X]</Text>
+              <Text style={{ color: 'red', fontSize: 20 }}>{i18n.t('game.close')} [X]</Text>
             </TouchableHighlight>
           </View>
         </View>

@@ -222,7 +222,7 @@ export default class Main extends React.Component {
           </View>
           {!this.state.authenticated &&
           <View style={{ marginTop: 10 }}>
-            <Text style={[globalStyles.normalText, { color: 'red' }]}>{i18n.t('main.signInToSave')}</Text>
+            <Text style={[globalStyles.normalText, { color: 'red' }]}>{i18n.t('common.signInToSave')}</Text>
           </View>
           }
         </ScrollView>}
