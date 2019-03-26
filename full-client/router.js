@@ -13,6 +13,7 @@ import AuthLoading from './screens/AuthLoading'
 import PersonalCharts from './screens/PersonalCharts'
 import EmailVerificationPage from './screens/EmailVerificationPage'
 import ForgotPassword from './screens/ForgotPassword'
+import i18n from 'i18n-js'
 
 const MainStack = createStackNavigator({
   Main: {
@@ -84,11 +85,11 @@ const AuthSwitchNavigator = createSwitchNavigator({
 
 const tabBarIconSize = 25
 
-const Tabs = createBottomTabNavigator({
+const Tabs = () => createBottomTabNavigator({
   Main: {
     screen: MainStack,
     navigationOptions: {
-      tabBarLabel: 'Main',
+      tabBarLabel: i18n.t('navigation.main'),
       tabBarIcon: ({ tintColor }) => <Icon name='md-home' type='ionicon' size={tabBarIconSize}
         color={tintColor} />
     }
@@ -96,7 +97,7 @@ const Tabs = createBottomTabNavigator({
   Leaderboard: {
     screen: Leaderboard,
     navigationOptions: {
-      tabBarLabel: 'Leaderboard',
+      tabBarLabel: i18n.t('navigation.leaderboard'),
       tabBarIcon: ({ tintColor }) => <Icon name='md-stats' type='ionicon' size={tabBarIconSize}
         color={tintColor} />
     }
@@ -104,7 +105,7 @@ const Tabs = createBottomTabNavigator({
   PersonalPage: {
     screen: AuthSwitchNavigator,
     navigationOptions: {
-      tabBarLabel: 'Personal Page',
+      tabBarLabel: i18n.t('navigation.personalPage'),
       tabBarIcon: ({ tintColor }) => <Icon name='md-body' type='ionicon' size={tabBarIconSize}
         color={tintColor} />
     }
@@ -112,7 +113,7 @@ const Tabs = createBottomTabNavigator({
   Settings: {
     screen: Settings,
     navigationOptions: {
-      tabBarLabel: 'Settings',
+      tabBarLabel: i18n.t('navigation.settings'),
       tabBarIcon: ({ tintColor }) => <Icon name='md-build' type='ionicon' size={tabBarIconSize}
         color={tintColor} />
     }
@@ -120,7 +121,7 @@ const Tabs = createBottomTabNavigator({
   About: {
     screen: About,
     navigationOptions: {
-      tabBarLabel: 'About',
+      tabBarLabel: i18n.t('navigation.about'),
       tabBarIcon: ({ tintColor }) => <Icon name='md-information-circle' type='ionicon'
         size={tabBarIconSize} color={tintColor} />
     }
@@ -131,7 +132,7 @@ export const createRootNavigator = () => {
   return createStackNavigator(
     {
       Tabs: {
-        screen: Tabs,
+        screen: Tabs(),
         navigationOptions: ({ navigation }) => ({
           gesturesEnabled: false
         })

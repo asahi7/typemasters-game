@@ -150,11 +150,11 @@ export default class Main extends React.Component {
   handleConnectivityChange (isConnected) {
     if (isConnected) {
       this.online = true
-      this.dropdown.alertWithType('success', i18n.t('common.success'), i18n.t('common.backOnline'))
+      if (this.dropdown) { this.dropdown.alertWithType('success', i18n.t('common.success'), i18n.t('common.backOnline')) }
       this.getApiDataOnline()
     } else {
       this.online = false
-      this.dropdown.alertWithType('warn', i18n.t('common.warn'), i18n.t('common.noInternet'))
+      if (this.dropdown) { this.dropdown.alertWithType('warn', i18n.t('common.warn'), i18n.t('common.noInternet')) }
     }
   }
 

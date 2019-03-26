@@ -1,4 +1,11 @@
 export const en = {
+  navigation: {
+    main: 'Main',
+    leaderboard: 'Leaderboard',
+    personalPage: 'Personal Page',
+    settings: 'Settings',
+    about: 'About'
+  },
   common: {
     noData: 'We are sorry, but it seems no data is available, check your internet connection',
     backOnline: 'Back online',
@@ -117,6 +124,13 @@ export const en = {
 }
 
 export const ru = {
+  navigation: {
+    main: 'Главная',
+    leaderboard: 'Статистика',
+    personalPage: 'Страница',
+    settings: 'Настройки',
+    about: 'О нас'
+  },
   common: {
     noData: 'Извините, но необходимые данные не могут быть найдены, проверьте свое интернет подключение',
     backOnline: 'Снова онлайн',
