@@ -100,6 +100,9 @@ const en = {
     close: 'Close',
     startTypingHere: 'Start typing here..',
     timeLeft: 'left'
+  },
+  loading: {
+    loading: 'Loading'
   }
 }
 const ru = {
@@ -198,6 +201,9 @@ const ru = {
     close: 'Закрыть',
     startTypingHere: 'Начните печатать..',
     timeLeft: 'осталось'
+  },
+  loading: {
+    loading: 'Загрузка'
   }
 }
 

@@ -3,6 +3,7 @@ import { View, Text, ActivityIndicator, AsyncStorage } from 'react-native'
 import firebase from 'firebase'
 import globalStyles from '../styles'
 import WebAPI from '../WebAPI'
+import i18n from 'i18n-js'
 
 export default class AuthLoading extends React.Component {
   constructor (props) {
@@ -38,7 +39,7 @@ export default class AuthLoading extends React.Component {
       return (
         <View style={globalStyles.loadingContainer}>
           <ActivityIndicator size='large' />
-          <Text>Loading</Text>
+          <Text>{i18n.t('loading.loading')}</Text>
         </View>
       )
     }
