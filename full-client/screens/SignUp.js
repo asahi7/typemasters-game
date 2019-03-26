@@ -5,6 +5,7 @@ import { LinearGradient } from 'expo'
 import Commons from '../Commons'
 import globalStyles from '../styles'
 import DropdownAlert from 'react-native-dropdownalert'
+import i18n from 'i18n-js'
 
 export default class SignUp extends React.Component {
   constructor (props) {
@@ -43,10 +44,10 @@ export default class SignUp extends React.Component {
   handleConnectivityChange (isConnected) {
     if (isConnected) {
       this.online = true
-      this.dropdown.alertWithType('success', 'Success', 'Back online')
+      this.dropdown.alertWithType('success', i18n.t('common.success'), i18n.t('common.backOnline'))
     } else {
       this.online = false
-      this.dropdown.alertWithType('warn', 'Warning', 'No internet connection')
+      this.dropdown.alertWithType('warn', i18n.t('common.warn'), i18n.t('common.noInternet'))
     }
   }
 
@@ -59,7 +60,7 @@ export default class SignUp extends React.Component {
         })
         .catch(error => this.setState({ errorMessage: error.message }))
     } else {
-      this.dropdown.alertWithType('warn', 'Warning', 'No internet connection. Please try later')
+      this.dropdown.alertWithType('warn', i18n.t('common.warn'), i18n.t('common.cantInternet'))
     }
   }
 
@@ -68,7 +69,7 @@ export default class SignUp extends React.Component {
       <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
         <View style={{ marginTop: 30 }}>
           <Text style={globalStyles.header}>
-            Sign Up
+            {i18n.t('signUp.header')}
           </Text>
         </View>
         {this.state.errorMessage &&
@@ -76,7 +77,7 @@ export default class SignUp extends React.Component {
           {this.state.errorMessage}
         </Text>}
         <TextInput
-          placeholder='Email'
+          placeholder={i18n.t('common.email')}
           autoCapitalize='none'
           style={styles.textInput}
           onChangeText={email => this.setState({ email })}
@@ -84,19 +85,19 @@ export default class SignUp extends React.Component {
         />
         <TextInput
           secureTextEntry
-          placeholder='Password'
+          placeholder={i18n.t('common.password')}
           autoCapitalize='none'
           style={styles.textInput}
           onChangeText={password => this.setState({ password })}
           value={this.state.password}
         />
         <View style={globalStyles.normalButton}>
-          <Button title='Sign up' color={Commons.buttonColor} onPress={this.handleSignUp} />
+          <Button title={i18n.t('signUp.signUp')} color={Commons.buttonColor} onPress={this.handleSignUp} />
         </View>
         <View style={globalStyles.normalButton}>
           <Button
             onPress={() => this.props.navigation.navigate('SignIn')}
-            title='Already have an account? Sign in'
+            title={i18n.t('signUp.haveAccount')}
             color={Commons.buttonColor}
           />
         </View>

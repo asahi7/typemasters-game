@@ -14,7 +14,10 @@ const en = {
     info: 'Info',
     email: 'Email',
     country: 'Country',
-    signInToSave: '*Sign in to save your progress.'
+    signInToSave: '*Sign in to save your progress.',
+    password: 'Password',
+    signIn: 'Sign in',
+    cantInternet: 'No internet connection. Please try later'
   },
   main: {
     header: 'Compete With Others And Increase Your Typing Speed!',
@@ -68,7 +71,7 @@ const en = {
   emailVerification: {
     header: 'Please verify your email',
     text: 'An email verification link has been sent to your email, please click on it in order to verify your email and finish the registration.\nAfter that you can sign in again',
-    signIn: 'Sign in',
+
     sendLink: 'Send a new link?',
     signOut: 'Sign out'
   },
@@ -107,6 +110,16 @@ const en = {
   personalCharts: {
     header: 'Personal Charts',
     last100Days: 'Last 100 Days'
+  },
+  signIn: {
+    header: 'Sign In',
+    dontHaveAccount: "Don't have an account? Sign Up",
+    forgotPassword: 'Forgot password?'
+  },
+  signUp: {
+    header: 'Sign up',
+    signUp: 'Sign up',
+    haveAccount: 'Already have an account? Sign in'
   }
 }
 
@@ -121,7 +134,9 @@ const ru = {
     info: 'Информация',
     email: 'Электронный адрес',
     country: 'Страна',
-    signInToSave: '*Авторизуйтесь для сохранения вашего прогресса'
+    signInToSave: '*Авторизуйтесь для сохранения вашего прогресса',
+    password: 'Пароль',
+    signIn: 'Войти'
   },
   main: {
     header: 'Повысьте свою скорость печатания, соревнуясь с другими',
@@ -174,7 +189,7 @@ const ru = {
   emailVerification: {
     header: 'Пожалуйста подтвердите свой email',
     text: 'Ссылка для подтверждения вашего электронного адреса была отправлена, пожалуйста кликните на нее и закончите регистрацию.\nПосле этого вы сможете зайти в свой аккаунт',
-    signIn: 'Войти',
+
     sendLink: 'Отправить новую ссылку?',
     signOut: 'Выйти'
   },
@@ -213,6 +228,16 @@ const ru = {
   personalCharts: {
     header: 'Графики',
     last100Days: 'Последние 100 дней'
+  },
+  signIn: {
+    header: 'Войти',
+    dontHaveAccount: 'Нету аккаунта? Зарегистрироваться',
+    forgotPassword: 'Забыли пароль?'
+  },
+  signUp: {
+    header: 'Зарегистрироваться',
+    signUp: 'Зарегистрироваться',
+    haveAccount: 'Уже есть аккаунт? Войти'
   }
 }
 

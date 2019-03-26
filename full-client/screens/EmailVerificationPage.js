@@ -67,7 +67,7 @@ export default class EmailVerificationPage extends React.Component {
           <Button
             style={globalStyles.normalButton}
             onPress={() => this.props.navigation.navigate('SignIn')}
-            title={i18n.t('emailVerification.signIn')}
+            title={i18n.t('common.signIn')}
             color={Commons.buttonColor}
           />
         </View>

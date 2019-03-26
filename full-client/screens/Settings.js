@@ -161,7 +161,7 @@ export default class Settings extends React.Component {
       this.getApiDataOnline()
     } else {
       this.online = false
-      this.dropdown.alertWithType('warn', i18n.t('common.warning'), i18n.t('common.nointernet'))
+      this.dropdown.alertWithType('warn', i18n.t('common.warning'), i18n.t('common.noInternet'))
     }
   }
 

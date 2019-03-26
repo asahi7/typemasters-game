@@ -6,6 +6,7 @@ import WebAPI from '../WebAPI'
 import Commons from '../Commons'
 import globalStyles from '../styles'
 import DropdownAlert from 'react-native-dropdownalert'
+import i18n from 'i18n-js'
 
 export default class SignIn extends React.Component {
   constructor (props) {
@@ -44,10 +45,10 @@ export default class SignIn extends React.Component {
   handleConnectivityChange (isConnected) {
     if (isConnected) {
       this.online = true
-      this.dropdown.alertWithType('success', 'Success', 'Back online')
+      this.dropdown.alertWithType('success', i18n.t('common.success'), i18n.t('common.backOnline'))
     } else {
       this.online = false
-      this.dropdown.alertWithType('warn', 'Warning', 'No internet connection')
+      this.dropdown.alertWithType('warn', i18n.t('common.warn'), i18n.t('common.noInternet'))
     }
   }
 
@@ -71,7 +72,7 @@ export default class SignIn extends React.Component {
         })
         .catch(error => this.setState({ errorMessage: error.message }))
     } else {
-      this.dropdown.alertWithType('warn', 'Warning', 'No internet connection. Please try later')
+      this.dropdown.alertWithType('warn', i18n.t('common.warn'), i18n.t('common.cantInternet'))
     }
   }
 
@@ -80,7 +81,7 @@ export default class SignIn extends React.Component {
       <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
         <View style={{ marginTop: 30 }}>
           <Text style={globalStyles.header}>
-            Sign In
+            {i18n.t('signIn.header')}
           </Text>
         </View>
         {this.state.errorMessage &&
@@ -90,7 +91,7 @@ export default class SignIn extends React.Component {
         <TextInput
           style={styles.textInput}
           autoCapitalize='none'
-          placeholder='Email'
+          placeholder={i18n.t('common.email')}
           onChangeText={email => this.setState({ email })}
           value={this.state.email}
         />
@@ -98,28 +99,28 @@ export default class SignIn extends React.Component {
           secureTextEntry
           style={styles.textInput}
           autoCapitalize='none'
-          placeholder='Password'
+          placeholder={i18n.t('common.password')}
           onChangeText={password => this.setState({ password })}
           value={this.state.password}
         />
         <View style={globalStyles.normalButton}>
           <Button
             onPress={this.handleSignIn}
-            title='Sign in'
+            title={i18n.t('common.signIn')}
             color={Commons.buttonColor}
           />
         </View>
         <View style={globalStyles.normalButton}>
           <Button
             onPress={() => this.props.navigation.navigate('SignUp')}
-            title="Don't have an account? Sign Up"
+            title={i18n.t('signIn.dontHaveAccount')}
             color={Commons.buttonColor}
           />
         </View>
         <View style={globalStyles.normalButton}>
           <Button
             onPress={() => this.props.navigation.navigate('ForgotPassword')}
-            title='Forgot password?'
+            title={i18n.t('signIn.forgotPassword')}
             color={Commons.buttonColor}
           />
         </View>
