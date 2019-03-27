@@ -3,6 +3,12 @@ import * as firebase from 'firebase'
 import i18n from 'i18n-js'
 import { Localization } from 'expo'
 import { en, ru } from './i18n'
+import Sentry from 'sentry-expo'
+
+// Remove this once Sentry is correctly setup.
+Sentry.enableInExpoDevelopment = true
+
+Sentry.config('https://87a1b73b40134530a69a4178026fd4eb@sentry.io/1424807').install()
 
 // TODO(aibek): check if async call is needed for Android in order to detect language change
 i18n.fallbacks = true

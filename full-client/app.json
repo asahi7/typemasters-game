@@ -14,6 +14,18 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "sentry-expo/upload-sourcemaps",
+          "config": {
+            "organization": "typemasters",
+            "project": "typemasters",
+            "authToken": "c75cd6da48064586b84c9c7ca716ca85406a7f7c541f4304b6ff4de363337e99"
+          }
+        }
+      ]
+    },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
