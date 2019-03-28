@@ -21,7 +21,9 @@ export default class SignUp extends React.Component {
 
   async componentDidMount () {
     NetInfo.isConnected.fetch().then(isConnected => {
-      console.log('User is ' + (isConnected ? 'online' : 'offline'))
+      if (__DEV__) {
+        console.log('User is ' + (isConnected ? 'online' : 'offline'))
+      }
       if (!isConnected) {
         this.online = false
       } else {

@@ -33,7 +33,9 @@ export default class Main extends React.Component {
   async componentDidMount () {
     await this.updateTextLanguageState()
     NetInfo.isConnected.fetch().then(isConnected => {
-      console.log('User is ' + (isConnected ? 'online' : 'offline'))
+      if (__DEV__) {
+        console.log('User is ' + (isConnected ? 'online' : 'offline'))
+      }
       if (!isConnected) {
         this.online = false
         this.getPersistentDataOffline().then(() => {
@@ -71,7 +73,9 @@ export default class Main extends React.Component {
   }
 
   async updateScreen () {
-    console.log('update screen!')
+    if (__DEV__) {
+      console.log('Updated screen')
+    }
     await this.updateTextLanguageState()
     this.setState({ errorMessage: null })
     if (this.online) {
@@ -122,7 +126,9 @@ export default class Main extends React.Component {
           })
         })
       }).catch((error) => {
-        console.log(error)
+        if (__DEV__) {
+          console.log(error)
+        }
       })
     } else {
       return Promise.all([
@@ -142,7 +148,9 @@ export default class Main extends React.Component {
           })
         })
       }).catch((error) => {
-        console.log(error)
+        if (__DEV__) {
+          console.log(error)
+        }
       })
     }
   }
@@ -160,7 +168,9 @@ export default class Main extends React.Component {
 
   async updateTextLanguageState () {
     const textLanguage = await AsyncStorage.getItem('textLanguage')
-    console.log('lang ' + textLanguage)
+    if (__DEV__) {
+      console.log('Language ' + textLanguage)
+    }
     if (!textLanguage) {
       this.setState({
         textLanguage: 'en'

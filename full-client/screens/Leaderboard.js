@@ -31,7 +31,9 @@ export default class Leaderboard extends React.Component {
   async componentDidMount () {
     await this.updateTextLanguageState()
     NetInfo.isConnected.fetch().then(isConnected => {
-      console.log('User is ' + (isConnected ? 'online' : 'offline'))
+      if (__DEV__) {
+        console.log('User is ' + (isConnected ? 'online' : 'offline'))
+      }
       if (!isConnected) {
         this.online = false
         this.getPersistentDataOffline().then(() => {
@@ -69,7 +71,9 @@ export default class Leaderboard extends React.Component {
   }
 
   async updateScreen () {
-    console.log('update screen!')
+    if (__DEV__) {
+      console.log('Updated screen')
+    }
     await this.updateTextLanguageState()
     if (this.online) {
       this.getApiDataOnline()
@@ -116,7 +120,9 @@ export default class Leaderboard extends React.Component {
         })
       })
     }).catch((error) => {
-      console.log(error)
+      if (__DEV__) {
+        console.log(error)
+      }
     })
   }
 

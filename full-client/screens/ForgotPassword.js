@@ -24,7 +24,9 @@ export default class ForgotPassword extends React.Component {
     }).catch((error) => {
       // TODO(aibek): handle better
       this.dropdown.alertWithType('error', i18n.t('common.error'), i18n.t('forgotPassword.somethingWrong'))
-      console.log(error)
+      if (__DEV__) {
+        console.log(error)
+      }
     })
   }
 

@@ -5,6 +5,10 @@ import { Localization } from 'expo'
 import { en, ru } from './i18n'
 import Sentry from 'sentry-expo'
 
+if (__DEV__) {
+  console.log('__DEV__: ' + __DEV__)
+}
+
 // Remove this once Sentry is correctly setup.
 Sentry.enableInExpoDevelopment = true
 

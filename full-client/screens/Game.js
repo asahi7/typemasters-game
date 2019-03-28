@@ -25,6 +25,10 @@ import * as offlineTexts from '../offline_texts'
 
 const env = process.env.REACT_NATIVE_ENV || 'dev'
 
+if (__DEV__) {
+  console.log('REACT_NATIVE_ENV: ' + env)
+}
+
 let socket
 
 export default class Game extends React.Component {
@@ -68,7 +72,9 @@ export default class Game extends React.Component {
     BackHandler.addEventListener('hardwareBackPress', () => { this.dicsonnectPlayer() })
     await this.updateTextLanguageState()
     NetInfo.isConnected.fetch().then(isConnected => {
-      console.log('User is ' + (isConnected ? 'online' : 'offline'))
+      if (__DEV__) {
+        console.log('User is ' + (isConnected ? 'online' : 'offline'))
+      }
       if (!isConnected) {
         this.online = false
       } else {
@@ -105,7 +111,9 @@ export default class Game extends React.Component {
 
   async updateTextLanguageState () {
     const textLanguage = await AsyncStorage.getItem('textLanguage')
-    console.log('lang ' + textLanguage)
+    if (__DEV__) {
+      console.log('Language ' + textLanguage)
+    }
     if (!textLanguage) {
       this.setState({
         textLanguage: 'en'
@@ -162,7 +170,9 @@ export default class Game extends React.Component {
   }
 
   handlePlayGamePressedOffline () {
-    console.log('Game started in offline mode ' + this.state.textLanguage)
+    if (__DEV__) {
+      console.log('Game started in offline mode ' + this.state.textLanguage)
+    }
     const data = _.get(offlineTexts[this.state.textLanguage], 'data')
     if (!data) {
       this.dropdown.alertWithType('warn', i18n.t('common.warning'), i18n.t('game.noTextsLang'))
@@ -243,7 +253,9 @@ export default class Game extends React.Component {
         this.setSocketBehavior(idToken)
       }).catch(function (error) {
         // TODO(aibek): handle better
-        console.log(error)
+        if (__DEV__) {
+          console.log(error)
+        }
       })
     } else {
       this.setState({ authenticated: false })
@@ -258,8 +270,10 @@ export default class Game extends React.Component {
     socket.on('connect', () => {
       socket.emit('authentication', { token: idToken })
       socket.on('authenticated', () => {
-        console.log('Asking for a new game..')
-        console.log(socket.id)
+        if (__DEV__) {
+          console.log('Asking for a new game..')
+          console.log(socket.id)
+        }
         socket.emit('newgame', { language: this.state.textLanguage })
         this.setState({
           text: 'Loading..',
@@ -267,7 +281,9 @@ export default class Game extends React.Component {
         })
 
         socket.on('gamestarted', (data) => {
-          console.log('Game started')
+          if (__DEV__) {
+            console.log('Game started')
+          }
           const textArray = data.text.split(' ')
           this.setState({
             textArray,
@@ -288,13 +304,17 @@ export default class Game extends React.Component {
           this.setGameData(data, false)
         })
         socket.on('gameended', (data) => {
-          console.log('Game finished')
+          if (__DEV__) {
+            console.log('Game finished')
+          }
           this.cleanGameData()
           this.setGameData(data, true)
         })
 
         socket.on('disconnect', () => {
-          console.log('Disconnected')
+          if (__DEV__) {
+            console.log('Disconnected')
+          }
           this.cleanGameData()
         })
       })
@@ -382,7 +402,7 @@ export default class Game extends React.Component {
     const admobBanner = <AdMobBanner
       bannerSize='mediumRectangle'
       adUnitID='ca-app-pub-1048218245279838/9133509327'
-      onDidFailToReceiveAdWithError={(error) => { console.log(error) }} />
+      onDidFailToReceiveAdWithError={(error) => { if (__DEV__) { console.log(error) } }} />
     return (
       <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
         <GameEndModal admobBanner={admobBanner} modalText={this.state.modalText} position={this.state.position}

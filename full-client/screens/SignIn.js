@@ -22,7 +22,9 @@ export default class SignIn extends React.Component {
 
   async componentDidMount () {
     NetInfo.isConnected.fetch().then(isConnected => {
-      console.log('User is ' + (isConnected ? 'online' : 'offline'))
+      if (__DEV__) {
+        console.log('User is ' + (isConnected ? 'online' : 'offline'))
+      }
       if (!isConnected) {
         this.online = false
       } else {
@@ -59,14 +61,18 @@ export default class SignIn extends React.Component {
         .auth()
         .signInWithEmailAndPassword(email, password)
         .then((authObj) => {
-          console.log('Signed in')
+          if (__DEV__) {
+            console.log('Signed in')
+          }
           if (authObj.user && !authObj.user.emailVerified) {
             this.props.navigation.navigate('EmailVerificationPage')
           } else if (authObj.user) {
             WebAPI.createUserIfNotExists(authObj.user.email, authObj.user.uid).then(() => {
               this.props.navigation.navigate('PersonalPage')
             }).catch(error => {
-              console.log(error)
+              if (__DEV__) {
+                console.log(error)
+              }
             })
           }
         })

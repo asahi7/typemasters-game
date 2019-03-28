@@ -2,14 +2,16 @@ import firebase from 'firebase'
 import Config from './config/Config'
 
 const env = process.env.REACT_NATIVE_ENV || 'dev'
-console.log(env)
 
 function parseJSON (response) {
   if (response.status >= 400) {
-    console.log(JSON.stringify(response))
-
+    if (__DEV__) {
+      console.log(JSON.stringify(response))
+    }
     return response.json().then((res) => {
-      console.log(res)
+      if (__DEV__) {
+        console.log(res)
+      }
       let error = new Error(response.status)
       error.err = res
       throw error

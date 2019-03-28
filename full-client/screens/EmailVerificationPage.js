@@ -47,9 +47,13 @@ export default class EmailVerificationPage extends React.Component {
 
   handleSignOut () {
     firebase.auth().signOut().then(function () {
-      console.log('Signed out')
+      if (__DEV__) {
+        console.log('Signed out')
+      }
     }, function (error) {
-      console.log(error)
+      if (__DEV__) {
+        console.log(error)
+      }
     })
   }
 

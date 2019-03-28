@@ -29,7 +29,9 @@ export default class PersonalPage extends React.Component {
   async componentDidMount () {
     await this.updateTextLanguageState()
     NetInfo.isConnected.fetch().then(isConnected => {
-      console.log('User is ' + (isConnected ? 'online' : 'offline'))
+      if (__DEV__) {
+        console.log('User is ' + (isConnected ? 'online' : 'offline'))
+      }
       if (!isConnected) {
         this.online = false
         this.getPersistentDataOffline().then(() => {
@@ -67,7 +69,9 @@ export default class PersonalPage extends React.Component {
   }
 
   async updateScreen () {
-    console.log('update screen!')
+    if (__DEV__) {
+      console.log('Updated screen')
+    }
     await this.updateTextLanguageState()
     if (this.online) {
       this.getApiDataOnline(firebase.auth().currentUser)
@@ -131,7 +135,9 @@ export default class PersonalPage extends React.Component {
         })
       })
     }).catch((error) => {
-      console.log(error)
+      if (__DEV__) {
+        console.log(error)
+      }
     })
   }
 
@@ -163,9 +169,13 @@ export default class PersonalPage extends React.Component {
   handleSignOut () {
     if (this.online) {
       firebase.auth().signOut().then(function () {
-        console.log('Signed out')
+        if (__DEV__) {
+          console.log('Signed out')
+        }
       }, function (error) {
-        console.log(error)
+        if (__DEV__) {
+          console.log(error)
+        }
       })
     } else {
       this.dropdown.alertWithType('error', i18n.t('common.error'), i18n.t('personalPage.cantSignOutOffline'))

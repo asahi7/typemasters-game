@@ -20,15 +20,21 @@ export default class AuthLoading extends React.Component {
         AsyncStorage.clear()
       }
       if (user && user.emailVerified) {
-        console.log('User is verified')
+        if (__DEV__) {
+          console.log('User is verified')
+        }
         WebAPI.createUserIfNotExists(user.email, user.uid).then(() => {
           this.props.navigation.navigate('PersonalPage')
         })
       } else if (user && !user.emailVerified) {
-        console.log('User is not verified redirecting to EmailVerificationPage')
+        if (__DEV__) {
+          console.log('User is not verified redirecting to EmailVerificationPage')
+        }
         this.props.navigation.navigate('EmailVerificationPage')
       } else {
-        console.log('User is not present')
+        if (__DEV__) {
+          console.log('User is not present')
+        }
         this.props.navigation.navigate('SignIn')
       }
     })
