@@ -6,10 +6,15 @@ const Op = models.sequelize.Op
 
 router.get('/getBestResults', [
   query('language').isAlpha().isLength({ min: 1, max: 2 })
-], async (req, res) => {
+], async (req, res, next) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() })
+    return res.status(400).json({
+      error: {
+        message: 'Validation Error',
+        etc: errors.array()
+      }
+    })
   }
   return models.RacePlayer.findAll({
     include: [
@@ -30,15 +35,22 @@ router.get('/getBestResults', [
     limit: 20
   }).then((results) => {
     return res.send(results)
+  }).catch(err => {
+    next(err)
   })
 })
 
 router.get('/getBestAvgResults', [
   query('language').isAlpha().isLength({ min: 1, max: 2 })
-], async (req, res) => {
+], async (req, res, next) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() })
+    return res.status(400).json({
+      error: {
+        message: 'Validation Error',
+        etc: errors.array()
+      }
+    })
   }
   return models.RacePlayer.findAll({
     include: [
@@ -61,15 +73,22 @@ router.get('/getBestAvgResults', [
     limit: 20
   }).then((results) => {
     return res.send(results)
+  }).catch(err => {
+    next(err)
   })
 })
 
 router.get('/getBestTodayResults', [
   query('language').isAlpha().isLength({ min: 1, max: 2 })
-], async (req, res) => {
+], async (req, res, next) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() })
+    return res.status(400).json({
+      error: {
+        message: 'Validation Error',
+        etc: errors.array()
+      }
+    })
   }
   return models.RacePlayer.findAll({
     include: [
@@ -100,6 +119,8 @@ router.get('/getBestTodayResults', [
     limit: 20
   }).then((results) => {
     return res.send(results)
+  }).catch(err => {
+    next(err)
   })
 })
 

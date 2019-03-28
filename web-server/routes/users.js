@@ -12,19 +12,25 @@ const Sequelize = models.sequelize.Sequelize
  */
 router.get('/', [
   query('uid').isAlphanumeric().isLength({ min: 1 })
-], async (req, res) => {
+], async (req, res, next) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() })
+    return res.status(400).json({
+      error: {
+        message: 'Validation Error',
+        etc: errors.array()
+      }
+    })
   }
   const user = await models.User.findOne({ where: { uid: req.query.uid } })
   if (_.isEmpty(user)) {
-    res.status(400).send({
-      error: `User with uid: ${req.query.uid} does not exist`
+    return res.status(400).send({
+      error: {
+        message: `User with uid: ${req.query.uid} does not exist`
+      }
     })
-    return
   }
-  res.send(user)
+  return res.send(user)
 })
 
 /**
@@ -36,21 +42,30 @@ router.post('/createUserIfNotExists', async (req, res) => {
 
 router.post('/saveNickname', [
   query('nickname').isAlphanumeric().isLength({ min: 3 })
-], async (req, res) => {
+], async (req, res, next) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() })
+    return res.status(400).json({
+      error: {
+        message: 'Validation Error',
+        etc: errors.array()
+      }
+    })
   }
   return models.User.update(
     { nickname: req.query.nickname },
     { where: { uid: res.locals.userPayload.uid } }
   ).then(() => {
-    res.sendStatus(200)
+    return res.sendStatus(200)
   }).catch(err => {
     if (err instanceof Sequelize.UniqueConstraintError) {
-      return res.status(409).send({ message: 'nickname is already present' })
+      return res.status(409).send({
+        error: {
+          message: 'Nickname: ' + req.query.nickname + ' is already present'
+        }
+      })
     }
-    return res.sendStatus(500)
+    next(err)
   })
 })
 
@@ -72,21 +87,30 @@ const countryList = ['Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', '
 
 router.post('/saveCountry', [
   query('country').isAscii().isLength({ min: 3 })
-], async (req, res) => {
+], async (req, res, next) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() })
+    return res.status(400).json({
+      error: {
+        message: 'Validation Error',
+        etc: errors.array()
+      }
+    })
   }
   if (!_.includes(countryList, req.query.country)) {
-    return res.status(400).send({ message: 'country is not in list' })
+    return res.status(400).send({
+      error: {
+        message: 'Country ' + req.query.country + ' does not exist'
+      }
+    })
   }
   return models.User.update(
     { country: req.query.country },
     { where: { uid: res.locals.userPayload.uid } }
   ).then(() => {
-    res.sendStatus(200)
-  }).catch(() => {
-    return res.sendStatus(500)
+    return res.sendStatus(200)
+  }).catch((err) => {
+    next(err)
   })
 })
 

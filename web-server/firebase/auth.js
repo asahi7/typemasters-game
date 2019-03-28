@@ -77,7 +77,9 @@ const firebaseAddUserMiddleware = async (req, res, next) => {
   if (payload && payload.uid) {
     const user = await models.User.findOne({ where: { uid: payload.uid } })
     if (_.isEmpty(user)) {
-      await addUser(payload)
+      await addUser(payload).catch(err => {
+        next(err)
+      })
     }
   }
   next()
@@ -86,8 +88,8 @@ const firebaseAddUserMiddleware = async (req, res, next) => {
 /**
  * A method to create a user in a database using firebase middleware.
  */
-async function addUser (payload) {
-  await models.User.findOrCreate({
+function addUser (payload) {
+  return models.User.findOrCreate({
     where: {
       email: payload.email
     },

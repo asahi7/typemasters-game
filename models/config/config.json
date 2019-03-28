@@ -6,7 +6,7 @@
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
-  "prod": {
+  "production": {
     "username": "admin",
     "password": "newpass123",
     "database": "typemasters",

@@ -26,4 +26,26 @@ app.use('/users', usersRouter)
 app.use('/statistics', statisticsRouter)
 app.use('/leaderboard', leaderboardRouter)
 
+app.use((req, res, next) => {
+  const error = new Error('Not Found')
+  error.status = 404
+  next(error)
+})
+
+// Error handler
+app.use(function (err, req, res, next) {
+  // logger
+  console.log(err)
+  // TODO(aibek): add sentry.io
+  if (process.env.NODE_ENV === 'production') {
+    delete err.stack
+  }
+  res.status(err.status || 500).send({
+    error: {
+      message: err.message,
+      etc: err
+    }
+  })
+})
+
 module.exports = app

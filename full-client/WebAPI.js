@@ -5,15 +5,13 @@ const env = process.env.REACT_NATIVE_ENV || 'dev'
 
 function parseJSON (response) {
   if (response.status >= 400) {
-    if (__DEV__) {
-      console.log(JSON.stringify(response))
-    }
     return response.json().then((res) => {
       if (__DEV__) {
         console.log(res)
       }
-      let error = new Error(response.status)
-      error.err = res
+      let error = new Error(res.error.message)
+      error.status = response.status
+      error.err = res.error.etc
       throw error
     })
   }

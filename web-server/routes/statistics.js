@@ -8,10 +8,15 @@ const Op = models.sequelize.Op
 router.get('/getLatestAverageCpm', [
   query('uid').isAlphanumeric().isLength({ min: 1 }),
   query('language').isAlpha().isLength({ min: 1, max: 2 })
-], async (req, res) => {
+], async (req, res, next) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() })
+    return res.status(400).json({
+      error: {
+        message: 'Validation Error',
+        etc: errors.array()
+      }
+    })
   }
   return models.RacePlayer.findAll({
     include: [
@@ -36,16 +41,23 @@ router.get('/getLatestAverageCpm', [
     return Math.round(average * 100) / 100
   }).then(avg => {
     return res.send({ result: avg })
+  }).catch(err => {
+    next(err)
   })
 })
 
 router.get('/getAverageCpm', [
   query('uid').isAlphanumeric().isLength({ min: 1 }),
   query('language').isAlpha().isLength({ min: 1, max: 2 })
-], async (req, res) => {
+], async (req, res, next) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() })
+    return res.status(400).json({
+      error: {
+        message: 'Validation Error',
+        etc: errors.array()
+      }
+    })
   }
   return models.RacePlayer.findAll({
     include: [
@@ -68,16 +80,23 @@ router.get('/getAverageCpm', [
     return Math.round(average * 100) / 100
   }).then(avg => {
     return res.send({ result: avg })
+  }).catch(err => {
+    next(err)
   })
 })
 
 router.get('/getRaceCount', [
   query('uid').isAlphanumeric().isLength({ min: 1 }),
   query('language').isAlpha().isLength({ min: 1, max: 2 })
-], async (req, res) => {
+], async (req, res, next) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() })
+    return res.status(400).json({
+      error: {
+        message: 'Validation Error',
+        etc: errors.array()
+      }
+    })
   }
   return models.Race.count({
     include: [
@@ -90,18 +109,25 @@ router.get('/getRaceCount', [
     ]
   }).then((result) => {
     return res.send({ result })
+  }).catch(err => {
+    next(err)
   })
 })
 
 router.get('/getFirstRace', [
   query('uid').isAlphanumeric().isLength({ min: 1 }),
   query('language').isAlpha().isLength({ min: 1, max: 2 })
-], async (req, res) => {
+], async (req, res, next) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() })
+    return res.status(400).json({
+      error: {
+        message: 'Validation Error',
+        etc: errors.array()
+      }
+    })
   }
-  models.Race.findOne({
+  return models.Race.findOne({
     include: [
       {
         model: models.Text, attributes: [], where: { language: req.query.language }
@@ -113,18 +139,25 @@ router.get('/getFirstRace', [
     order: [['date', 'ASC']]
   }).then(result => {
     return res.send({ result })
+  }).catch(err => {
+    next(err)
   })
 })
 
 router.get('/getLastPlayedGame', [
   query('uid').isAlphanumeric().isLength({ min: 1 }),
   query('language').isAlpha().isLength({ min: 1, max: 2 })
-], async (req, res) => {
+], async (req, res, next) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() })
+    return res.status(400).json({
+      error: {
+        message: 'Validation Error',
+        etc: errors.array()
+      }
+    })
   }
-  models.Race.findOne({
+  return models.Race.findOne({
     include: [
       {
         model: models.Text, attributes: [], where: { language: req.query.language }
@@ -145,16 +178,23 @@ router.get('/getLastPlayedGame', [
         accuracy: result.racePlayers[0].accuracy
       }
     })
+  }).catch(err => {
+    next(err)
   })
 })
 
 router.get('/getBestResult', [
   query('uid').isAlphanumeric().isLength({ min: 1 }),
   query('language').isAlpha().isLength({ min: 1, max: 2 })
-], async (req, res) => {
+], async (req, res, next) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() })
+    return res.status(400).json({
+      error: {
+        message: 'Validation Error',
+        etc: errors.array()
+      }
+    })
   }
   // TODO(aibek): check other queries and in case make it like this one.
   return models.RacePlayer.findOne({
@@ -175,16 +215,23 @@ router.get('/getBestResult', [
       return res.send({ result: null })
     }
     return res.send({ result: result.cpm })
+  }).catch(err => {
+    next(err)
   })
 })
 
 router.get('/getGamesWon', [
   query('uid').isAlphanumeric().isLength({ min: 1 }),
   query('language').isAlpha().isLength({ min: 1, max: 2 })
-], async (req, res) => {
+], async (req, res, next) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() })
+    return res.status(400).json({
+      error: {
+        message: 'Validation Error',
+        etc: errors.array()
+      }
+    })
   }
   return models.Race.count({
     include: [
@@ -196,11 +243,13 @@ router.get('/getGamesWon', [
       }
     ]
   }).then(function (result) {
-    return res.send({ result: result })
+    return res.send({ result })
+  }).catch(err => {
+    next(err)
   })
 })
 
-router.get('/countGamesPlayedToday', async (req, res) => {
+router.get('/countGamesPlayedToday', async (req, res, next) => {
   return models.Race.count({
     where: {
       date: {
@@ -210,15 +259,22 @@ router.get('/countGamesPlayedToday', async (req, res) => {
     }
   }).then((result) => {
     return res.send({ result })
+  }).catch(err => {
+    next(err)
   })
 })
 
 router.get('/countUserPlayedToday', [
   query('uid').isAlphanumeric().isLength({ min: 1 })
-], async (req, res) => {
+], async (req, res, next) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() })
+    return res.status(400).json({
+      error: {
+        message: 'Validation Error',
+        etc: errors.array()
+      }
+    })
   }
   return models.RacePlayer.count({
     include: [
@@ -240,10 +296,12 @@ router.get('/countUserPlayedToday', [
     ]
   }).then((result) => {
     return res.send({ result })
+  }).catch(err => {
+    next(err)
   })
 })
 
-router.get('/getLastPlayedGames', async (req, res) => {
+router.get('/getLastPlayedGames', async (req, res, next) => {
   return models.RacePlayer.findAll({
     include: [
       {
@@ -264,16 +322,23 @@ router.get('/getLastPlayedGames', async (req, res) => {
     limit: 10
   }).then((result) => {
     return res.send({ result })
+  }).catch(err => {
+    next(err)
   })
 })
 
 router.get('/getAverageAccuracy', [
   query('uid').isAlphanumeric().isLength({ min: 1 }),
   query('language').isAlpha().isLength({ min: 1, max: 2 })
-], async (req, res) => {
+], async (req, res, next) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() })
+    return res.status(400).json({
+      error: {
+        message: 'Validation Error',
+        etc: errors.array()
+      }
+    })
   }
   return models.Race.findAll({
     include: [
@@ -293,16 +358,23 @@ router.get('/getAverageAccuracy', [
     return average
   }).then(avg => {
     return res.send({ result: Math.round(avg) })
+  }).catch(err => {
+    next(err)
   })
 })
 
 router.get('/getLastAverageAccuracy', [
   query('uid').isAlphanumeric().isLength({ min: 1 }),
   query('language').isAlpha().isLength({ min: 1, max: 2 })
-], async (req, res) => {
+], async (req, res, next) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() })
+    return res.status(400).json({
+      error: {
+        message: 'Validation Error',
+        etc: errors.array()
+      }
+    })
   }
   return models.Race.findAll({
     include: [
@@ -324,6 +396,8 @@ router.get('/getLastAverageAccuracy', [
     return average
   }).then(avg => {
     return res.send({ result: Math.round(avg) })
+  }).catch(err => {
+    next(err)
   })
 })
 
@@ -331,10 +405,15 @@ router.get('/getLastAverageAccuracy', [
 router.get('/getAllCpmHistory', [
   query('uid').isAlphanumeric().isLength({ min: 1 }),
   query('language').isAlpha().isLength({ min: 1, max: 2 })
-], async (req, res) => {
+], async (req, res, next) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() })
+    return res.status(400).json({
+      error: {
+        message: 'Validation Error',
+        etc: errors.array()
+      }
+    })
   }
   return models.RacePlayer.findAll({
     include: [
@@ -360,6 +439,8 @@ router.get('/getAllCpmHistory', [
       res.send({ result: null })
     }
     return res.send({ result: results })
+  }).catch(err => {
+    next(err)
   })
 })
 
