@@ -1,6 +1,7 @@
 const uuidv4 = require('uuid/v4')
 const _ = require('lodash')
 
+// TODO(aibek): add good comments to methods, and write unit tests
 class Room {
   constructor () {
     this.uuid = uuidv4()
@@ -38,7 +39,7 @@ class Room {
   }
 
   createBots (count) {
-    console.log('number of bots to be created: ' + count)
+    console.log('Number of bots to be created: ' + count)
     for (let i = 1; i <= count; i++) {
       Object.assign(this.players, {
         // negative socket.id is for bots
@@ -49,7 +50,7 @@ class Room {
             position: 0,
             accuracy: 100,
             chars: 0,
-            // followings are only for bots
+            // followings  fields are only for bots
             socket: null,
             isBot: true,
             id: -i

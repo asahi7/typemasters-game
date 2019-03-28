@@ -39,7 +39,7 @@ const updatingGameDataLock = new AsyncLock()
 socketioAuth(io, {
   authenticate: function (socket, data, callback) {
     const firebaseIdToken = data.token
-    // TODO(aibek): potential security bottleneck for anonymous user
+    // TODO(aibek): potential security bottleneck for anonymous user, check IP address
     if (firebaseIdToken === -1) {
       socket._serverData = {
         // -1 is for anonymous users
@@ -48,13 +48,13 @@ socketioAuth(io, {
       return callback(null, true)
     }
     return firebaseAdmin.auth().verifyIdToken(firebaseIdToken)
-      .then(function (decodedToken) {
+      .then(async (decodedToken) => {
         socket._serverData = {
           uid: decodedToken.uid,
           email: decodedToken.email
         }
         // Creates user if not already created
-        models.User.findOrCreate({
+        await models.User.findOrCreate({
           where: {
             email: decodedToken.email
           },
@@ -65,17 +65,16 @@ socketioAuth(io, {
         })
         // Inform the callback of auth success/failure
         return callback(null, true)
-      }).catch(function (error) {
-        console.log('Auth error')
-        console.log(error)
-        return callback(error)
+      }).catch(function (err) {
+        Sentry.captureException(err)
+        console.log(err)
+        return callback(err)
       })
   }
 })
 
 io.on('connection', function (socket) {
   console.log('Connected ' + socket.id)
-
   socket.on('newgame', function (data) {
     console.log('Socket asking for a new game: ' + socket.id)
     if (startingGamesCnt === 0) {
@@ -102,9 +101,9 @@ io.on('connection', function (socket) {
               addedToGame = true
             }
           }).catch(function (err) {
-            // TODO(aibek): make a better error message and handle better
-            console.log('Error at newgame:')
-            console.log(err.message)
+            Sentry.captureException(err)
+            console.log(err)
+            throw err
           })
         }
         current = current.next
@@ -117,7 +116,6 @@ io.on('connection', function (socket) {
 
   socket.on('racedata', function (data) {
     console.log('Race data from socket: ' + socket.id)
-    console.log(data)
     const room = startedGames[data.room.uuid]
     if (room && room.startTime + room.duration >= Date.now()) {
       updatingGameDataLock.acquire(room.uuid, function () {
@@ -132,8 +130,9 @@ io.on('connection', function (socket) {
           room.setWinner(socket.id)
         }
       }, { skipQueue: true }).catch(function (err) {
-        console.log('Error at racedata:')
-        console.log(err.message)
+        Sentry.captureException(err)
+        console.log(err)
+        throw err
       })
     }
   })
@@ -147,7 +146,7 @@ io.on('connection', function (socket) {
   })
 
   socket.on('disconnect', function (reason) {
-    console.log('disconnected because: ' + reason)
+    console.log(socket.id + ' disconnected because: ' + reason)
     if (reason === 'transport error' || reason === 'ping timeout') {
       const room = _.find(startedGames, (room) => {
         return room.containsPlayer(socket._serverData.uid)
@@ -176,6 +175,7 @@ async function createNewRoom (socket, data) {
       duration: 30,
       id: -1
     }
+    Sentry.captureException('Text with language ' + data.language + ' was asked and was not found')
   }
   room.language = data.language
   room.text = text.text
@@ -223,10 +223,9 @@ function startGame (item) {
       playGame(room)
     }, SERVER_SEND_DATA_INTERVAL)
   }).catch(function (err) {
+    Sentry.captureException(err)
     console.log(err)
-    // TODO(aibek): make a better error message and handle better
-    console.log('Error at startGame:')
-    console.log(err.message)
+    throw err
   })
 }
 
@@ -291,7 +290,8 @@ function sendGameData (room, call) {
     }
     io.to(room.uuid).emit(call, data)
   }).catch(function (err) {
-    console.log('Error at sendGameData:')
-    console.log(err.message)
+    Sentry.captureException(err)
+    console.log(err)
+    throw err
   })
 }
