@@ -7,6 +7,7 @@ const models = require('../models/models')
 const firebaseAdmin = require('firebase-admin')
 const socketioAuth = require('socketio-auth')
 const _ = require('lodash')
+const Sentry = require('@sentry/node')
 
 console.log('Running on ' + (process.env.PORT || '3000'))
 
@@ -15,6 +16,8 @@ const serviceAccount = require('./firebase/typemasters-cc028-firebase-adminsdk-f
 firebaseAdmin.initializeApp({
   credential: firebaseAdmin.credential.cert(serviceAccount)
 })
+
+Sentry.init({ dsn: 'https://85893e4c45124030bb065a1184ceb349@sentry.io/1425755' })
 
 // Defining list item wrapper for room object
 inherits(RoomItem, LinkedList.Item)
@@ -63,6 +66,7 @@ socketioAuth(io, {
         // Inform the callback of auth success/failure
         return callback(null, true)
       }).catch(function (error) {
+        console.log('Auth error')
         console.log(error)
         return callback(error)
       })

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "full-client",
-    "description": "This project is really great.",
+    "name": "Typemasters-Client",
+    "description": "Client for typemasters project with React Native.",
     "slug": "full-client",
     "privacy": "public",
     "sdkVersion": "31.0.0",
@@ -20,7 +20,7 @@
           "file": "sentry-expo/upload-sourcemaps",
           "config": {
             "organization": "typemasters",
-            "project": "typemasters",
+            "project": "typemasters-client",
             "authToken": "c75cd6da48064586b84c9c7ca716ca85406a7f7c541f4304b6ff4de363337e99"
           }
         }
