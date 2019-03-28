@@ -18,3 +18,10 @@ In models:
 - `sequelize db:migrate`
 
 - Run `pm2 start`
+
+## Notes
+
+In production, do not forget to include rotation for logs (with pm2), so that if the log files become
+too big, it will stick to the limits.
+
+Here is the link: https://github.com/keymetrics/pm2-logrotate
