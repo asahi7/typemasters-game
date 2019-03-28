@@ -12,15 +12,9 @@ In models:
 
 - `npm install`
 - `sudo npm install -g sequelize-cli`
+- `sudo npm install -g pm2`
 - Paste your DB password into models/config/config.json
 - `sequelize db:create`
-- Create .env file with your database credentials, like following:
-
- ```
- DB_HOST=localhost
- DB_USER=root
- DB_PASS=
-```
-
 - `sequelize db:migrate`
-- Run `node index.js`
+
+- Run `pm2 start`

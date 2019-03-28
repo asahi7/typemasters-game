@@ -8,6 +8,8 @@ const firebaseAdmin = require('firebase-admin')
 const socketioAuth = require('socketio-auth')
 const _ = require('lodash')
 
+console.log('Running on ' + (process.env.PORT || '3000'))
+
 const serviceAccount = require('./firebase/typemasters-cc028-firebase-adminsdk-ft5e2-a8cacca758.json')
 
 firebaseAdmin.initializeApp({
