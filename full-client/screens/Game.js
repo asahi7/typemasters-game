@@ -20,6 +20,7 @@ import GameTextInput from '../components/GameTextInput'
 import GameEndModal from '../components/GameEndModal'
 import DropdownAlert from 'react-native-dropdownalert'
 import i18n from 'i18n-js'
+import Sentry from 'sentry-expo'
 
 import * as offlineTexts from '../offline_texts'
 
@@ -59,7 +60,6 @@ export default class Game extends React.Component {
     this.setModalVisible = this.setModalVisible.bind(this)
     this.gameInputHandler = this.gameInputHandler.bind(this)
     this.accuracyHandler = this.accuracyHandler.bind(this)
-
     this.handleConnectivityChange = this.handleConnectivityChange.bind(this)
     this.updateTextLanguageState = this.updateTextLanguageState.bind(this)
     this.countCpm = this.countCpm.bind(this)
@@ -252,7 +252,7 @@ export default class Game extends React.Component {
       currentUser.getIdToken(true).then((idToken) => {
         this.setSocketBehavior(idToken)
       }).catch(function (error) {
-        // TODO(aibek): handle better
+        Sentry.captureException(error)
         if (__DEV__) {
           console.log(error)
         }
@@ -359,7 +359,6 @@ export default class Game extends React.Component {
   }
 
   findPlayerPosition (data) {
-    // TODO(aibek): consider anonymous users too
     return _.find(data.players, { 'id': this.state.socketId }).position
   }
 

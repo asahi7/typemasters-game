@@ -149,6 +149,7 @@ export default class Settings extends React.Component {
         if (__DEV__) {
           console.log(error)
         }
+        throw error
       })
     } else {
       this.setState({
@@ -204,18 +205,25 @@ export default class Settings extends React.Component {
             })
           }).catch((error) => {
             // TODO(aibek): add i18n
-            this.setState({ errorMessage: error.err.errors[0].msg + ' in ' + error.err.errors[0].param })
+            if (error.message === 'Validation Error') {
+              this.setState({ errorMessage: error.err[0].msg + ' in ' + error.err[0].param })
+              return
+            }
+            this.setState({ errorMessage: error.message })
           })
         }
         // TODO(aibek): might be unnecessary call when no change happens
-        if (this.state.userData.country !== 'Select') {
+        if (this.state.userData.country !== 'Select' && this.state.userData.country) {
           WebAPI.saveCountry(this.state.userData.country).catch(error => {
-            // TODO(aibek): bug with error's different signature
             if (__DEV__) {
               console.log(JSON.stringify(error))
             }
             // TODO(aibek): add i18n
-            this.setState({ errorMessage: error.err.errors[0].msg + ' in ' + error.err.errors[0].param })
+            if (error.message === 'Validation Error') {
+              this.setState({ errorMessage: error.err[0].msg + ' in ' + error.err[0].param })
+              return
+            }
+            this.setState({ errorMessage: error.message })
           })
         }
         this.setState({ nicknameInput: '' })

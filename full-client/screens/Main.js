@@ -129,6 +129,7 @@ export default class Main extends React.Component {
         if (__DEV__) {
           console.log(error)
         }
+        throw error
       })
     } else {
       return Promise.all([
@@ -151,6 +152,7 @@ export default class Main extends React.Component {
         if (__DEV__) {
           console.log(error)
         }
+        throw error
       })
     }
   }

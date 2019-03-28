@@ -6,6 +6,7 @@ import Commons from '../Commons'
 import globalStyles from '../styles'
 import Loading from './Loading'
 import i18n from 'i18n-js'
+import Sentry from 'sentry-expo'
 
 // TODO(aibek): add offline mode
 export default class EmailVerificationPage extends React.Component {
@@ -52,6 +53,7 @@ export default class EmailVerificationPage extends React.Component {
       }
     }, function (error) {
       if (__DEV__) {
+        Sentry.captureException(error)
         console.log(error)
       }
     })

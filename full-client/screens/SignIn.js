@@ -7,6 +7,7 @@ import Commons from '../Commons'
 import globalStyles from '../styles'
 import DropdownAlert from 'react-native-dropdownalert'
 import i18n from 'i18n-js'
+import Sentry from 'sentry-expo'
 
 export default class SignIn extends React.Component {
   constructor (props) {
@@ -67,9 +68,10 @@ export default class SignIn extends React.Component {
           if (authObj.user && !authObj.user.emailVerified) {
             this.props.navigation.navigate('EmailVerificationPage')
           } else if (authObj.user) {
-            WebAPI.createUserIfNotExists(authObj.user.email, authObj.user.uid).then(() => {
+            return WebAPI.createUserIfNotExists(authObj.user.email, authObj.user.uid).then(() => {
               this.props.navigation.navigate('PersonalPage')
             }).catch(error => {
+              Sentry.captureException(error)
               if (__DEV__) {
                 console.log(error)
               }

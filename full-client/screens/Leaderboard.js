@@ -123,6 +123,7 @@ export default class Leaderboard extends React.Component {
       if (__DEV__) {
         console.log(error)
       }
+      throw error
     })
   }
 

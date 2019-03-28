@@ -113,6 +113,7 @@ export default class PersonalCharts extends React.Component {
       if (__DEV__) {
         console.log(error)
       }
+      throw error
     })
   }
 
