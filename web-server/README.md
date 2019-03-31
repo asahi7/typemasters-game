@@ -17,3 +17,6 @@ In production, do not forget to include rotation for logs (with pm2), so that if
 too big, it will stick to the limits.
 
 Here is the link: https://github.com/keymetrics/pm2-logrotate
+
+`sudo npm install -g snyk` for finding vulnerabilities in dependencies.
+`snyk test`
