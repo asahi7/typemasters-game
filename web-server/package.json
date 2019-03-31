@@ -3,8 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "PORT=3001 node ./bin/www",
-    "prod-start": "PORT=8080 NODE_ENV=production node ./bin/www"
+    "start": "node ./bin/www"
   },
   "dependencies": {
     "@sentry/node": "^4.6.6",

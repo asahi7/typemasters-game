@@ -9,4 +9,11 @@ This is a web server for Typemasters. The server is an API bridge between client
 To properly run the server you will need to do the following:
 
 - Firstly you must have your game server installed.
-- Then run: `npm start`, you might want to change the port from 3000, to avoid conflicts.
+- Run `pm2 start`
+
+## Notes
+
+In production, do not forget to include rotation for logs (with pm2), so that if the log files become
+too big, it will stick to the limits.
+
+Here is the link: https://github.com/keymetrics/pm2-logrotate
