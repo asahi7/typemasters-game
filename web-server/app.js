@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const firebase = require('./firebase/auth')
 const Sentry = require('@sentry/node')
+const helmet = require('helmet')
 
 Sentry.init({ dsn: 'https://8ba7f2fda85246a0a168a2f7fcae5c73@sentry.io/1427713' })
 
@@ -16,6 +17,9 @@ const app = express()
 
 // The request handler must be the first middleware on the app
 app.use(Sentry.Handlers.requestHandler())
+app.use(helmet.dnsPrefetchControl())
+app.use(helmet.hidePoweredBy())
+app.use(helmet.ieNoOpen())
 app.use(cors())
 app.use(logger('combined'))
 app.use(bodyParser.urlencoded({ extended: true }))
