@@ -4,6 +4,9 @@ const logger = require('morgan')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const firebase = require('./firebase/auth')
+const Sentry = require('@sentry/node')
+
+Sentry.init({ dsn: 'https://8ba7f2fda85246a0a168a2f7fcae5c73@sentry.io/1427713' })
 
 const usersRouter = require('./routes/users')
 const statisticsRouter = require('./routes/statistics')
@@ -11,6 +14,8 @@ const leaderboardRouter = require('./routes/leaderboard')
 
 const app = express()
 
+// The request handler must be the first middleware on the app
+app.use(Sentry.Handlers.requestHandler())
 app.use(cors())
 app.use(logger('combined'))
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -31,6 +36,9 @@ app.use((req, res, next) => {
   error.status = 404
   next(error)
 })
+
+// The error handler must be before any other error middleware
+app.use(Sentry.Handlers.errorHandler())
 
 // Error handler
 app.use(function (err, req, res, next) {
