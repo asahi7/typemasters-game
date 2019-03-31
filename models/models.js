@@ -14,7 +14,8 @@ const sequelize = new Sequelize('typemasters', config.username, config.password,
   define: {
     underscoredAll: true,
     timestamps: false
-  }
+  },
+  logging: false
 })
 
 const User = sequelize.define('user', {
