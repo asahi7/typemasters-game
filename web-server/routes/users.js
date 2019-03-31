@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const models = require('../../models/models')
 const _ = require('lodash')
-const { query, validationResult } = require('express-validator/check')
+const { query, validationResult, body } = require('express-validator/check')
 
 const Sequelize = models.sequelize.Sequelize
 
@@ -41,7 +41,7 @@ router.post('/createUserIfNotExists', async (req, res) => {
 })
 
 router.post('/saveNickname', [
-  query('nickname').isAlphanumeric().isLength({ min: 3 }).trim().escape()
+  body('nickname').isAlphanumeric().isLength({ min: 3 }).trim().escape()
 ], async (req, res, next) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
@@ -53,7 +53,7 @@ router.post('/saveNickname', [
     })
   }
   return models.User.update(
-    { nickname: req.query.nickname },
+    { nickname: req.body.nickname },
     { where: { uid: res.locals.userPayload.uid } }
   ).then(() => {
     return res.sendStatus(200)
@@ -61,7 +61,7 @@ router.post('/saveNickname', [
     if (err instanceof Sequelize.UniqueConstraintError) {
       return res.status(409).send({
         error: {
-          message: 'Nickname: ' + req.query.nickname + ' is already present'
+          message: 'Nickname: ' + req.body.nickname + ' is already present'
         }
       })
     }
@@ -86,7 +86,7 @@ const countryList = ['Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', '
   'Uzbekistan', 'Venezuela', 'Vietnam', 'Virgin Islands (US)', 'Yemen', 'Zambia', 'Zimbabwe']
 
 router.post('/saveCountry', [
-  query('country').isAscii().isLength({ min: 3 }).trim().escape()
+  body('country').isAscii().isLength({ min: 3 }).trim().escape()
 ], async (req, res, next) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
@@ -97,15 +97,15 @@ router.post('/saveCountry', [
       }
     })
   }
-  if (!_.includes(countryList, req.query.country)) {
+  if (!_.includes(countryList, req.body.country)) {
     return res.status(400).send({
       error: {
-        message: 'Country ' + req.query.country + ' does not exist'
+        message: 'Country ' + req.body.country + ' does not exist'
       }
     })
   }
   return models.User.update(
-    { country: req.query.country },
+    { country: req.body.country },
     { where: { uid: res.locals.userPayload.uid } }
   ).then(() => {
     return res.sendStatus(200)

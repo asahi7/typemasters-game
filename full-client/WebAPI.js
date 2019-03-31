@@ -54,19 +54,29 @@ const attachToken = async (options) => {
 export default {
   saveNickname: (nickname) => {
     const options = {
-      method: 'POST'
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({nickname})
     }
     return attachToken(options).then(options => {
-      return fetch(`${Config[env].WEB_SERVER_API}/users/saveNickname?nickname=${nickname}`, options).then(parseJSON)
+      return fetch(`${Config[env].WEB_SERVER_API}/users/saveNickname`, options).then(parseJSON)
     })
   },
 
   saveCountry: (country) => {
     const options = {
-      method: 'POST'
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({country})
     }
     return attachToken(options).then(options => {
-      return fetch(`${Config[env].WEB_SERVER_API}/users/saveCountry?country=${country}`, options).then(parseJSON)
+      return fetch(`${Config[env].WEB_SERVER_API}/users/saveCountry`, options).then(parseJSON)
     })
   },
 
