@@ -41,7 +41,7 @@ router.post('/createUserIfNotExists', async (req, res) => {
 })
 
 router.post('/saveNickname', [
-  query('nickname').isAlphanumeric().isLength({ min: 3 })
+  query('nickname').isAlphanumeric().isLength({ min: 3 }).trim().escape()
 ], async (req, res, next) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
@@ -86,7 +86,7 @@ const countryList = ['Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', '
   'Uzbekistan', 'Venezuela', 'Vietnam', 'Virgin Islands (US)', 'Yemen', 'Zambia', 'Zimbabwe']
 
 router.post('/saveCountry', [
-  query('country').isAscii().isLength({ min: 3 })
+  query('country').isAscii().isLength({ min: 3 }).trim().escape()
 ], async (req, res, next) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
