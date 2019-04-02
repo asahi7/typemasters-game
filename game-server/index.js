@@ -8,6 +8,21 @@ const firebaseAdmin = require('firebase-admin')
 const socketioAuth = require('socketio-auth')
 const _ = require('lodash')
 const Sentry = require('@sentry/node')
+const { RateLimiterMemory } = require('rate-limiter-flexible')
+
+// TODO(aibek): npm install rate-limiter-flexible
+// TODO(aibek): next use redis
+// TODO(aibek): check if using long timers is okay?
+const anonymousUsersRateLimiter = new RateLimiterMemory({
+  points: 50,
+  duration: 24 * 60 * 60 // 1 day
+})
+
+// The interval is usually in 500ms between each message, however in 250ms is also ok
+const raceDataIntervalRateLimiter = new RateLimiterMemory({
+  points: 4,
+  duration: 1
+})
 
 console.log('Running on ' + (process.env.PORT || '3000'))
 
@@ -42,11 +57,18 @@ socketioAuth(io, {
     // TODO(aibek): potential security bottleneck for anonymous user, check IP address
     // TODO(aibek): let anonymous users play only for some period of time per day, otherwise send them the message to register
     if (firebaseIdToken === -1) {
-      socket._serverData = {
-        // -1 is for anonymous users
-        uid: -1
-      }
-      return callback(null, true)
+      // TODO(aibek): find socket.ip, socket.id is not possible cause changes everytime
+      anonymousUsersRateLimiter.consume(socket.id).then(() => {
+        socket._serverData = {
+          // -1 is for anonymous users
+          uid: -1
+        }
+        return callback(null, true)
+      }).catch(() => {
+        const err = new Error('Ability to play anonymously expired. Please register.')
+        // TODO(aibek): send message to socket, so that client will be displayed the message
+        return callback(err)
+      })
     }
     return firebaseAdmin.auth().verifyIdToken(firebaseIdToken)
       .then(async (decodedToken) => {
@@ -70,6 +92,8 @@ io.on('connection', function (socket) {
   socket.on('newgame', function (data) {
     console.log('Socket asking for a new game: ' + socket.id)
     if (startingGamesCnt === 0) {
+      // TODO(aibek): think about using redis in order to enable cluster mode and be more fault-tolerant
+      // TODO(aibek): think about future compatibility issues if not using redis
       createNewRoom(socket, data)
     } else {
       console.log('The waiting queue is not empty!')
@@ -85,7 +109,10 @@ io.on('connection', function (socket) {
           startingGamesLock.acquire(room.uuid, function () {
             if (socket._serverData.uid && socket._serverData.uid !== -1 && room.containsPlayer(socket._serverData.uid)) {
               console.log('New player: + ' + socket.id + ' deleted the same player from same room with uid: ' + socket._serverData.uid)
-              room.removePlayer(socket._serverData.uid, io)
+              const player = room.getPlayer(socket._serverData.uid)
+              if (player && player.socket) {
+                room.removePlayer(player.socket.id, io)
+              }
             }
             if (room.started === false && room.countPlayers() < MAXIMUM_PLAYERS_IN_ROOM) {
               room.addPlayer(socket)
@@ -112,25 +139,36 @@ io.on('connection', function (socket) {
   // should check for interval of 500ms between each message, or disconnect, also report to Sentry the uid
   socket.on('racedata', function (data) {
     console.log('Race data from socket: ' + socket.id)
+    // TODO(aibek): maybe by socket.ip?
     const room = startedGames[data.room.uuid]
-    if (room && room.startTime + room.duration >= Date.now()) {
-      updatingGameDataLock.acquire(room.uuid, function () {
-        if (!room.isWinner(socket.id)) {
-          room.setCharsCount(socket.id, data.chars)
-          const cpm = room.countCpm(data.chars)
-          room.updatePlayerCpm(socket.id, cpm)
-          room.updateAccuracy(socket.id, data.accuracy)
-        }
-        // Player has finished race in time
-        if (data.chars === room.totalChars && !room.isWinner(socket.id)) {
-          room.setWinner(socket.id)
-        }
-      }, { skipQueue: true }).catch(function (err) {
-        Sentry.captureException(err)
-        console.log(err)
-        throw err
-      })
-    }
+    raceDataIntervalRateLimiter.consume(socket.id).then(() => {
+      if (room && room.startTime + room.duration >= Date.now()) {
+        updatingGameDataLock.acquire(room.uuid, function () {
+          if (!room.isWinner(socket.id)) {
+            room.setCharsCount(socket.id, data.chars)
+            const cpm = room.countCpm(data.chars)
+            room.updatePlayerCpm(socket.id, cpm)
+            room.updateAccuracy(socket.id, data.accuracy)
+          }
+          // Player has finished race in time
+          if (data.chars === room.totalChars && !room.isWinner(socket.id)) {
+            room.setWinner(socket.id)
+          }
+        }, { skipQueue: true }).catch(function (err) {
+          Sentry.captureException(err)
+          console.log(err)
+          throw err
+        })
+      }
+    }).catch(() => {
+      const error = new Error('User sending too many racedata requests')
+      error.uid = socket._serverData.uid
+      // TODO(aibek): find the socket's ip
+      error.ip = socket.ip
+      Sentry.captureException(error)
+      console.log(error)
+      room.removePlayer(socket.id, io)
+    })
   })
 
   socket.on('removeplayer', function (data) {
@@ -225,7 +263,6 @@ function startGame (item) {
   })
 }
 
-// TODO(aibek): make game finish earlier if all players are disconnected or are winners
 function playGame (room) {
   if (room.startTime + room.duration < Date.now() || room.allDisconnected()) {
     clearInterval(room.intervalId)

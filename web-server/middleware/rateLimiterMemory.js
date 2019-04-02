@@ -1,6 +1,7 @@
 const { RateLimiterMemory } = require('rate-limiter-flexible')
 
 // TODO(aibek): next use redis
+// TODO(aibek): redis is a must, for cluster mode which we are going to use
 const rateLimiter = new RateLimiterMemory({
   points: 30,
   duration: 1

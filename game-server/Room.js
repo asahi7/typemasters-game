@@ -38,6 +38,11 @@ class Room {
     })
   }
 
+  getPlayer (uid) {
+    const player = _.find(this.players, ['uid', uid])
+    return player
+  }
+
   createBots (count) {
     console.log('Number of bots to be created: ' + count)
     for (let i = 1; i <= count; i++) {
@@ -66,8 +71,7 @@ class Room {
     return false
   }
 
-  removePlayer (uid, io) {
-    const socketId = _.findKey(this.players, ['uid', uid])
+  removePlayer (socketId, io) {
     delete this.players[socketId]
     if (io.sockets.connected[socketId]) { io.sockets.connected[socketId].disconnect() }
   }
