@@ -109,7 +109,8 @@ export const en = {
   },
   personalCharts: {
     header: 'Personal Charts',
-    last100Days: 'Last 100 Days'
+    last100DaysCpm: 'Last 100 Days Cpm',
+    last100DaysAcc: 'Last 100 Days Accuracy'
   },
   signIn: {
     header: 'Sign In',
@@ -233,7 +234,8 @@ export const ru = {
   },
   personalCharts: {
     header: 'Графики',
-    last100Days: 'Последние 100 дней'
+    last100DaysCpm: 'CPM за последние 100 дней',
+    last100DaysAcc: 'Точность за последние 100 дней'
   },
   signIn: {
     header: 'Войти',

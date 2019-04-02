@@ -402,7 +402,7 @@ router.get('/getLastAverageAccuracy', [
 })
 
 // TODO(aibek): timezone is not correct for client
-router.get('/getAllCpmHistory', [
+router.get('/getGameHistoryByDay', [
   query('uid').isAlphanumeric().isLength({ min: 1 }),
   query('language').isAlpha().isLength({ min: 1, max: 2 })
 ], async (req, res, next) => {
@@ -430,7 +430,11 @@ router.get('/getAllCpmHistory', [
     ],
     includeIgnoreAttributes: false,
     where: { userUid: req.query.uid },
-    attributes: [[models.sequelize.fn('AVG', models.sequelize.col('cpm')), 'cpm'], [models.sequelize.fn('DATE_FORMAT', models.sequelize.col('race.date'), '%Y-%m-%d'), 'date']],
+    attributes: [
+      [models.sequelize.fn('AVG', models.sequelize.col('cpm')), 'cpm'],
+      [models.sequelize.fn('AVG', models.sequelize.col('accuracy')), 'accuracy'],
+      [models.sequelize.fn('DATE_FORMAT', models.sequelize.col('race.date'), '%Y-%m-%d'), 'date']
+    ],
     group: [models.sequelize.fn('DATE_FORMAT', models.sequelize.col('race.date'), '%Y-%m-%d')],
     order: [[models.sequelize.col('date'), 'ASC']],
     limit: 100

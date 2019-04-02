@@ -10,12 +10,16 @@ import PureChart from 'react-native-pure-chart'
 import DropdownAlert from 'react-native-dropdownalert'
 import i18n from 'i18n-js'
 
+// TODO(aibek): make the limit configurable, current is 100, could be 500, 1000
+// TODO(aibek): current chart shows the cpm results from beginning, but it has more sense to show the last N ones.
+// in increasing order
 export default class PersonalCharts extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
       loading: true,
-      data: []
+      cpmData: [],
+      accData: []
     }
     this.updateScreen = this.updateScreen.bind(this)
     this.getPersistentDataOffline = this.getPersistentDataOffline.bind(this)
@@ -87,26 +91,37 @@ export default class PersonalCharts extends React.Component {
       } else {
         const data = JSON.parse(value)
         this.setState({
-          data
+          cpmData: data.cpmData,
+          accData: data.accData
         })
       }
     })
   }
 
   getApiDataOnline () {
-    let data = {}
+    let cpmData = {}
+    let accData = {}
     const user = firebase.auth().currentUser
-    return WebAPI.getAllCpmHistory(user.uid, this.state.textLanguage).then(({ result }) => {
-      data = result.map((res) => {
+    return Promise.all([
+      WebAPI.getGameHistoryByDay(user.uid, this.state.textLanguage)
+    ]).then(results => {
+      cpmData = results[0].map((res) => {
         return {
           x: res.date,
           y: +res.cpm
         }
       })
+      accData = results[0].map((res) => {
+        return {
+          x: res.date,
+          y: +res.accuracy
+        }
+      })
     }).then(() => {
-      return AsyncStorage.setItem('personalCharts-data', JSON.stringify(data)).then(() => {
+      return AsyncStorage.setItem('personalCharts-data', JSON.stringify({ cpmData, accData })).then(() => {
         this.setState({
-          data
+          cpmData,
+          accData
         })
       })
     }).catch((error) => {
@@ -153,8 +168,12 @@ export default class PersonalCharts extends React.Component {
         </View>
         <ScrollView style={{ marginTop: 10, marginBottom: 10 }}>
           <View style={{ marginTop: 10 }}>
-            <Text style={globalStyles.tableHeader}>{i18n.t('personalCharts.last100Days')}</Text>
-            <PureChart data={this.state.data} type='line' />
+            <Text style={globalStyles.tableHeader}>{i18n.t('personalCharts.last100DaysCpm')}</Text>
+            <PureChart data={this.state.cpmData} type='line' />
+          </View>
+          <View style={{ marginTop: 10 }}>
+            <Text style={globalStyles.tableHeader}>{i18n.t('personalCharts.last100DaysAcc')}</Text>
+            <PureChart data={this.state.accData} type='line' />
           </View>
         </ScrollView>
         <DropdownAlert ref={(ref) => { this.dropdown = ref }} />

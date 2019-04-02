@@ -59,7 +59,7 @@ export default {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({nickname})
+      body: JSON.stringify({ nickname })
     }
     return attachToken(options).then(options => {
       return fetch(`${Config[env].WEB_SERVER_API}/users/saveNickname`, options).then(parseJSON)
@@ -73,7 +73,7 @@ export default {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({country})
+      body: JSON.stringify({ country })
     }
     return attachToken(options).then(options => {
       return fetch(`${Config[env].WEB_SERVER_API}/users/saveCountry`, options).then(parseJSON)
@@ -145,12 +145,12 @@ export default {
     return fetch(`${Config[env].WEB_SERVER_API}/statistics/getAverageAccuracy?language=${language}&uid=${uid}`).then(parseJSON)
   },
 
-  getAllCpmHistory: (uid, language) => {
+  getGameHistoryByDay: (uid, language) => {
     const options = {
       method: 'GET'
     }
     return attachToken(options).then(options => {
-      return fetch(`${Config[env].WEB_SERVER_API}/statistics/getAllCpmHistory?language=${language}&uid=${uid}`, options).then(parseJSON)
+      return fetch(`${Config[env].WEB_SERVER_API}/statistics/getGameHistoryByDay?language=${language}&uid=${uid}`, options).then(parseJSON)
     })
   },
 

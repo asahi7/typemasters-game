@@ -33,7 +33,9 @@ const EXCLUDED_ROUTES_FROM_VERIFICATION = [
   '/statistics/getLastAverageAccuracy',
   '/leaderboard/getBestResults',
   '/leaderboard/getBestAvgResults',
-  '/leaderboard/getBestTodayResults'
+  '/leaderboard/getBestTodayResults',
+  // TODO(aibek): remove following
+  '/statistics/getAllCpmHistory'
 ]
 // TODO(aibek): some of the routes should be checked for token
 
