@@ -40,6 +40,7 @@ socketioAuth(io, {
   authenticate: function (socket, data, callback) {
     const firebaseIdToken = data.token
     // TODO(aibek): potential security bottleneck for anonymous user, check IP address
+    // TODO(aibek): let anonymous users play only for some period of time per day, otherwise send them the message to register
     if (firebaseIdToken === -1) {
       socket._serverData = {
         // -1 is for anonymous users
@@ -53,16 +54,6 @@ socketioAuth(io, {
           uid: decodedToken.uid,
           email: decodedToken.email
         }
-        // Creates user if not already created
-        await models.User.findOrCreate({
-          where: {
-            email: decodedToken.email
-          },
-          defaults: {
-            uid: decodedToken.uid,
-            email: decodedToken.email
-          }
-        })
         // Inform the callback of auth success/failure
         return callback(null, true)
       }).catch(function (err) {
@@ -75,6 +66,7 @@ socketioAuth(io, {
 
 io.on('connection', function (socket) {
   console.log('Connected ' + socket.id)
+  // TODO(aibek): disallow same ip address from creation of too many rooms
   socket.on('newgame', function (data) {
     console.log('Socket asking for a new game: ' + socket.id)
     if (startingGamesCnt === 0) {
@@ -114,6 +106,10 @@ io.on('connection', function (socket) {
     }
   })
 
+  // TODO(aibek): check if the data is true, you might want to introduce some inner encryption, or data hiding
+  // to disallow players change their cpms and same ones, use some token?
+  // TODO(aibek): if authenticated or not user sends data too often, then this is a potential security issue
+  // should check for interval of 500ms between each message, or disconnect, also report to Sentry the uid
   socket.on('racedata', function (data) {
     console.log('Race data from socket: ' + socket.id)
     const room = startedGames[data.room.uuid]
