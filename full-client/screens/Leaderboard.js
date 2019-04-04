@@ -18,7 +18,8 @@ export default class Leaderboard extends React.Component {
       data: {
         bestResults: [],
         bestAvgResults: [],
-        bestTodayResults: []
+        bestCpmTodayResults: [],
+        bestAccTodayResults: []
       }
     }
     this.updateScreen = this.updateScreen.bind(this)
@@ -89,7 +90,8 @@ export default class Leaderboard extends React.Component {
           data: {
             bestResults: [],
             bestAvgResults: [],
-            bestTodayResults: []
+            bestCpmTodayResults: [],
+            bestAccTodayResults: []
           }
         })
       } else {
@@ -106,17 +108,20 @@ export default class Leaderboard extends React.Component {
     return Promise.all([
       WebAPI.getBestResults(this.state.textLanguage),
       WebAPI.getBestAvgResults(this.state.textLanguage),
-      WebAPI.getBestTodayResults(this.state.textLanguage)
+      WebAPI.getBestCpmTodayResults(this.state.textLanguage),
+      WebAPI.getBestAccTodayResults(this.state.textLanguage)
     ]).then((results) => {
       data = {
         bestResults: results[0],
         bestAvgResults: results[1],
-        bestTodayResults: results[2]
+        bestCpmTodayResults: results[2],
+        bestAccTodayResults: results[3]
       }
     }).then(() => {
       return AsyncStorage.setItem('leaderboard-data', JSON.stringify(data)).then(() => {
         this.setState({
-          data
+          data,
+          loading: false
         })
       })
     }).catch((error) => {
@@ -164,12 +169,24 @@ export default class Leaderboard extends React.Component {
         <ScrollView style={{ marginTop: 10, marginBottom: 10 }}>
           <View style={{ marginTop: 10 }}>
             <Text style={globalStyles.tableHeader}>{i18n.t('leaderboard.bestTodayByCpm')}</Text>
-            {this.state.data.bestTodayResults.map((result, i) => {
+            {this.state.data.bestCpmTodayResults.map((result, i) => {
               return (
                 <View style={globalStyles.row} key={i}>
                   <Text style={globalStyles.column}>{result.user.nickname ? result.user.nickname : 'noname'}</Text>
                   <Text style={globalStyles.column}>{result.user.country ? result.user.country : 'not specified'}</Text>
                   <Text style={globalStyles.column}>{result.cpm}</Text>
+                </View>
+              )
+            })}
+          </View>
+          <View style={{ marginTop: 10 }}>
+            <Text style={globalStyles.tableHeader}>{i18n.t('leaderboard.bestTodayByAcc')}</Text>
+            {this.state.data.bestAccTodayResults.map((result, i) => {
+              return (
+                <View style={globalStyles.row} key={i}>
+                  <Text style={globalStyles.column}>{result.user.nickname ? result.user.nickname : 'noname'}</Text>
+                  <Text style={globalStyles.column}>{result.user.country ? result.user.country : 'not specified'}</Text>
+                  <Text style={globalStyles.column}>{result.accuracy}</Text>
                 </View>
               )
             })}

@@ -105,13 +105,13 @@ export default class PersonalCharts extends React.Component {
     return Promise.all([
       WebAPI.getGameHistoryByDay(user.uid, this.state.textLanguage)
     ]).then(results => {
-      cpmData = results[0].map((res) => {
+      cpmData = results[0].result.map((res) => {
         return {
           x: res.date,
           y: +res.cpm
         }
       })
-      accData = results[0].map((res) => {
+      accData = results[0].result.map((res) => {
         return {
           x: res.date,
           y: +res.accuracy
@@ -121,7 +121,8 @@ export default class PersonalCharts extends React.Component {
       return AsyncStorage.setItem('personalCharts-data', JSON.stringify({ cpmData, accData })).then(() => {
         this.setState({
           cpmData,
-          accData
+          accData,
+          loading: false
         })
       })
     }).catch((error) => {

@@ -32,6 +32,7 @@ export const en = {
   leaderboard: {
     header: 'Leaderboard',
     bestTodayByCpm: 'Best Today Results By CPM',
+    bestTodayByAcc: 'Best Today Results By Accuracy',
     bestTodayByAvgCpm: 'Best Average Results By CPM',
     bestByCpm: 'Best Results By CPM'
   },
@@ -157,6 +158,7 @@ export const ru = {
   leaderboard: {
     header: 'Статистика',
     bestTodayByCpm: 'Лучшие результаты CPM за сегодня',
+    bestTodayByAcc: 'Лучшие результаты по точности за сегодня',
     bestTodayByAvgCpm: 'Лучшие средние результаты CPM за сегодня',
     bestByCpm: 'Лучшие результаты CPM за все время'
   },

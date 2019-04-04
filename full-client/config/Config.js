@@ -1,8 +1,8 @@
 // TODO(aibek): add https
 export default {
   dev: {
-    WEB_SERVER_API: 'http://192.168.0.105:3001',
-    GAME_SERVER_API: 'http://192.168.0.105:3000'
+    WEB_SERVER_API: 'http://192.168.1.140:3001',
+    GAME_SERVER_API: 'http://192.168.1.140:3000'
   },
   prod: {
     WEB_SERVER_API: 'http://18.188.240.67:8080',

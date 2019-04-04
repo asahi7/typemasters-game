@@ -137,8 +137,12 @@ export default {
     return fetch(`${Config[env].WEB_SERVER_API}/statistics/countUserPlayedToday?uid=${uid}`).then(parseJSON)
   },
 
-  getBestTodayResults: (language) => {
-    return fetch(`${Config[env].WEB_SERVER_API}/leaderboard/getBestTodayResults?language=${language}`).then(parseJSON)
+  getBestCpmTodayResults: (language) => {
+    return fetch(`${Config[env].WEB_SERVER_API}/leaderboard/getBestCpmTodayResults?language=${language}`).then(parseJSON)
+  },
+
+  getBestAccTodayResults: (language) => {
+    return fetch(`${Config[env].WEB_SERVER_API}/leaderboard/getBestAccTodayResults?language=${language}`).then(parseJSON)
   },
 
   getAverageAccuracy: (uid, language) => {

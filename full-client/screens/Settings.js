@@ -142,7 +142,8 @@ export default class Settings extends React.Component {
         return AsyncStorage.setItem('settings-userData', JSON.stringify(userData)).then(() => {
           this.setState({
             userData,
-            authenticated: true
+            authenticated: true,
+            loading: false
           })
         })
       }).catch((error) => {
@@ -153,7 +154,8 @@ export default class Settings extends React.Component {
       })
     } else {
       this.setState({
-        authenticated: false
+        authenticated: false,
+        loading: false
       })
       return new Promise((resolve, reject) => {
         resolve()

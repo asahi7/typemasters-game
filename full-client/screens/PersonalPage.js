@@ -131,7 +131,8 @@ export default class PersonalPage extends React.Component {
     }).then(() => {
       return AsyncStorage.setItem('personalPage-userData', JSON.stringify(userData)).then(() => {
         this.setState({
-          userData
+          userData,
+          loading: false
         })
       })
     }).catch((error) => {
