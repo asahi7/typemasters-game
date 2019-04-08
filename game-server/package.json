@@ -29,9 +29,12 @@
     "mongojs": "^2.6.0",
     "mysql2": "^1.6.4",
     "queue-fifo": "^0.2.5",
+    "rate-limiter-flexible": "^0.24.0",
+    "redis": "^2.8.0",
     "sequelize": "^4.41.1",
     "socket.io": "^2.1.1",
     "socket.io-client": "^2.1.1",
+    "socket.io-redis": "^5.2.0",
     "socketio-auth": "^0.1.1",
     "uuid": "^3.3.2"
   }

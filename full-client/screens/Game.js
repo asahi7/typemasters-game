@@ -66,6 +66,7 @@ export default class Game extends React.Component {
     this.setOfflineGameData = this.setOfflineGameData.bind(this)
     this.handlePlayGamePressedOffline = this.handlePlayGamePressedOffline.bind(this)
     this.finishOfflineGame = this.finishOfflineGame.bind(this)
+    this.findPlayerId = this.findPlayerId.bind(this)
   }
 
   async componentDidMount () {
@@ -130,11 +131,9 @@ export default class Game extends React.Component {
    * A method to disconnect from the game server.
    */
   dicsonnectPlayer () {
-    if (this.state.uuid) {
+    if (this.state.roomKey) {
       socket.emit('removeplayer', {
-        room: {
-          uuid: this.state.uuid
-        }
+        roomKey: this.state.roomKey
       })
     }
     if (this.state.gamePlaying === true && socket) {
@@ -190,7 +189,6 @@ export default class Game extends React.Component {
         textArray,
         text: text.text,
         wordIndex: 0,
-        uuid: data.room,
         numOfPlayers: 1,
         chars: 0,
         startTime: Date.now(),
@@ -283,15 +281,17 @@ export default class Game extends React.Component {
         socket.on('gamestarted', (data) => {
           if (__DEV__) {
             console.log('Game started')
+            console.log(data)
           }
           const textArray = data.text.split(' ')
           this.setState({
             textArray,
             text: data.text,
             wordIndex: 0,
-            uuid: data.room,
+            roomKey: data.roomKey,
             numOfPlayers: data.players.length,
-            chars: 0
+            chars: 0,
+            playerId: this.findPlayerId(data)
           }, () => {
             const intervalId = setInterval(this.sendRaceData, 500)
             this.setState({
@@ -301,6 +301,9 @@ export default class Game extends React.Component {
         })
 
         socket.on('gamedata', (data) => {
+          if (__DEV__) {
+            console.log('Game data')
+          }
           this.setGameData(data, false)
         })
         socket.on('gameended', (data) => {
@@ -325,14 +328,21 @@ export default class Game extends React.Component {
     socket.emit('racedata', {
       chars: this.state.chars,
       accuracy: this.state.accuracy,
-      room: {
-        uuid: this.state.uuid
-      }
+      roomKey: this.state.roomKey,
+      playerId: this.state.playerId
     })
   }
 
   setGameData (data, isGameEnded) {
-    const isWinner = _.find(data.players, { 'id': this.state.socketId }).isWinner
+    const player = _.find(data.players, { 'socketId': this.state.socketId })
+    if (!player) {
+      Sentry.captureException('Server sent data to socket ' + this.state.socketId + ' without playing client')
+      this.dicsonnectPlayer()
+      // TODO(aibek): will socket.io emit disconnected msg and cleanGameData triggered automatically?
+      // this.cleanGameData()
+      return
+    }
+    const isWinner = player.isWinner
     this.setState({
       timeLeft: data.timeLeft / 1000,
       cpm: this.findCpmForCurrentUser(data),
@@ -355,11 +365,15 @@ export default class Game extends React.Component {
   }
 
   findCpmForCurrentUser (data) {
-    return Math.round(_.get(_.find(data.players, ['id', this.state.socketId]), 'cpm'))
+    return Math.round(_.get(_.find(data.players, ['socketId', this.state.socketId]), 'cpm'))
+  }
+
+  findPlayerId (data) {
+    return _.find(data.players, ['socketId', this.state.socketId]).playerId
   }
 
   findPlayerPosition (data) {
-    return _.find(data.players, { 'id': this.state.socketId }).position
+    return _.find(data.players, ['socketId', this.state.socketId]).position
   }
 
   setModalVisible (visible) {
@@ -372,7 +386,8 @@ export default class Game extends React.Component {
     }
     this.setState({
       gamePlaying: false,
-      chars: 0
+      chars: 0,
+      roomKey: null
     })
     if (this.state.intervalId) {
       clearInterval(this.state.intervalId)

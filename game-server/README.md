@@ -16,6 +16,9 @@ In models:
 - Paste your DB password into models/config/config.json
 - `sequelize db:create`
 - `sequelize db:migrate`
+- Install Redis locally, `brew install redis`
+- Run Redis by: `redis-server /usr/local/etc/redis.conf`
+- Check Redis by: `redis-cli ping`
 
 - Run `pm2 start`
 

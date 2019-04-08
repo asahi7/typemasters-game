@@ -122,7 +122,8 @@ export default class Main extends React.Component {
         return AsyncStorage.setItem('main-data', JSON.stringify(data)).then(() => {
           this.setState({
             data,
-            authenticated: true
+            authenticated: true,
+            loading: false
           })
         })
       }).catch((error) => {
@@ -145,7 +146,8 @@ export default class Main extends React.Component {
         return AsyncStorage.setItem('main-data', JSON.stringify(data)).then(() => {
           this.setState({
             data,
-            authenticated: false
+            authenticated: false,
+            loading: false
           })
         })
       }).catch((error) => {

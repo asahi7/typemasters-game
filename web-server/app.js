@@ -6,7 +6,7 @@ const cors = require('cors')
 const firebase = require('./firebase/auth')
 const Sentry = require('@sentry/node')
 const helmet = require('helmet')
-const rateLimiterMiddleware = require('./middleware/rateLimiterMemory')
+const rateLimiterMiddleware = require('./middleware/rateLimiter')
 
 Sentry.init({ dsn: 'https://8ba7f2fda85246a0a168a2f7fcae5c73@sentry.io/1427713' })
 

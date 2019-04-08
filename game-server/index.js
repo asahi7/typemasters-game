@@ -1,28 +1,45 @@
+// TODO(aibek): add sticky sessions to socket.io
 const io = require('socket.io')(process.env.PORT || '3000')
-const Room = require('./Room')
-const inherits = require('inherits')
-const LinkedList = require('linked-list')
-const AsyncLock = require('async-lock')
 const models = require('../models/models')
 const firebaseAdmin = require('firebase-admin')
 const socketioAuth = require('socketio-auth')
 const _ = require('lodash')
 const Sentry = require('@sentry/node')
-const { RateLimiterMemory } = require('rate-limiter-flexible')
+const redis = require('redis')
+const socketIoRedis = require('socket.io-redis')
+const { RateLimiterRedis } = require('rate-limiter-flexible')
+const utils = require('./utils')
 
-// TODO(aibek): npm install rate-limiter-flexible
-// TODO(aibek): next use redis
-// TODO(aibek): check if using long timers is okay?
-const anonymousUsersRateLimiter = new RateLimiterMemory({
+// TODO(aibek): study more https://github.com/animir/node-rate-limiter-flexible/wiki/Redis
+// TODO(aibek): separate environments, prod and dev
+const redisClient = redis.createClient({
+  host: 'localhost',
+  port: 6379,
+  enable_offline_queue: false
+})
+
+const anonymousUsersRateLimiter = new RateLimiterRedis({
+  redis: redisClient,
+  keyPrefix: 'anonUsers',
   points: 50,
   duration: 24 * 60 * 60 // 1 day
 })
 
-// The interval is usually in 500ms between each message, however in 250ms is also ok
-const raceDataIntervalRateLimiter = new RateLimiterMemory({
+// TODO(aibek): think about the proxy server, ip may be same, allow more points
+const raceDataIntervalRateLimiter = new RateLimiterRedis({
+  redis: redisClient,
+  keyPrefix: 'raceDataIntv',
   points: 4,
   duration: 1
 })
+
+redisClient.on('error', function (err) {
+  Sentry.captureException(err)
+  console.log('Error ' + err)
+})
+
+// TODO(aibek): separate environments, prod and dev
+io.adapter(socketIoRedis({ host: 'localhost', port: 6379 }))
 
 console.log('Running on ' + (process.env.PORT || '3000'))
 
@@ -34,31 +51,19 @@ firebaseAdmin.initializeApp({
 
 Sentry.init({ dsn: 'https://85893e4c45124030bb065a1184ceb349@sentry.io/1425755' })
 
-// Defining list item wrapper for room object
-inherits(RoomItem, LinkedList.Item)
-function RoomItem (room) {
-  this.room = room
-  LinkedList.Item.apply(this)
-}
-
-const STARTING_GAME_TIMEOUT = 7000
+const STARTING_GAME_TIMEOUT = 8000
 const MAXIMUM_PLAYERS_IN_ROOM = 7
 const SERVER_SEND_DATA_INTERVAL = 500
-// Linked list for games which are to be started
-const startingGames = new LinkedList()
-const startingGamesLock = new AsyncLock()
-let startingGamesCnt = 0
-let startedGames = {}
-const updatingGameDataLock = new AsyncLock()
 
+let gamePlayIntervals = {}
+
+// TODO(aibek): check this library https://www.npmjs.com/package/socketio-auth, timeouts and etc
 socketioAuth(io, {
   authenticate: function (socket, data, callback) {
     const firebaseIdToken = data.token
-    // TODO(aibek): potential security bottleneck for anonymous user, check IP address
-    // TODO(aibek): let anonymous users play only for some period of time per day, otherwise send them the message to register
     if (firebaseIdToken === -1) {
-      // TODO(aibek): find socket.ip, socket.id is not possible cause changes everytime
-      anonymousUsersRateLimiter.consume(socket.id).then(() => {
+      // TODO(aibek): check limiter
+      anonymousUsersRateLimiter.consume(socket.conn.remoteAddress).then(() => {
         socket._serverData = {
           // -1 is for anonymous users
           uid: -1
@@ -86,117 +91,198 @@ socketioAuth(io, {
   }
 })
 
+function _findGameToBeAdded (cursor, language) {
+  return new Promise((resolve, reject) => {
+    redisClient.scan(cursor, 'MATCH', `game:*:${language}`, function (err, games) {
+      if (err) {
+        return reject(err)
+      }
+      let requests = []
+      if (games[1]) {
+        console.log(games[1])
+        // TODO(aibek): check for room specifics
+        requests = games[1].map(game => {
+          return new Promise((resolve) => {
+            redisClient.hgetall(game, function (err, reply) {
+              if (err) {
+                throw err
+              }
+              return resolve({ game, reply })
+            })
+          })
+        })
+      }
+      return Promise.all(requests).then((responses) => {
+        let game = null
+        responses.forEach((response) => {
+          // TODO(aibek): check for maximum players in room
+          if (response.reply && response.reply.started === 'false' && +response.reply.scheduled - 1000 >= Date.now() &&
+              utils.countPlayers(response.reply) + 1 <= MAXIMUM_PLAYERS_IN_ROOM) {
+            game = response.game
+          }
+        })
+        return game
+      }).then((game) => {
+        if (!game) {
+          const cursor = games[0]
+          if (cursor === '0') {
+            return resolve({ game, cursor })
+          }
+          return resolve({ game, cursor })
+        } else {
+          return resolve({ game })
+        }
+      })
+    })
+  }).then((obj) => {
+    if (obj.game === null && obj.cursor === '0') {
+      return null
+    } else if (obj.game === null) {
+      // TODO(aibek): check recursion
+      return _findGameToBeAdded(obj.cursor, language)
+    } else if (obj.game) {
+      return obj.game
+    }
+  })
+}
+
+// TODO(aibek): check all possible error scenarios/cases
+function addToExistingRoom (socket, roomKey) {
+  console.log('Adding player ' + socket.id + ' to existing room ' + roomKey)
+  const playerId = 'player_' + socket.id
+  const player = utils.makePlayer(socket, playerId)
+  redisClient.hgetall(roomKey, function (err, room) {
+    if (err) {
+      throw err
+    }
+    const prevPlayer = utils.getPlayerBy(room, { uid: socket._serverData.uid })
+    if (socket._serverData.uid && socket._serverData.uid !== -1 && prevPlayer !== null) {
+      console.log('New player: ' + socket.id + ' deleted the same player from same room with uid: ' + socket._serverData.uid)
+      if (prevPlayer && prevPlayer.socketId) {
+        utils.removePlayer(room, prevPlayer.socketId, io, redisClient)
+      }
+    }
+    redisClient.hset(roomKey, playerId, utils.serializePlayer(player), function (err, res) {
+      if (err) {
+        Sentry.captureException(err)
+        console.log(err)
+        throw err
+      }
+    })
+    socket._serverData.roomKey = roomKey
+    socket.join(roomKey)
+  })
+}
+
 io.on('connection', function (socket) {
   console.log('Connected ' + socket.id)
   // TODO(aibek): disallow same ip address from creation of too many rooms
   socket.on('newgame', function (data) {
     console.log('Socket asking for a new game: ' + socket.id)
-    if (startingGamesCnt === 0) {
-      // TODO(aibek): think about using redis in order to enable cluster mode and be more fault-tolerant
-      // TODO(aibek): think about future compatibility issues if not using redis
-      createNewRoom(socket, data)
-    } else {
-      console.log('The waiting queue is not empty!')
-      let current = startingGames.head
-      let addedToGame = false
-      while (current !== null && addedToGame === false) {
-        if (current.room.countPlayers() < MAXIMUM_PLAYERS_IN_ROOM) {
-          const room = current.room
-          if (room.language !== data.language) {
-            current = current.next
-            continue
-          }
-          startingGamesLock.acquire(room.uuid, function () {
-            if (socket._serverData.uid && socket._serverData.uid !== -1 && room.containsPlayer(socket._serverData.uid)) {
-              console.log('New player: + ' + socket.id + ' deleted the same player from same room with uid: ' + socket._serverData.uid)
-              const player = room.getPlayer(socket._serverData.uid)
-              if (player && player.socket) {
-                room.removePlayer(player.socket.id, io)
-              }
-            }
-            if (room.started === false && room.countPlayers() < MAXIMUM_PLAYERS_IN_ROOM) {
-              room.addPlayer(socket)
-              socket.join(room.uuid)
-              addedToGame = true
-            }
-          }).catch(function (err) {
-            Sentry.captureException(err)
-            console.log(err)
-            throw err
-          })
-        }
-        current = current.next
-      }
-      if (addedToGame === false) {
+    _findGameToBeAdded('0', data.language).then(game => {
+      if (!game) {
         createNewRoom(socket, data)
+      } else {
+        addToExistingRoom(socket, game)
       }
-    }
+    })
   })
 
   // TODO(aibek): check if the data is true, you might want to introduce some inner encryption, or data hiding
   // to disallow players change their cpms and same ones, use some token?
-  // TODO(aibek): if authenticated or not user sends data too often, then this is a potential security issue
-  // should check for interval of 500ms between each message, or disconnect, also report to Sentry the uid
+  // TODO(aibek): never rely on data sent by user, only access the fields by socket.id
+  // In this case if user fakes the key, and players data, then they may falsify other player's data and affect
+  // In this case, we must make sure that user can't falsify the data on his side, encryption?
+  // TODO(aibek): check all rooms fields, should be numbers
   socket.on('racedata', function (data) {
     console.log('Race data from socket: ' + socket.id)
-    // TODO(aibek): maybe by socket.ip?
-    const room = startedGames[data.room.uuid]
-    raceDataIntervalRateLimiter.consume(socket.id).then(() => {
-      if (room && room.startTime + room.duration >= Date.now()) {
-        updatingGameDataLock.acquire(room.uuid, function () {
-          if (!room.isWinner(socket.id)) {
-            room.setCharsCount(socket.id, data.chars)
-            const cpm = room.countCpm(data.chars)
-            room.updatePlayerCpm(socket.id, cpm)
-            room.updateAccuracy(socket.id, data.accuracy)
+    if (socket.conn.remoteAddress) {
+      raceDataIntervalRateLimiter.consume(socket.conn.remoteAddress).then(() => {
+        redisClient.hgetall(data.roomKey, function (err, room) {
+          if (err) {
+            Sentry.captureException(err)
+            console.log(err)
+            throw err
           }
-          // Player has finished race in time
-          if (data.chars === room.totalChars && !room.isWinner(socket.id)) {
-            room.setWinner(socket.id)
+          if (!room) {
+            // TODO(aibek): disconnect this player, and cover this case
+            return
           }
-        }, { skipQueue: true }).catch(function (err) {
-          Sentry.captureException(err)
-          console.log(err)
-          throw err
+          let player = utils.getPlayer(room, data.playerId)
+          if (+room.startTime + +room.duration >= Date.now()) {
+            if (!player.isWinner) {
+              const cpm = utils.countCpm(room, data.chars)
+              player.chars = data.chars
+              player.cpm = cpm
+              player.accuracy = data.accuracy
+              utils.updatePlayer(room, player, redisClient)
+            }
+            // Player has finished race in time
+            if (data.chars === +room.totalChars && !player.isWinner) {
+              player.isWinner = true
+              player.finishedTime = Date.now()
+              utils.updatePlayer(room, player, redisClient)
+            }
+          }
         })
-      }
-    }).catch(() => {
-      const error = new Error('User sending too many racedata requests')
-      error.uid = socket._serverData.uid
-      // TODO(aibek): find the socket's ip
-      error.ip = socket.ip
-      Sentry.captureException(error)
-      console.log(error)
-      room.removePlayer(socket.id, io)
-    })
-  })
-
-  socket.on('removeplayer', function (data) {
-    console.log('Player is being removed: ' + socket.id + ' from room:' + data.room.uuid)
-    const room = startedGames[data.room.uuid]
-    if (room) {
-      room.setPlayerDisconnected(socket.id)
+      }).catch(() => {
+        const error = new Error('User sending too many racedata requests')
+        error.uid = socket._serverData.uid
+        error.ip = socket.conn.remoteAddress
+        error.roomKey = data.roomKey
+        Sentry.captureException(error)
+        console.log(error)
+        // TODO(aibek): room is not defined, handle better, remove from game, remove from room
+        // utils.removePlayer(room, player.socket.id, io, redisClient)
+      })
     }
   })
 
+  socket.on('removeplayer', function (data) {
+    console.log('Player is being removed: ' + socket.id + ' from room: ' + data.roomKey)
+    console.log(socket._serverData.roomKey)
+    redisClient.hgetall(socket._serverData.roomKey, function (err, room) {
+      if (err) {
+        Sentry.captureException(err)
+        console.log(err)
+        throw err
+      }
+      console.log(room)
+      if (!room) {
+        Sentry.captureException(new Error('Room ' + data.roomKey + ' does not exist, from socket ' + socket.id))
+        return
+      }
+      utils.setPlayerDisconnected(room, socket.id, redisClient)
+    })
+  })
+
+  // TODO(aibek): check scenarios
   socket.on('disconnect', function (reason) {
     console.log(socket.id + ' disconnected because: ' + reason)
     if (reason === 'transport error' || reason === 'ping timeout') {
-      const room = _.find(startedGames, (room) => {
-        return room.containsPlayer(socket._serverData.uid)
+      const roomKey = socket._serverData.roomKey
+      redisClient.hgetall(roomKey, function (err, room) {
+        if (err) {
+          Sentry.captureException(err)
+          console.log(err)
+          throw err
+        }
+        if (!room) {
+          Sentry.captureException('Room ' + roomKey + ' does not exist, from socket ' + socket.id)
+          return
+        }
+        const player = utils.getPlayerBy(room, { uid: socket._serverData.uid })
+        if (player && !player.disconnected) {
+          console.log('Player is being removed: ' + socket.id + ' from room: ' + roomKey)
+          utils.setPlayerDisconnected(room, socket.id, redisClient)
+        }
       })
-      if (room) {
-        console.log('Player is being removed: ' + socket.id + ' from room:' + room.uuid)
-        room.setPlayerDisconnected(socket.id)
-      }
     }
     console.log('Player disconnected: ' + socket.id)
   })
 })
 
 async function createNewRoom (socket, data) {
-  const room = new Room()
-  console.log('Socket: ' + socket.id + ' created room: ' + room.uuid)
   let text = await models.Text.findOne({
     where: { language: data.language },
     order: [
@@ -211,91 +297,133 @@ async function createNewRoom (socket, data) {
     }
     Sentry.captureException('Text with language ' + data.language + ' was asked and was not found')
   }
-  room.language = data.language
-  room.text = text.text
-  room.computeChars()
-  room.duration = text.duration * 1000 // converting to milliseconds
-  room.textId = text.id
-  room.addPlayer(socket)
-  socket.join(room.uuid)
-  const item = new RoomItem(room)
-  startingGames.append(item)
-  startingGamesCnt++
-  setTimeout(function () {
-    startGame(item)
-  }, STARTING_GAME_TIMEOUT)
+  const uuid = utils.generateUUID()
+  const roomKey = `game:${uuid}:${data.language}`
+  const playerId = 'player_' + socket.id
+  const player = utils.makePlayer(socket, playerId)
+  // TODO(aibek): make a function which would put all values as String, something like type recognizer
+  redisClient.hmset(roomKey,
+    {
+      text: text.text,
+      duration: (text.duration * 1000).toString(),
+      textId: String(text.id),
+      language: data.language,
+      uuid,
+      totalChars: String(utils.computeTotalChars(text.text)),
+      started: String(false),
+      finished: String(false), // TODO(aibek): unused currently
+      [playerId]: utils.serializePlayer(player),
+      scheduled: String(Date.now() + STARTING_GAME_TIMEOUT),
+      key: roomKey
+    },
+    function (err, res) {
+      if (err) {
+        Sentry.captureException(err)
+        console.log(err)
+        throw err
+      }
+      redisClient.expire(roomKey, String(text.duration + (STARTING_GAME_TIMEOUT / 1000) + 10))
+      console.log('Socket: ' + socket.id + ' created room: ' + roomKey)
+      socket._serverData.roomKey = roomKey
+      socket.join(roomKey)
+      setTimeout(function () {
+        startGame(roomKey)
+      }, STARTING_GAME_TIMEOUT)
+    })
 }
 
-function startGame (item) {
-  startingGamesLock.acquire(item.room.uuid, function () {
-    console.log('Game: ' + item.room.uuid + ' has started')
-    console.log(' No of players in room: ' + item.room.countPlayers())
-    const room = item.room
-    startingGamesCnt--
-    item.detach()
-    if (room.allDisconnected()) {
-      console.log('Game will not start in room: ' + room.uuid + ', all users disconnected')
-      // TODO(aibek): following may be unnecessary
-      room.closeSockets()
+function startGame (roomKey) {
+  console.log('Game: ' + roomKey + ' has started')
+  redisClient.hgetall(roomKey, async function (err, room) {
+    if (err) {
+      Sentry.captureException(err)
+      console.log(err)
+      throw err
+    }
+    if (!room) {
+      Sentry.captureException(new Error('Game was created but not found in Redis: ' + roomKey))
       return
     }
-    if (room.countPlayers() <= 2) {
-      room.createBots(_.random(0, MAXIMUM_PLAYERS_IN_ROOM - 2))
+    const isAllDisconnected = await utils.allDisconnected(room, io)
+    if (isAllDisconnected) {
+      console.log('Game will not start in room: ' + roomKey + ', all users disconnected')
+      utils.deleteRoom(roomKey, redisClient)
+      return
     }
-    room.started = true
-    startedGames[room.uuid] = room
-    room.startTime = Date.now()
-    const data = {
-      msg: 'Game in room: ' + room.uuid + ' has started',
-      text: room.text,
-      duration: room.duration,
-      room: room.uuid,
-      players: room.getFilteredPlayersData()
-    }
-    io.to(room.uuid).emit('gamestarted', data)
-    room.intervalId = setInterval(function () {
-      playGame(room)
-    }, SERVER_SEND_DATA_INTERVAL)
-  }).catch(function (err) {
-    Sentry.captureException(err)
-    console.log(err)
-    throw err
+    // TODO(aibek): assign bots to the game with players.length
+    const players = utils.getPlayers(room)
+    console.log(' No of players in room ' + roomKey + ': ' + players.length)
+    console.log(players)
+    redisClient.hmset(roomKey, {
+      started: String(true),
+      startTime: String(Date.now())
+    }, function (err, res) {
+      if (err) {
+        Sentry.captureException(err)
+        console.log(err)
+        throw err
+      }
+      const data = {
+        msg: 'Game in room: ' + roomKey + ' has started',
+        text: room.text,
+        roomKey,
+        players
+      }
+      io.to(roomKey).emit('gamestarted', data)
+      const gamePlayInterval = setInterval(function () {
+        playGame(roomKey)
+      }, SERVER_SEND_DATA_INTERVAL)
+      gamePlayIntervals = {
+        ...gamePlayIntervals,
+        [roomKey]: {
+          gamePlayInterval,
+          // TODO(aibek): make periodical check ups for leaked timers
+          startTime: Date.now()
+        }
+      }
+    })
   })
 }
 
-function playGame (room) {
-  if (room.startTime + room.duration < Date.now() || room.allDisconnected()) {
-    clearInterval(room.intervalId)
-    console.log('Game ended for room: ' + room.uuid)
-    sendGameData(room, 'gameended')
-    delete startedGames[room.uuid]
-    // Means that the text was not present in DB, then do not save the game data
-    if (room.textId !== -1) {
-      models.sequelize.transaction((t) => {
-        return models.Race.create({ textId: room.textId }, { transaction: t }).then((race) => {
-          const playerPromises = []
-          _.forEach(room.players, (player, key) => {
-            if (!player.isBot && (!player.disconnected || player.isWinner) && player.socket._serverData.uid !== -1) {
-              playerPromises.push(models.RacePlayer.create({
-                userUid: player.socket._serverData.uid,
-                raceId: race.id,
-                cpm: player.cpm,
-                isWinner: player.isWinner,
-                position: player.position,
-                points: 0, // TODO(aibek): compute points for game
-                accuracy: player.accuracy
-              }, { transaction: t }))
-            }
-          })
-          return Promise.all(playerPromises)
-        })
-      })
+function playGame (roomKey) {
+  redisClient.hgetall(roomKey, async function (err, room) {
+    if (err) {
+      throw err
     }
-    room.removeRoomParticipants(io)
-    room.closeSockets()
-  } else {
-    sendGameData(room, 'gamedata')
-  }
+    const isAllDisconnected = await utils.allDisconnected(room, io)
+    const players = utils.getUpdatedPlayerPositions(room)
+    if (+room.startTime + +room.duration < Date.now() || isAllDisconnected) {
+      clearInterval(gamePlayIntervals[roomKey].gamePlayInterval)
+      delete gamePlayIntervals[roomKey]
+      utils.deleteRoom(roomKey, redisClient)
+      sendGameData(room, 'gameended', players)
+      // Means that the text was not present in DB, then do not save the game data
+      if (room.textId !== -1) {
+        models.sequelize.transaction((t) => {
+          return models.Race.create({ textId: room.textId }, { transaction: t }).then((race) => {
+            const playerPromises = []
+            _.forEach(players, (player) => {
+              if (!player.isBot && (!player.disconnected || player.isWinner) && player.uid !== -1) {
+                playerPromises.push(models.RacePlayer.create({
+                  userUid: player.uid,
+                  raceId: race.id,
+                  cpm: player.cpm,
+                  isWinner: player.isWinner,
+                  position: player.position,
+                  points: 0, // TODO(aibek): compute points for game
+                  accuracy: player.accuracy
+                }, { transaction: t }))
+              }
+            })
+            return Promise.all(playerPromises)
+          })
+        })
+      }
+      utils.removeRoomParticipants(roomKey, io)
+    } else {
+      sendGameData(room, 'gamedata', players)
+    }
+  })
 }
 
 /**
@@ -307,24 +435,20 @@ function playGame (room) {
  * Note: isWinner can still be true, even if a player is not the absolute winner, it means they finished
  * the race.
  */
-function sendGameData (room, call) {
-  console.log('Sending the game data in room: ' + room.uuid + ' with call ' + call)
-  updatingGameDataLock.acquire(room.uuid, function () {
-    let timeLeft = (room.startTime + room.duration) - Date.now()
-    if (timeLeft < 0) {
-      timeLeft = 0
-    }
-    room.updateBots()
-    room.updatePositions()
-    const data = {
-      room: room.uuid,
-      players: room.getFilteredPlayersData(),
-      timeLeft
-    }
-    io.to(room.uuid).emit(call, data)
-  }).catch(function (err) {
-    Sentry.captureException(err)
-    console.log(err)
-    throw err
-  })
+function sendGameData (room, call, players) {
+  console.log('Sending the game data in room: ' + room.key + ' with call ' + call)
+  let timeLeft = (+room.startTime + +room.duration) - Date.now()
+  if (timeLeft < 0) {
+    timeLeft = 0
+  }
+  // TODO(aibek): update bots data
+  if (call !== 'gameended') {
+    utils.updatePlayers(room, players, redisClient)
+  }
+  const data = {
+    roomKey: room.key,
+    players,
+    timeLeft
+  }
+  io.to(room.key).emit(call, data)
 }
