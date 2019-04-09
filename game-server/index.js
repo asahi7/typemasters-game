@@ -24,11 +24,10 @@ const anonymousUsersRateLimiter = new RateLimiterRedis({
   duration: 24 * 60 * 60 // 1 day
 })
 
-// TODO(aibek): think about the proxy server, ip may be same, allow more points
 const raceDataIntervalRateLimiter = new RateLimiterRedis({
   redis: redisClient,
   keyPrefix: 'raceDataIntv',
-  points: 4,
+  points: 50, // 25 players may play from one ip
   duration: 1
 })
 
@@ -230,8 +229,7 @@ io.on('connection', function (socket) {
         error.roomKey = data.roomKey
         Sentry.captureException(error)
         console.log(error)
-        // TODO(aibek): room is not defined, handle better, remove from game, remove from room
-        // utils.removePlayer(room, player.socket.id, io, redisClient)
+        utils.removePlayerWithRoomKey(data.roomKey, socket.id, io, redisClient)
       })
     }
   })

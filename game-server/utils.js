@@ -127,6 +127,21 @@ exports.removePlayer = (room, socketId, io, redisClient) => {
   redisClient.hdel(room.key, player.playerId)
 }
 
+exports.removePlayerWithRoomKey = (roomKey, socketId, io, redisClient) => {
+  if (io.sockets.connected[socketId]) { io.sockets.connected[socketId].disconnect() }
+  redisClient.hgetall(roomKey, (err, room) => {
+    if (!room) {
+      return
+    }
+    const players = this.getPlayers(room)
+    const player = _.find(players, ['socketId', socketId])
+    if (!player) {
+      return
+    }
+    redisClient.hdel(room.key, player.playerId)
+  })
+}
+
 exports.getPlayerBy = (room, params) => {
   const players = this.getPlayers(room)
   let player = null
