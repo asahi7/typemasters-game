@@ -130,6 +130,9 @@ exports.removePlayer = (room, socketId, io, redisClient) => {
 exports.removePlayerWithRoomKey = (roomKey, socketId, io, redisClient) => {
   if (io.sockets.connected[socketId]) { io.sockets.connected[socketId].disconnect() }
   redisClient.hgetall(roomKey, (err, room) => {
+    if (err) {
+      throw err
+    }
     if (!room) {
       return
     }
