@@ -91,7 +91,9 @@ export const en = {
     noTextsLangOffline: 'No texts exists in selected language during offline mode',
     modal: {
       winner: 'You are the winner!',
-      timeUp: 'Time is up!'
+      timeUp: 'Time is up!',
+      anonymGamesExpiredHeader: 'Anonymous games limit expired!',
+      anonymGamesExpired: 'Daily anonymous games limit has expired, please sign up or wait one day till reload'
     },
     stop: 'Stop',
     play: 'Play',
@@ -217,7 +219,9 @@ export const ru = {
     noTextsLangOffline: 'К сожалению, у нас нет текста с выбранным языком в режиме оффлайн',
     modal: {
       winner: 'Вы победитель!',
-      timeUp: 'Время вышло!'
+      timeUp: 'Время вышло!',
+      anonymGamesExpiredHeader: 'Лимит анонимных игр закончен!',
+      anonymGamesExpired: 'Ваш лимит анонимных игр за сегодня был исчерпан, пожалуйста зарегистрируйтесь или подождите один день'
     },
     stop: 'Стоп',
     play: 'Старт',

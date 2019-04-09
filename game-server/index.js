@@ -59,17 +59,19 @@ socketioAuth(io, {
   authenticate: function (socket, data, callback) {
     const firebaseIdToken = data.token
     if (firebaseIdToken === -1) {
-      // TODO(aibek): check limiter
-      anonymousUsersRateLimiter.consume(socket.conn.remoteAddress).then(() => {
+      console.log('anonymous player')
+      return anonymousUsersRateLimiter.consume(socket.conn.remoteAddress).then(() => {
         socket._serverData = {
           // -1 is for anonymous users
           uid: -1
         }
         return callback(null, true)
       }).catch(() => {
-        const err = new Error('Ability to play anonymously expired. Please register.')
-        // TODO(aibek): send message to socket, so that client will be displayed the message
-        return callback(err)
+        const error = new Error('Anonymous user expired the ability to play more games')
+        error.ip = socket.conn.remoteAddress
+        Sentry.captureException(error)
+        console.log(error)
+        return callback(error)
       })
     }
     return firebaseAdmin.auth().verifyIdToken(firebaseIdToken)

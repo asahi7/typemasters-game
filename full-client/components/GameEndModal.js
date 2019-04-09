@@ -13,11 +13,16 @@ export default class GameEndModal extends React.Component {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalStyle}>
-            <Text style={styles.modalHeader}>{this.props.modalText}</Text>
+            <Text style={styles.modalHeader}>{this.props.headerText}</Text>
             <View
               style={styles.modalItem}><Text>{i18n.t('game.youAre')} {this.props.position} {i18n.t('game.outOf')} {this.props.numOfPlayers}</Text></View>
             <View style={styles.modalItem}><Text>{i18n.t('game.yourCpm')}: {this.props.cpm}</Text></View>
             <View style={styles.modalItem}><Text>{i18n.t('game.yourAccuracy')}: {this.props.accuracy}</Text></View>
+            {this.props.text &&
+              <View style={{ marginTop: 10 }}>
+                <Text style={[globalStyles.normalText, { color: 'red' }]}>{this.props.text}</Text>
+              </View>
+            }
             {!this.props.authenticated &&
             <View style={{ marginTop: 10 }}>
               <Text style={[globalStyles.normalText, { color: 'red' }]}>{i18n.t('common.signInToSave')}</Text>

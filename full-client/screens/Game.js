@@ -267,6 +267,20 @@ export default class Game extends React.Component {
     socket = io.connect(Config[env].GAME_SERVER_API, { reconnection: false })
     socket.on('connect', () => {
       socket.emit('authentication', { token: idToken })
+      socket.on('unauthorized', (err) => {
+        if (__DEV__) {
+          console.log('There was an error with the authentication: ', err.message)
+        }
+        if (err.message === 'Anonymous user expired the ability to play more games') {
+          this.setState({
+            modalText: i18n.t('game.modal.anonymGamesExpiredHeader'),
+            modalNormalText: i18n.t('game.modal.anonymGamesExpired')
+          }, () => {
+            this.setModalVisible(true)
+          })
+        }
+        this.dicsonnectPlayer()
+      })
       socket.on('authenticated', () => {
         if (__DEV__) {
           console.log('Asking for a new game..')
@@ -387,7 +401,8 @@ export default class Game extends React.Component {
     this.setState({
       gamePlaying: false,
       chars: 0,
-      roomKey: null
+      roomKey: null,
+      modalNormalText: null
     })
     if (this.state.intervalId) {
       clearInterval(this.state.intervalId)
@@ -419,8 +434,8 @@ export default class Game extends React.Component {
       onDidFailToReceiveAdWithError={(error) => { if (__DEV__) { console.log(error) } }} />
     return (
       <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
-        <GameEndModal admobBanner={admobBanner} modalText={this.state.modalText} position={this.state.position}
-          numOfPlayers={this.state.numOfPlayers} cpm={this.state.cpm}
+        <GameEndModal admobBanner={admobBanner} headerText={this.state.modalText} position={this.state.position}
+          numOfPlayers={this.state.numOfPlayers} cpm={this.state.cpm} text={this.state.modalNormalText}
           accuracy={this.state.accuracy} authenticated={this.state.authenticated} visible={this.state.modalVisible} closeModalHandler={() => {
             this.setModalVisible(false)
           }}
