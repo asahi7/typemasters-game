@@ -11,10 +11,9 @@ const { RateLimiterRedis } = require('rate-limiter-flexible')
 const utils = require('./utils')
 
 // TODO(aibek): study more https://github.com/animir/node-rate-limiter-flexible/wiki/Redis
-// TODO(aibek): separate environments, prod and dev
 const redisClient = redis.createClient({
-  host: 'localhost',
-  port: 6379,
+  host: process.env.REDIS_HOST,
+  port: process.env.REDIS_PORT,
   enable_offline_queue: false
 })
 
@@ -38,8 +37,7 @@ redisClient.on('error', function (err) {
   console.log('Error ' + err)
 })
 
-// TODO(aibek): separate environments, prod and dev
-io.adapter(socketIoRedis({ host: 'localhost', port: 6379 }))
+io.adapter(socketIoRedis({ host: process.env.REDIS_HOST, port: process.env.REDIS_PORT }))
 
 console.log('Running on ' + (process.env.PORT || '3000'))
 
