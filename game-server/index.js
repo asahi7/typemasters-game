@@ -120,13 +120,14 @@ function _findGameToBeAdded (cursor, language) {
       }
       return Promise.all(requests).then((responses) => {
         let game = null
-        responses.forEach((response) => {
-          // TODO(aibek): check for maximum players in room
+        for (let i = 0; i < responses.length; i++) {
+          const response = responses[i]
           if (response.reply && response.reply.started === 'false' && +response.reply.scheduled - 1000 >= Date.now() &&
-              utils.countPlayers(response.reply) + 1 <= MAXIMUM_PLAYERS_IN_ROOM) {
+            utils.countPlayers(response.reply) + 1 <= MAXIMUM_PLAYERS_IN_ROOM) {
             game = response.game
+            break
           }
-        })
+        }
         return game
       }).then((game) => {
         if (!game) {
@@ -183,7 +184,7 @@ function addToExistingRoom (socket, roomKey) {
 
 io.on('connection', function (socket) {
   console.log('Connected ' + socket.id)
-  // TODO(aibek): disallow same ip address from creation of too many rooms
+  // TODO(aibek): disallow same ip address from creation of too many games
   socket.on('newgame', function (data) {
     console.log('Socket asking for a new game: ' + socket.id)
     _findGameToBeAdded('0', data.language).then(game => {
