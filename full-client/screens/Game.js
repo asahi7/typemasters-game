@@ -295,7 +295,6 @@ export default class Game extends React.Component {
         socket.on('gamestarted', (data) => {
           if (__DEV__) {
             console.log('Game started')
-            console.log(data)
           }
           const textArray = data.text.split(' ')
           this.setState({
@@ -317,6 +316,7 @@ export default class Game extends React.Component {
         socket.on('gamedata', (data) => {
           if (__DEV__) {
             console.log('Game data')
+            console.log(data)
           }
           this.setGameData(data, false)
         })

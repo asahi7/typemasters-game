@@ -22,25 +22,35 @@ exports.deserializeRoom = () => {
 
 }
 
-exports.makePlayer = (socket, playerId) => {
-  const uid = _.get(socket, '_serverData.uid')
+exports.makePlayer = (socket, playerId, isBot) => {
+  let uid = null
+  let socketId = null
+  if (!isBot) {
+    uid = _.get(socket, '_serverData.uid')
+    socketId = _.get(socket, 'id')
+  }
   return {
-    socketId: socket.id,
+    socketId,
     uid,
     cpm: 0,
     isWinner: false,
     position: 0,
     accuracy: 100,
     chars: 0,
-    playerId
+    playerId,
+    isBot
   }
+}
+
+exports.isBot = (player) => {
+  return player.playerId.startsWith('bot_')
 }
 
 // TODO(aibek): add missing fields to player
 exports.getPlayers = (room) => {
   let players = []
   _.forEach(room, (value, key) => {
-    if (key.startsWith('player_')) {
+    if (key.startsWith('player_') || key.startsWith('bot_')) {
       players.push(this.deserializePlayer(value))
     }
   })
@@ -189,6 +199,44 @@ exports.removeRoomParticipants = (roomKey, io) => {
           io.sockets.sockets[socketId].leave(roomKey)
         }
       })
+    }
+  })
+}
+
+exports.createBots = (count, roomKey, redisClient, players) => {
+  console.log('Number of bots to be created: ' + count)
+  let promises = []
+  for (let i = 1; i <= count; i++) {
+    const bot = this.makePlayer(null, 'bot_' + i, true)
+    players.push(bot)
+    promises.push(
+      new Promise((resolve, reject) => {
+        return redisClient.hset(roomKey, bot.playerId, this.serializePlayer(bot), function (err, res) {
+          if (err) {
+            return reject(err)
+          }
+          return resolve(true)
+        })
+      })
+    )
+  }
+  return Promise.all(promises)
+}
+
+exports.updateBots = (room, players) => {
+  _.forEach(players, (player) => {
+    const chars = player.chars + _.random(0, 2)
+    if (player.isBot && !player.isWinner) {
+      const accuracy = _.random(60, 100)
+      const cpm = this.countCpm(room, chars)
+      player.chars = chars
+      player.cpm = cpm
+      player.accuracy = accuracy
+    }
+    // Bot has finished race in time
+    if (player.isBot && chars >= room.totalChars && !player.isWinner) {
+      player.isWinner = true
+      player.finishedTime = Date.now()
     }
   })
 }

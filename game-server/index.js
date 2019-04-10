@@ -168,6 +168,7 @@ function addToExistingRoom (socket, roomKey) {
         utils.removePlayer(room, prevPlayer.socketId, io, redisClient)
       }
     }
+    // TODO(aibek): refactor these methods, create redis model methods
     redisClient.hset(roomKey, playerId, utils.serializePlayer(player), function (err, res) {
       if (err) {
         Sentry.captureException(err)
@@ -363,10 +364,12 @@ function startGame (roomKey) {
       utils.deleteRoom(roomKey, redisClient)
       return
     }
-    // TODO(aibek): assign bots to the game with players.length
     const players = utils.getPlayers(room)
     console.log(' No of players in room ' + roomKey + ': ' + players.length)
     console.log(players)
+    if (players.length <= 2) {
+      await utils.createBots(_.random(0, MAXIMUM_PLAYERS_IN_ROOM - 2), roomKey, redisClient, players)
+    }
     redisClient.hmset(roomKey, {
       started: String(true),
       startTime: String(Date.now())
@@ -416,7 +419,7 @@ function playGame (roomKey) {
           return models.Race.create({ textId: room.textId }, { transaction: t }).then((race) => {
             const playerPromises = []
             _.forEach(players, (player) => {
-              if (!player.isBot && (!player.disconnected || player.isWinner) && player.uid !== -1) {
+              if (!utils.isBot(player) && (!player.disconnected || player.isWinner) && player.uid !== -1) {
                 playerPromises.push(models.RacePlayer.create({
                   userUid: player.uid,
                   raceId: race.id,
@@ -454,7 +457,7 @@ function sendGameData (room, call, players) {
   if (timeLeft < 0) {
     timeLeft = 0
   }
-  // TODO(aibek): update bots data
+  utils.updateBots(room, players)
   if (call !== 'gameended') {
     utils.updatePlayers(room, players, redisClient)
   }
