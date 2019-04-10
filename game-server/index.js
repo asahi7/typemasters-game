@@ -31,9 +31,9 @@ const raceDataIntervalRateLimiter = new RateLimiterRedis({
   duration: 1
 })
 
-const roomCreationRateLimiter = new RateLimiterRedis({
+const gameCreationRateLimiter = new RateLimiterRedis({
   redis: redisClient,
-  keyPrefix: 'roomCreation',
+  keyPrefix: 'gameCreation',
   points: 3,
   duration: 1
 })
@@ -186,13 +186,21 @@ io.on('connection', function (socket) {
   console.log('Connected ' + socket.id)
   // TODO(aibek): disallow same ip address from creation of too many games
   socket.on('newgame', function (data) {
-    console.log('Socket asking for a new game: ' + socket.id)
-    _findGameToBeAdded('0', data.language).then(game => {
-      if (!game) {
-        createNewRoom(socket, data)
-      } else {
-        addToExistingRoom(socket, game)
-      }
+    return gameCreationRateLimiter.consume(socket.conn.remoteAddress).then(async () => {
+      console.log('Socket asking for a new game: ' + socket.id)
+      _findGameToBeAdded('0', data.language).then(game => {
+        if (!game) {
+          createNewRoom(socket, data)
+        } else {
+          addToExistingRoom(socket, game)
+        }
+      })
+    }).catch(() => {
+      const error = new Error('User creates too many games')
+      error.ip = socket.conn.remoteAddress
+      Sentry.captureException(error)
+      console.log(error)
+      socket.disconnect()
     })
   })
 
@@ -289,62 +297,54 @@ io.on('connection', function (socket) {
   })
 })
 
-function createNewRoom (socket, data) {
-  return roomCreationRateLimiter.consume(socket.conn.remoteAddress).then(async () => {
-    let text = await models.Text.findOne({
-      where: { language: data.language },
-      order: [
-        models.sequelize.fn('RAND')
-      ]
-    })
-    if (!text) {
-      text = {
-        text: ':( We are sorry! No text was found. Please, contact our developers team.',
-        duration: 30,
-        id: -1
-      }
-      Sentry.captureException('Text with language ' + data.language + ' was asked and was not found')
-    }
-    const uuid = utils.generateUUID()
-    const roomKey = `game:${uuid}:${data.language}`
-    const playerId = 'player_' + socket.id
-    const player = utils.makePlayer(socket, playerId)
-    // TODO(aibek): make a function which would put all values as String, something like type recognizer
-    redisClient.hmset(roomKey,
-      {
-        text: text.text,
-        duration: (text.duration * 1000).toString(),
-        textId: String(text.id),
-        language: data.language,
-        uuid,
-        totalChars: String(utils.computeTotalChars(text.text)),
-        started: String(false),
-        finished: String(false), // TODO(aibek): unused currently
-        [playerId]: utils.serializePlayer(player),
-        scheduled: String(Date.now() + STARTING_GAME_TIMEOUT),
-        key: roomKey
-      },
-      function (err, res) {
-        if (err) {
-          Sentry.captureException(err)
-          console.log(err)
-          throw err
-        }
-        redisClient.expire(roomKey, String(text.duration + (STARTING_GAME_TIMEOUT / 1000) + 10))
-        console.log('Socket: ' + socket.id + ' created room: ' + roomKey)
-        socket._serverData.roomKey = roomKey
-        socket.join(roomKey)
-        setTimeout(function () {
-          startGame(roomKey)
-        }, STARTING_GAME_TIMEOUT)
-      })
-  }).catch(() => {
-    const error = new Error('User creates too many rooms')
-    error.ip = socket.conn.remoteAddress
-    Sentry.captureException(error)
-    console.log(error)
-    socket.disconnect()
+async function createNewRoom (socket, data) {
+  let text = await models.Text.findOne({
+    where: { language: data.language },
+    order: [
+      models.sequelize.fn('RAND')
+    ]
   })
+  if (!text) {
+    text = {
+      text: ':( We are sorry! No text was found. Please, contact our developers team.',
+      duration: 30,
+      id: -1
+    }
+    Sentry.captureException('Text with language ' + data.language + ' was asked and was not found')
+  }
+  const uuid = utils.generateUUID()
+  const roomKey = `game:${uuid}:${data.language}`
+  const playerId = 'player_' + socket.id
+  const player = utils.makePlayer(socket, playerId)
+  // TODO(aibek): make a function which would put all values as String, something like type recognizer
+  redisClient.hmset(roomKey,
+    {
+      text: text.text,
+      duration: (text.duration * 1000).toString(),
+      textId: String(text.id),
+      language: data.language,
+      uuid,
+      totalChars: String(utils.computeTotalChars(text.text)),
+      started: String(false),
+      finished: String(false), // TODO(aibek): unused currently
+      [playerId]: utils.serializePlayer(player),
+      scheduled: String(Date.now() + STARTING_GAME_TIMEOUT),
+      key: roomKey
+    },
+    function (err, res) {
+      if (err) {
+        Sentry.captureException(err)
+        console.log(err)
+        throw err
+      }
+      redisClient.expire(roomKey, String(text.duration + (STARTING_GAME_TIMEOUT / 1000) + 10))
+      console.log('Socket: ' + socket.id + ' created room: ' + roomKey)
+      socket._serverData.roomKey = roomKey
+      socket.join(roomKey)
+      setTimeout(function () {
+        startGame(roomKey)
+      }, STARTING_GAME_TIMEOUT)
+    })
 }
 
 function startGame (roomKey) {
