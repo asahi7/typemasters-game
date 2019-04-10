@@ -61,12 +61,17 @@ const SERVER_SEND_DATA_INTERVAL = 500
 
 let gamePlayIntervals = {}
 
+setInterval(() => {
+  _.forEach(gamePlayIntervals, (interval) => {
+    if (interval.startTime + 12 * 60 * 60 * 1000 <= Date.now()) { clearTimeout(interval.gamePlayInterval) }
+  })
+}, 24 * 60 * 60 * 1000) // runs each day
+
 // TODO(aibek): check this library https://www.npmjs.com/package/socketio-auth, timeouts and etc
 socketioAuth(io, {
   authenticate: function (socket, data, callback) {
     const firebaseIdToken = data.token
     if (firebaseIdToken === -1) {
-      console.log('anonymous player')
       return anonymousUsersRateLimiter.consume(socket.conn.remoteAddress).then(() => {
         socket._serverData = {
           // -1 is for anonymous users
@@ -105,8 +110,6 @@ function _findGameToBeAdded (cursor, language) {
       }
       let requests = []
       if (games[1]) {
-        console.log(games[1])
-        // TODO(aibek): check for room specifics
         requests = games[1].map(game => {
           return new Promise((resolve) => {
             redisClient.hgetall(game, function (err, reply) {
@@ -153,7 +156,6 @@ function _findGameToBeAdded (cursor, language) {
   })
 }
 
-// TODO(aibek): check all possible error scenarios/cases
 function addToExistingRoom (socket, roomKey) {
   console.log('Adding player ' + socket.id + ' to existing room ' + roomKey)
   const playerId = 'player_' + socket.id
@@ -184,7 +186,6 @@ function addToExistingRoom (socket, roomKey) {
 
 io.on('connection', function (socket) {
   console.log('Connected ' + socket.id)
-  // TODO(aibek): disallow same ip address from creation of too many games
   socket.on('newgame', function (data) {
     return gameCreationRateLimiter.consume(socket.conn.remoteAddress).then(async () => {
       console.log('Socket asking for a new game: ' + socket.id)
@@ -209,7 +210,6 @@ io.on('connection', function (socket) {
   // TODO(aibek): never rely on data sent by user, only access the fields by socket.id
   // In this case if user fakes the key, and players data, then they may falsify other player's data and affect
   // In this case, we must make sure that user can't falsify the data on his side, encryption?
-  // TODO(aibek): check all rooms fields, should be numbers
   socket.on('racedata', function (data) {
     console.log('Race data from socket: ' + socket.id)
     if (socket.conn.remoteAddress) {
@@ -221,8 +221,10 @@ io.on('connection', function (socket) {
             throw err
           }
           if (!room) {
-            // TODO(aibek): disconnect this player, and cover this case
-            return
+            const err = new Error('Room does not exist in racedata: ' + data.roomKey)
+            Sentry.captureException(err)
+            console.log(err)
+            utils.removePlayerWithRoomKey(data.roomKey, socket.id, io, redisClient)
           }
           let player = utils.getPlayer(room, data.playerId)
           if (+room.startTime + +room.duration >= Date.now()) {
@@ -255,14 +257,12 @@ io.on('connection', function (socket) {
 
   socket.on('removeplayer', function (data) {
     console.log('Player is being removed: ' + socket.id + ' from room: ' + data.roomKey)
-    console.log(socket._serverData.roomKey)
     redisClient.hgetall(socket._serverData.roomKey, function (err, room) {
       if (err) {
         Sentry.captureException(err)
         console.log(err)
         throw err
       }
-      console.log(room)
       if (!room) {
         Sentry.captureException(new Error('Room ' + data.roomKey + ' does not exist, from socket ' + socket.id))
         return
@@ -271,7 +271,6 @@ io.on('connection', function (socket) {
     })
   })
 
-  // TODO(aibek): check scenarios
   socket.on('disconnect', function (reason) {
     console.log(socket.id + ' disconnected because: ' + reason)
     if (reason === 'transport error' || reason === 'ping timeout') {
@@ -326,7 +325,6 @@ async function createNewRoom (socket, data) {
       uuid,
       totalChars: String(utils.computeTotalChars(text.text)),
       started: String(false),
-      finished: String(false), // TODO(aibek): unused currently
       [playerId]: utils.serializePlayer(player),
       scheduled: String(Date.now() + STARTING_GAME_TIMEOUT),
       key: roomKey
@@ -367,7 +365,6 @@ function startGame (roomKey) {
     }
     const players = utils.getPlayers(room)
     console.log(' No of players in room ' + roomKey + ': ' + players.length)
-    console.log(players)
     if (players.length <= 2) {
       await utils.createBots(_.random(0, MAXIMUM_PLAYERS_IN_ROOM - 2), roomKey, redisClient, players)
     }
@@ -390,13 +387,9 @@ function startGame (roomKey) {
       const gamePlayInterval = setInterval(function () {
         playGame(roomKey)
       }, SERVER_SEND_DATA_INTERVAL)
-      gamePlayIntervals = {
-        ...gamePlayIntervals,
-        [roomKey]: {
-          gamePlayInterval,
-          // TODO(aibek): make periodical check ups for leaked timers
-          startTime: Date.now()
-        }
+      gamePlayIntervals[roomKey] = {
+        gamePlayInterval,
+        startTime: Date.now()
       }
     })
   })

@@ -289,7 +289,8 @@ export default class Game extends React.Component {
         socket.emit('newgame', { language: this.state.textLanguage })
         this.setState({
           text: 'Loading..',
-          socketId: socket.id
+          socketId: socket.id,
+          accuracy: 100
         })
 
         socket.on('gamestarted', (data) => {
@@ -316,7 +317,6 @@ export default class Game extends React.Component {
         socket.on('gamedata', (data) => {
           if (__DEV__) {
             console.log('Game data')
-            console.log(data)
           }
           this.setGameData(data, false)
         })

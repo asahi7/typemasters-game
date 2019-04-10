@@ -46,7 +46,6 @@ exports.isBot = (player) => {
   return player.playerId.startsWith('bot_')
 }
 
-// TODO(aibek): add missing fields to player
 exports.getPlayers = (room) => {
   let players = []
   _.forEach(room, (value, key) => {
@@ -63,8 +62,6 @@ exports.allDisconnected = (room, io) => {
       if (err) {
         reject(err)
       }
-      console.log('Connected clients')
-      console.log(clients)
       if (!clients.length || clients.length === 0) {
         return resolve(true)
       }
@@ -186,14 +183,11 @@ exports.countPlayers = (room) => {
 }
 
 exports.removeRoomParticipants = (roomKey, io) => {
-  console.log('Players are being disconnected from room: ' + roomKey)
   io.of('/').in(roomKey).clients(function (error, clients) {
     if (error) {
       throw error
     }
     if (clients.length > 0) {
-      console.log('Clients in the room to be disconnected: ')
-      console.log(clients)
       clients.forEach(function (socketId) {
         if (io.sockets.sockets[socketId]) {
           io.sockets.sockets[socketId].leave(roomKey)
@@ -204,7 +198,6 @@ exports.removeRoomParticipants = (roomKey, io) => {
 }
 
 exports.createBots = (count, roomKey, redisClient, players) => {
-  console.log('Number of bots to be created: ' + count)
   let promises = []
   for (let i = 1; i <= count; i++) {
     const bot = this.makePlayer(null, 'bot_' + i, true)
