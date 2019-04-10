@@ -190,6 +190,8 @@ io.on('connection', function (socket) {
     return gameCreationRateLimiter.consume(socket.conn.remoteAddress).then(async () => {
       console.log('Socket asking for a new game: ' + socket.id)
       _findGameToBeAdded('0', data.language).then(game => {
+        console.log('Hmm ' + data.ratedGames)
+        socket._serverData.ratedGames = data.ratedGames
         if (!game) {
           createNewRoom(socket, data)
         } else {
@@ -413,7 +415,7 @@ function playGame (roomKey) {
           return models.Race.create({ textId: room.textId }, { transaction: t }).then((race) => {
             const playerPromises = []
             _.forEach(players, (player) => {
-              if (!utils.isBot(player) && (!player.disconnected || player.isWinner) && player.uid !== -1) {
+              if (!utils.isBot(player) && (!player.disconnected || player.isWinner) && player.uid !== -1 && player.ratedGames) {
                 playerPromises.push(models.RacePlayer.create({
                   userUid: player.uid,
                   raceId: race.id,

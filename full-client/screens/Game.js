@@ -46,7 +46,8 @@ export default class Game extends React.Component {
       modalVisible: false,
       modalText: '',
       authenticated: null,
-      accuracy: 100
+      accuracy: 100,
+      ratedGames: true
     }
     this.setSocketBehavior = this.setSocketBehavior.bind(this)
     this.sendRaceData = this.sendRaceData.bind(this)
@@ -67,11 +68,13 @@ export default class Game extends React.Component {
     this.handlePlayGamePressedOffline = this.handlePlayGamePressedOffline.bind(this)
     this.finishOfflineGame = this.finishOfflineGame.bind(this)
     this.findPlayerId = this.findPlayerId.bind(this)
+    this.getRatedSwitchValue = this.getRatedSwitchValue.bind(this)
   }
 
   async componentDidMount () {
     BackHandler.addEventListener('hardwareBackPress', () => { this.dicsonnectPlayer() })
     await this.updateTextLanguageState()
+    await this.getRatedSwitchValue()
     NetInfo.isConnected.fetch().then(isConnected => {
       if (__DEV__) {
         console.log('User is ' + (isConnected ? 'online' : 'offline'))
@@ -127,6 +130,23 @@ export default class Game extends React.Component {
     }
   }
 
+  async getRatedSwitchValue () {
+    const value = await AsyncStorage.getItem('ratedSwitchValue')
+    if (__DEV__) {
+      console.log('Rated switch value ' + value)
+    }
+    if (!value) {
+      this.setState({
+        ratedGames: true
+      })
+      await AsyncStorage.setItem('ratedSwitchValue', 'true')
+    } else {
+      this.setState({
+        ratedGames: (value === 'true')
+      })
+    }
+  }
+
   /**
    * A method to disconnect from the game server.
    */
@@ -163,6 +183,8 @@ export default class Game extends React.Component {
       })
     } else {
       this.updateTextLanguageState().then(() => {
+        return this.getRatedSwitchValue()
+      }).then(() => {
         this.handlePlayGamePressed()
       })
     }
@@ -286,7 +308,7 @@ export default class Game extends React.Component {
           console.log('Asking for a new game..')
           console.log(socket.id)
         }
-        socket.emit('newgame', { language: this.state.textLanguage })
+        socket.emit('newgame', { language: this.state.textLanguage, ratedGames: this.state.ratedGames })
         this.setState({
           text: 'Loading..',
           socketId: socket.id,

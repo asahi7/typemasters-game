@@ -29,6 +29,7 @@ exports.makePlayer = (socket, playerId, isBot) => {
     uid = _.get(socket, '_serverData.uid')
     socketId = _.get(socket, 'id')
   }
+  const ratedGames = (!!_.get(socket, '_serverData.ratedGames'))
   return {
     socketId,
     uid,
@@ -38,7 +39,8 @@ exports.makePlayer = (socket, playerId, isBot) => {
     accuracy: 100,
     chars: 0,
     playerId,
-    isBot
+    isBot,
+    ratedGames
   }
 }
 

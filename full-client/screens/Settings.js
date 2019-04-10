@@ -9,7 +9,8 @@ import {
   Button,
   Keyboard,
   ScrollView,
-  NetInfo
+  NetInfo,
+  Switch
 } from 'react-native'
 import { LinearGradient } from 'expo'
 import WebAPI from '../WebAPI'
@@ -46,7 +47,8 @@ export default class Settings extends React.Component {
       authenticated: null,
       nicknameInput: '',
       errorMessage: null,
-      userData: null
+      userData: null,
+      ratedSwitch: true
     }
     this.textLanguageSelected = this.textLanguageSelected.bind(this)
     this.saveSettings = this.saveSettings.bind(this)
@@ -57,10 +59,13 @@ export default class Settings extends React.Component {
     this.handleConnectivityChange = this.handleConnectivityChange.bind(this)
     this.getApiDataOnline = this.getApiDataOnline.bind(this)
     this.updateTextLanguageState = this.updateTextLanguageState.bind(this)
+    this.getRatedSwitchValue = this.getRatedSwitchValue.bind(this)
+    this.handleRatedSwitch = this.handleRatedSwitch.bind(this)
   }
 
   async componentDidMount () {
     await this.updateTextLanguageState()
+    await this.getRatedSwitchValue()
     NetInfo.isConnected.fetch().then(isConnected => {
       if (__DEV__) {
         console.log('User is ' + (isConnected ? 'online' : 'offline'))
@@ -191,9 +196,27 @@ export default class Settings extends React.Component {
     }
   }
 
+  async getRatedSwitchValue () {
+    const value = await AsyncStorage.getItem('ratedSwitchValue')
+    if (__DEV__) {
+      console.log('Rated switch value ' + value)
+    }
+    if (!value) {
+      this.setState({
+        ratedSwitch: true
+      })
+      await AsyncStorage.setItem('ratedSwitchValue', 'true')
+    } else {
+      this.setState({
+        ratedSwitch: (value === 'true')
+      })
+    }
+  }
+
   saveSettings () {
     this.setState({ errorMessage: null })
     AsyncStorage.setItem('textLanguage', this.state.textLanguage)
+    AsyncStorage.setItem('ratedSwitchValue', this.state.ratedSwitch === true ? 'true' : 'false')
     if (this.online) {
       if (this.state.authenticated) {
         const nicknameInput = this.state.nicknameInput
@@ -252,6 +275,12 @@ export default class Settings extends React.Component {
   handleNicknameInput (input) {
     this.setState({
       nicknameInput: input
+    })
+  }
+
+  handleRatedSwitch (value) {
+    this.setState({
+      ratedSwitch: value
     })
   }
 
@@ -328,6 +357,10 @@ export default class Settings extends React.Component {
               <Picker.Item value='tr' label='Turkish' />
             </Picker>
             }
+          </View>
+          <View style={globalStyles.row}>
+            <Text style={globalStyles.column}>{i18n.t('settings.ratedSwitch')}:</Text>
+            <Switch onValueChange={this.handleRatedSwitch} value={this.state.ratedSwitch} />
           </View>
           <View style={globalStyles.normalButton}>
             <Button

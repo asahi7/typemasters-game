@@ -10,7 +10,7 @@ const redisClient = redis.createClient({
 const rateLimiter = new RateLimiterRedis({
   redis: redisClient,
   keyPrefix: 'middleware',
-  points: 30,
+  points: 100,
   duration: 1
 })
 

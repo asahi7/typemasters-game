@@ -65,7 +65,8 @@ export const en = {
     typingLanguage: 'Typing language',
     selectTypingLanguage: 'Select your preferred typing language',
     save: 'Save',
-    saveSettingsOffline: 'No internet connection. Typing laguage successfully updated'
+    saveSettingsOffline: 'No internet connection. Typing laguage successfully updated',
+    ratedSwitch: 'Rated games'
   },
   about: {
     header: 'About'
@@ -193,7 +194,8 @@ export const ru = {
     typingLanguage: 'Язык печатания',
     selectTypingLanguage: 'Выберите свой предпочитаемый язык печатания',
     save: 'Сохранить',
-    saveSettingsOffline: 'Нет подключения к сети интернет. Язык печатания был обновлен'
+    saveSettingsOffline: 'Нет подключения к сети интернет. Язык печатания был обновлен',
+    ratedSwitch: 'Рейтинговая игра'
   },
   about: {
     header: 'О нас'
