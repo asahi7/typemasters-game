@@ -156,7 +156,7 @@ function _findGameToBeAdded (cursor, language) {
   })
 }
 
-function addToExistingRoom (socket, roomKey) {
+function _addToExistingRoom (socket, roomKey) {
   console.log('Adding player ' + socket.id + ' to existing room ' + roomKey)
   const playerId = 'player_' + socket.id
   const player = utils.makePlayer(socket, playerId)
@@ -180,6 +180,7 @@ function addToExistingRoom (socket, roomKey) {
       }
     })
     socket._serverData.roomKey = roomKey
+    socket._serverData.playerId = playerId
     socket.join(roomKey)
   })
 }
@@ -190,12 +191,11 @@ io.on('connection', function (socket) {
     return gameCreationRateLimiter.consume(socket.conn.remoteAddress).then(async () => {
       console.log('Socket asking for a new game: ' + socket.id)
       _findGameToBeAdded('0', data.language).then(game => {
-        console.log('Hmm ' + data.ratedGames)
         socket._serverData.ratedGames = data.ratedGames
         if (!game) {
-          createNewRoom(socket, data)
+          _createNewRoom(socket, data)
         } else {
-          addToExistingRoom(socket, game)
+          _addToExistingRoom(socket, game)
         }
       })
     }).catch(() => {
@@ -209,11 +209,16 @@ io.on('connection', function (socket) {
 
   // TODO(aibek): check if the data is true, you might want to introduce some inner encryption, or data hiding
   // to disallow players change their cpms and same ones, use some token?
-  // TODO(aibek): never rely on data sent by user, only access the fields by socket.id
+  // TODO(aibek): never rely on data sent by user, only access the fields by socket.id (chars, accuracy)
   // In this case if user fakes the key, and players data, then they may falsify other player's data and affect
   // In this case, we must make sure that user can't falsify the data on his side, encryption?
   socket.on('racedata', function (data) {
     console.log('Race data from socket: ' + socket.id)
+    if (
+      !_validateClient(socket._serverData.roomKey === data.roomKey, data, socket) ||
+      !_validateClient(socket._serverData.playerId === data.playerId, data, socket)) {
+      return
+    }
     if (socket.conn.remoteAddress) {
       raceDataIntervalRateLimiter.consume(socket.conn.remoteAddress).then(() => {
         redisClient.hgetall(data.roomKey, function (err, room) {
@@ -222,11 +227,8 @@ io.on('connection', function (socket) {
             console.log(err)
             throw err
           }
-          if (!room) {
-            const err = new Error('Room does not exist in racedata: ' + data.roomKey)
-            Sentry.captureException(err)
-            console.log(err)
-            utils.removePlayerWithRoomKey(data.roomKey, socket.id, io, redisClient)
+          if (!_validateClient(room, data, socket)) {
+            return
           }
           let player = utils.getPlayer(room, data.playerId)
           if (+room.startTime + +room.duration >= Date.now()) {
@@ -298,7 +300,18 @@ io.on('connection', function (socket) {
   })
 })
 
-async function createNewRoom (socket, data) {
+function _validateClient (result, data, socket) {
+  if (!result) {
+    const err = new Error('Forbidden action ' + data.roomKey)
+    Sentry.captureException(err)
+    console.log(err)
+    utils.removePlayerWithRoomKey(data.roomKey, socket.id, io, redisClient)
+    return false
+  }
+  return true
+}
+
+async function _createNewRoom (socket, data) {
   let text = await models.Text.findOne({
     where: { language: data.language },
     order: [
@@ -340,6 +353,7 @@ async function createNewRoom (socket, data) {
       redisClient.expire(roomKey, String(text.duration + (STARTING_GAME_TIMEOUT / 1000) + 10))
       console.log('Socket: ' + socket.id + ' created room: ' + roomKey)
       socket._serverData.roomKey = roomKey
+      socket._serverData.playerId = playerId
       socket.join(roomKey)
       setTimeout(function () {
         startGame(roomKey)
