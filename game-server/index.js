@@ -185,6 +185,25 @@ function _addToExistingRoom (socket, roomKey) {
   })
 }
 
+// Reverses a number and adds obfuscation logic
+function decodeNumber (num) {
+  num = num.split('').reverse().join('')
+  let newStr = ''
+  for (let i = 0; i < num.length; i++) {
+    let val = +num.charAt(i)
+    newStr += 9 - val
+  }
+  return Number(newStr)
+}
+
+function decodeData (data) {
+  const res = Buffer.from(data.data, 'base64').toString()
+  let resJson = JSON.parse(res)
+  resJson.chars = decodeNumber(resJson.chars)
+  resJson.accuracy = decodeNumber(resJson.accuracy)
+  return resJson
+}
+
 io.on('connection', function (socket) {
   console.log('Connected ' + socket.id)
   socket.on('newgame', function (data) {
@@ -214,6 +233,7 @@ io.on('connection', function (socket) {
   // In this case, we must make sure that user can't falsify the data on his side, encryption?
   socket.on('racedata', function (data) {
     console.log('Race data from socket: ' + socket.id)
+    data = decodeData(data)
     if (
       !_validateClient(socket._serverData.roomKey === data.roomKey, data, socket) ||
       !_validateClient(socket._serverData.playerId === data.playerId, data, socket)) {

@@ -21,6 +21,7 @@ import GameEndModal from '../components/GameEndModal'
 import DropdownAlert from 'react-native-dropdownalert'
 import i18n from 'i18n-js'
 import Sentry from 'sentry-expo'
+import { encode as btoa } from 'base-64'
 
 import * as offlineTexts from '../offline_texts'
 
@@ -69,6 +70,8 @@ export default class Game extends React.Component {
     this.finishOfflineGame = this.finishOfflineGame.bind(this)
     this.findPlayerId = this.findPlayerId.bind(this)
     this.getRatedSwitchValue = this.getRatedSwitchValue.bind(this)
+    this.obfuscateData = this.obfuscateData.bind(this)
+    this.obfuscateNumber = this.obfuscateNumber.bind(this)
   }
 
   async componentDidMount () {
@@ -360,13 +363,33 @@ export default class Game extends React.Component {
     })
   }
 
+  // Reverses a number and adds obfuscation logic
+  obfuscateNumber (num) {
+    let numCpy = num
+    let newNum = ''
+    while (numCpy > 0) {
+      newNum = newNum + (9 - (numCpy % 10))
+      numCpy = Math.floor(numCpy / 10)
+    }
+    return newNum.toString()
+  }
+
+  // TODO(aibek): btoa is not working in RN
+  obfuscateData (data) {
+    data.chars = this.obfuscateNumber(data.chars)
+    data.accuracy = this.obfuscateNumber(data.accuracy)
+    const jsonString = JSON.stringify(data)
+    return btoa(jsonString)
+  }
+
   sendRaceData () {
-    socket.emit('racedata', {
+    const data = this.obfuscateData({
       chars: this.state.chars,
       accuracy: this.state.accuracy,
       roomKey: this.state.roomKey,
       playerId: this.state.playerId
     })
+    socket.emit('racedata', { data })
   }
 
   setGameData (data, isGameEnded) {
