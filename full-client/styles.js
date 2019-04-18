@@ -1,10 +1,20 @@
-'use strict'
+import { StyleSheet, PixelRatio } from 'react-native'
 
-const React = require('react-native')
+let FONTS = {
+  HEADER_FONT: 30,
+  TABLE_HEADER_FONT: 20,
+  NORMAL_TEXT_FONT: 16,
+  TABLE_FONT: 13
+}
 
-const {
-  StyleSheet
-} = React
+if (PixelRatio.get() <= 2) {
+  FONTS = {
+    HEADER_FONT: 20,
+    TABLE_HEADER_FONT: 16,
+    NORMAL_TEXT_FONT: 12,
+    TABLE_FONT: 10
+  }
+}
 
 const globalStyles = StyleSheet.create({
   container: {
@@ -12,25 +22,22 @@ const globalStyles = StyleSheet.create({
     alignItems: 'center'
   },
   header: {
-    fontSize: 30,
+    fontSize: FONTS.HEADER_FONT,
     color: '#ed4747',
-    letterSpacing: 2,
-    textTransform: 'capitalize',
+    letterSpacing: 1,
     textAlign: 'center',
     fontWeight: '700'
   },
   tableHeader: {
-    fontSize: 20,
+    fontSize: FONTS.TABLE_HEADER_FONT,
     color: '#7f1717',
-    letterSpacing: 2,
-    textTransform: 'capitalize',
+    letterSpacing: 1,
     textAlign: 'center',
     fontWeight: '700'
   },
   normalText: {
-    fontSize: 15,
+    fontSize: FONTS.NORMAL_TEXT_FONT,
     color: '#340303',
-    textTransform: 'capitalize',
     textAlign: 'center'
   },
   row: {
@@ -40,13 +47,13 @@ const globalStyles = StyleSheet.create({
     flexDirection: 'row',
     alignSelf: 'stretch',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'space-between'
   },
   column: {
     marginLeft: 10,
     marginRight: 10,
     color: '#340303',
-    fontSize: 15
+    fontSize: FONTS.TABLE_FONT
   },
   loadingContainer: {
     flex: 1,
@@ -63,4 +70,4 @@ const globalStyles = StyleSheet.create({
   }
 })
 
-export default globalStyles
+export { globalStyles as default, globalStyles, FONTS }

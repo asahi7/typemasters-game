@@ -9,6 +9,7 @@ import moment from 'moment'
 import firebase from 'firebase'
 import DropdownAlert from 'react-native-dropdownalert'
 import i18n from 'i18n-js'
+import _ from 'lodash'
 
 export default class Main extends React.Component {
   constructor (props) {
@@ -204,32 +205,8 @@ export default class Main extends React.Component {
         </View>
         {!this.state.data && <View><Text style={globalStyles.tableHeader}>{i18n.t('common.noData')}</Text></View>}
         {this.state.data && <ScrollView style={{ marginTop: 10, marginBottom: 10 }}>
-          {this.state.authenticated &&
-          <View style={{ marginTop: 10 }}>
-            <Text style={globalStyles.tableHeader}>{i18n.t('main.yourGamesCount')}: {this.state.data.gamesPlayedCntUser}</Text>
-          </View>
-          }
-          <View style={{ marginTop: 10 }}>
-            <Text style={globalStyles.tableHeader}>{i18n.t('main.totalGamesCount')}: {this.state.data.gamesPlayedCnt}</Text>
-          </View>
-          {/* TODO(aibek): fill out last played games from API */}
-          <View style={{ marginTop: 20 }}>
-            <Text style={globalStyles.tableHeader}>{i18n.t('main.lastGames')}</Text>
-            {
-              this.state.data.lastGames.map((result, i) => {
-                return (
-                  <View style={globalStyles.row} key={i}>
-                    <Text style={globalStyles.column}>{result.user.nickname ? result.user.nickname : 'noname'}</Text>
-                    <Text style={globalStyles.column}>{result.user.country ? result.user.country : 'not specified'}</Text>
-                    <Text style={globalStyles.column}>{result.cpm}</Text>
-                    <Text style={globalStyles.column}>{moment(result.race.date).fromNow()}</Text>
-                  </View>
-                )
-              })
-            }
-          </View>
           {/* TODO(aibek): add link to settings for language */}
-          <View style={{ marginTop: 20, alignItems: 'center' }}>
+          <View style={{ marginTop: 10, alignItems: 'center' }}>
             <Text style={globalStyles.normalText}>{i18n.t('main.chooseLangText')}</Text>
             <TouchableOpacity style={styles.playButton} onPress={this.handlePlayPressed}>
               <Text style={styles.playButtonText}>{i18n.t('main.playButton')}</Text>
@@ -239,6 +216,33 @@ export default class Main extends React.Component {
           <View style={{ marginTop: 10 }}>
             <Text style={[globalStyles.normalText, { color: 'red' }]}>{i18n.t('common.signInToSave')}</Text>
           </View>
+          }
+          {this.state.authenticated &&
+          <View style={{ marginTop: 10 }}>
+            <Text style={globalStyles.tableHeader}>{i18n.t('main.yourGamesCount')}: {this.state.data.gamesPlayedCntUser}</Text>
+          </View>
+          }
+          <View style={{ marginTop: 10 }}>
+            <Text style={globalStyles.tableHeader}>{i18n.t('main.totalGamesCount')}: {this.state.data.gamesPlayedCnt}</Text>
+          </View>
+          {/* TODO(aibek): fill out last played games from API */}
+          {!_.isEmpty(this.state.data.lastGames) &&
+            <View style={{ marginTop: 20 }}>
+              <Text style={globalStyles.tableHeader}>{i18n.t('main.lastGames')}</Text>
+              {
+                this.state.data.lastGames.map((result, i) => {
+                  return (
+                    <View style={globalStyles.row} key={i}>
+                      <Text style={globalStyles.column}>{result.user.nickname ? result.user.nickname : 'noname'}</Text>
+                      <Text
+                        style={globalStyles.column}>{result.user.country ? result.user.country : 'not specified'}</Text>
+                      <Text style={globalStyles.column}>{result.cpm}</Text>
+                      <Text style={globalStyles.column}>{moment(result.race.date).fromNow()}</Text>
+                    </View>
+                  )
+                })
+              }
+            </View>
           }
         </ScrollView>}
         <DropdownAlert ref={(ref) => { this.dropdown = ref }} />
@@ -258,8 +262,8 @@ const styles = StyleSheet.create({
     marginTop: 10,
     backgroundColor: '#ed4747',
     borderRadius: 10,
-    paddingLeft: 5,
-    paddingRight: 5
+    paddingLeft: 15,
+    paddingRight: 15
   },
   playButtonText: {
     color: '#fff',

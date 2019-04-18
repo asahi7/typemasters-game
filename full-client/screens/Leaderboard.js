@@ -8,6 +8,7 @@ import globalStyles from '../styles'
 import moment from 'moment'
 import DropdownAlert from 'react-native-dropdownalert'
 import i18n from 'i18n-js'
+import _ from 'lodash'
 
 export default class Leaderboard extends React.Component {
   constructor (props) {
@@ -167,18 +168,23 @@ export default class Leaderboard extends React.Component {
           </Text>
         </View>
         <ScrollView style={{ marginTop: 10, marginBottom: 10 }}>
+          {!_.isEmpty(this.state.data.bestCpmTodayResults) &&
           <View style={{ marginTop: 10 }}>
+
             <Text style={globalStyles.tableHeader}>{i18n.t('leaderboard.bestTodayByCpm')}</Text>
             {this.state.data.bestCpmTodayResults.map((result, i) => {
               return (
                 <View style={globalStyles.row} key={i}>
                   <Text style={globalStyles.column}>{result.user.nickname ? result.user.nickname : 'noname'}</Text>
-                  <Text style={globalStyles.column}>{result.user.country ? result.user.country : 'not specified'}</Text>
+                  <Text
+                    style={globalStyles.column}>{result.user.country ? result.user.country : 'not specified'}</Text>
                   <Text style={globalStyles.column}>{result.cpm}</Text>
                 </View>
               )
             })}
           </View>
+          }
+          {!_.isEmpty(this.state.data.bestAccTodayResults) &&
           <View style={{ marginTop: 10 }}>
             <Text style={globalStyles.tableHeader}>{i18n.t('leaderboard.bestTodayByAcc')}</Text>
             {this.state.data.bestAccTodayResults.map((result, i) => {
@@ -191,6 +197,8 @@ export default class Leaderboard extends React.Component {
               )
             })}
           </View>
+          }
+          {!_.isEmpty(this.state.data.bestAvgResults) &&
           <View style={{ marginTop: 10 }}>
             <Text style={globalStyles.tableHeader}>{i18n.t('leaderboard.bestTodayByAvgCpm')}</Text>
             {this.state.data.bestAvgResults.map((result, i) => {
@@ -198,11 +206,13 @@ export default class Leaderboard extends React.Component {
                 <View style={globalStyles.row} key={i}>
                   <Text style={globalStyles.column}>{result.user.nickname ? result.user.nickname : 'noname'}</Text>
                   <Text style={globalStyles.column}>{result.user.country ? result.user.country : 'not specified'}</Text>
-                  <Text style={globalStyles.column}>{result.avg}</Text>
+                  <Text style={globalStyles.column}>{Math.round(result.avg)}</Text>
                 </View>
               )
             })}
           </View>
+          }
+          {!_.isEmpty(this.state.data.bestResults) &&
           <View style={{ marginTop: 10 }}>
             <Text style={globalStyles.tableHeader}>{i18n.t('leaderboard.bestByCpm')}</Text>
             {this.state.data.bestResults.map((result, i) => {
@@ -216,6 +226,7 @@ export default class Leaderboard extends React.Component {
               )
             })}
           </View>
+          }
         </ScrollView>
         <DropdownAlert ref={(ref) => { this.dropdown = ref }} />
       </LinearGradient>

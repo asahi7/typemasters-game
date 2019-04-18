@@ -22,10 +22,10 @@ export const en = {
     cantInternet: 'No internet connection. Please try later'
   },
   main: {
-    header: 'Compete With Others And Increase Your Typing Speed!',
-    yourGamesCount: 'You Played Games Today',
-    totalGamesCount: 'Total Played Games Today',
-    lastGames: 'Last Games Today',
+    header: 'Compete With Others And Increase Your Typing Speed',
+    yourGamesCount: 'You played games today',
+    totalGamesCount: 'Total played games today',
+    lastGames: 'Last games today',
     chooseLangText: 'Choose your typing language and',
     playButton: 'PLAY'
   },
@@ -61,7 +61,7 @@ export const en = {
     notSpecified: 'Not Specified',
     changeNickname: 'Change nickname',
     yourNickname: 'Your nickname',
-    yourNicknameInput: 'Your nickname',
+    yourNicknameInput: 'Enter',
     typingLanguage: 'Typing language',
     selectTypingLanguage: 'Select your preferred typing language',
     save: 'Save',
@@ -146,17 +146,17 @@ export const ru = {
     info: 'Информация',
     email: 'Электронный адрес',
     country: 'Страна',
-    signInToSave: '*Авторизуйтесь для сохранения вашего прогресса',
+    signInToSave: '*Авторизуйся для сохранения твоего прогресса',
     password: 'Пароль',
     signIn: 'Войти'
   },
   main: {
-    header: 'Повысьте свою скорость печатания, соревнуясь с другими',
-    yourGamesCount: 'Количестов игр за сегодня сыгранных вами',
-    totalGamesCount: 'Количество всех игр за сегодня',
+    header: 'Повысь Свою Скорость Печатания, Соревнуясь с Другими',
+    yourGamesCount: 'Количестов ваших игр за сегодня',
+    totalGamesCount: 'Количество игр за сегодня',
     lastGames: 'Последние игры',
-    chooseLangText: 'Выберите подходящий язык для печатания и',
-    playButton: 'ИГРАЙТЕ'
+    chooseLangText: 'Выбери печатаемый язык и',
+    playButton: 'ИГРАЙ'
   },
   leaderboard: {
     header: 'Статистика',
@@ -172,9 +172,9 @@ export const ru = {
     nickname: 'Ник',
     typingLanguage: 'Язык печатания',
     totalGames: 'Количество игр',
-    averageCpm: 'Средний cpm',
+    averageCpm: 'Средний CPM',
     averageAccuracy: 'Средняя точность',
-    averageCpm10: 'Средний cpm (последние 10 игр)',
+    averageCpm10: 'Средний CPM (последние 10 игр)',
     averageAccuracy10: 'Средняя точность (последние 10 игр)',
     gamesWon: 'Число выигранных игр',
     bestResult: 'Лучший результат',
@@ -190,7 +190,7 @@ export const ru = {
     notSpecified: 'Не указано',
     changeNickname: 'Поменять ник',
     yourNickname: 'Ваш ник',
-    yourNicknameInput: 'Ваш ник',
+    yourNicknameInput: 'Введите',
     typingLanguage: 'Язык печатания',
     selectTypingLanguage: 'Выберите свой предпочитаемый язык печатания',
     save: 'Сохранить',
@@ -235,7 +235,7 @@ export const ru = {
     yourAccuracy: 'Ваша точность',
     close: 'Закрыть',
     startTypingHere: 'Начните печатать..',
-    timeLeft: 'осталось'
+    timeLeft: 'сек'
   },
   loading: {
     loading: 'Загрузка'

@@ -17,7 +17,7 @@ import WebAPI from '../WebAPI'
 import Loading from './Loading'
 import firebase from 'firebase'
 import Commons from '../Commons'
-import globalStyles from '../styles'
+import { globalStyles, FONTS } from '../styles'
 import DropdownAlert from 'react-native-dropdownalert'
 import i18n from 'i18n-js'
 
@@ -328,7 +328,8 @@ export default class Settings extends React.Component {
               <View style={globalStyles.row}>
                 <Text style={globalStyles.column}>{i18n.t('common.country')}:</Text>
                 <Picker selectedValue={this.state.userData.country ? this.state.userData.country : 'Select'}
-                  style={[{ width: 150 }, styles.column]}
+                  style={[{ width: 150, height: 100 }, styles.column]}
+                  itemStyle={{ height: 100, fontSize: FONTS.TABLE_HEADER_FONT }}
                   onValueChange={this.countrySelected}>
                   {countryList.map((country) => {
                     return <Picker.Item value={country} label={country} key={country} />
@@ -343,7 +344,8 @@ export default class Settings extends React.Component {
             {this.state.textLanguage &&
             <Picker selectedValue={this.state.textLanguage}
               prompt={i18n.t('settings.selectTypingLanguage')}
-              style={[{ width: 150 }, styles.column]}
+              style={[{ width: 150, height: 100 }, styles.column]}
+              itemStyle={{ height: 100, fontSize: FONTS.TABLE_HEADER_FONT }}
               onValueChange={this.textLanguageSelected}>
               <Picker.Item value='ar' label='Arabic' />
               <Picker.Item value='en' label='English' />

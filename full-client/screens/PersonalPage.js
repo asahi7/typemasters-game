@@ -116,8 +116,8 @@ export default class PersonalPage extends React.Component {
         userData = {
           ...userData,
           totalRaces: results[0].result,
-          avgCpm: (results[1].result !== null ? results[1].result : null),
-          lastAvgCpm: results[2].result,
+          avgCpm: Math.round(results[1].result !== null ? results[1].result : null),
+          lastAvgCpm: Math.round(results[2].result),
           lastPlayed: (results[3].result !== null ? results[3].result.date : null),
           lastScore: (results[3].result !== null ? results[3].result.cpm : null),
           lastAccuracy: (results[3].result !== null ? results[3].result.accuracy : null),

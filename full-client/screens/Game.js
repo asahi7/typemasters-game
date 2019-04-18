@@ -2,9 +2,6 @@ import React from 'react'
 import {
   StyleSheet,
   Text,
-  TouchableHighlight,
-  View,
-  TouchableOpacity,
   ScrollView,
   BackHandler,
   AsyncStorage, NetInfo
@@ -18,6 +15,7 @@ import Commons from '../Commons'
 import globalStyles from '../styles'
 import GameTextInput from '../components/GameTextInput'
 import GameEndModal from '../components/GameEndModal'
+import GameTopMenu from '../components/GameTopMenu'
 import DropdownAlert from 'react-native-dropdownalert'
 import i18n from 'i18n-js'
 import Sentry from 'sentry-expo'
@@ -485,42 +483,15 @@ export default class Game extends React.Component {
             this.setModalVisible(false)
           }}
         />
-        <View style={styles.gameStatusBar}>
-          <View style={[styles.gameStatusBarItem, { borderLeftWidth: 0 }]}>
-            {this.state.gamePlaying === true
-              ? <TouchableOpacity
-                style={[styles.playButton, styles.playButtonBgStop]}
-                onPress={this.playButtonPressed}
-              >
-                <Text style={styles.playButtonText}>{i18n.t('game.stop')}</Text>
-              </TouchableOpacity>
-              : <TouchableOpacity
-                style={[styles.playButton, styles.playButtonBgPlay]}
-                onPress={this.playButtonPressed}
-              >
-                <Text style={styles.playButtonText}>{i18n.t('game.play')}</Text>
-              </TouchableOpacity>}
-          </View>
-          <View
-            style={styles.gameStatusBarItem}><Text>{this.state.position}/{this.state.numOfPlayers} {i18n.t('game.position')}</Text></View>
-          <View
-            style={styles.gameStatusBarItem}><Text>{Math.round(this.state.timeLeft)} {i18n.t('game.timeLeft')}</Text></View>
-          <View style={styles.gameStatusBarItem}><Text>{this.state.cpm} cpm</Text></View>
-          <View
-            style={[styles.gameStatusBarItem, { borderRightWidth: 0 }]}><Text>{this.state.accuracy ? this.state.accuracy : 100}%
-              {i18n.t('game.accuracy')}</Text></View>
-        </View>
+        <GameTopMenu playButtonPressed={this.playButtonPressed} position={this.state.position} numOfPlayers={this.state.numOfPlayers}
+          timeLeft={Math.round(this.state.timeLeft)} cpm={this.state.cpm} accuracy={this.state.accuracy ? this.state.accuracy : 100}
+          gamePlaying={this.state.gamePlaying}
+        />
         <GameTextInput textArray={this.state.textArray} handler={this.gameInputHandler} refresh={this.state.gamePlaying}
           accuracyHandler={this.accuracyHandler} />
         <ScrollView style={styles.raceTextView}>
           <Text style={styles.raceText}>{this.state.text}</Text>
         </ScrollView>
-        <TouchableHighlight
-          onPress={() => {
-            this.setModalVisible(true)
-          }} style={{ marginBottom: 20 }}>
-          <Text>Show Modal</Text>
-        </TouchableHighlight>
         <DropdownAlert ref={(ref) => { this.dropdown = ref }} />
       </LinearGradient>
     )
@@ -528,35 +499,6 @@ export default class Game extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  playButton: {
-    alignItems: 'center',
-    padding: 10
-  },
-  playButtonBgStop: {
-    backgroundColor: '#ff0000'
-  },
-  playButtonBgPlay: {
-    backgroundColor: '#76e77e'
-  },
-  playButtonText: {
-    color: '#fff'
-  },
-  gameStatusBar: {
-    flex: 0.1,
-    flexDirection: 'row',
-    marginTop: 50,
-    marginBottom: 30
-  },
-  gameStatusBarItem: {
-    paddingLeft: 3,
-    paddingRight: 3,
-    borderRightWidth: 1,
-    borderRightColor: '#7f1717',
-    borderLeftWidth: 1,
-    borderLeftColor: '#7f1717',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
   raceTextView: {
     flex: 3,
     flexDirection: 'column',
