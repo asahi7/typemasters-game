@@ -5,11 +5,13 @@ if (process.argv.length < 3) {
 
 const cmd = require('commander')
 const _ = require('lodash')
+const convertKazToLat = require('./kazCyrToLat')
 
 cmd
   .option('-t, --text <text>', 'text to format')
   .option('--sql', 'print SQL query')
   .option('-l, --lang <language>', 'language of the text')
+  .option('--fromkazcyr', 'will convert cyrillic kazakh to latin')
 
 cmd.parse(process.argv)
 
@@ -26,6 +28,10 @@ if (!text || text.length === 0) {
 // replacing double whitespaces with single space character
 text = text.replace(/(\r\n|\n|\r)/gm, ' ')
 text = text.replace(/\s\s+/g, ' ')
+
+if (cmd.fromkazcyr) {
+  text = convertKazToLat(text)
+}
 
 console.log('\n\nPlease read and check the text one more time:\n\n')
 
