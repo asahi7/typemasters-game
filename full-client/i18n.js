@@ -69,7 +69,40 @@ export const en = {
     ratedSwitch: 'Rated games'
   },
   about: {
-    header: 'About'
+    header: 'About',
+    subHeader1: 'About the Game',
+    subHeader2: 'Get More Personalized Experience',
+    subHeader3: 'Contact us',
+    firstP: 'Welcome to Typemasters, hope you enjoy us! ' +
+    'We developed this game to allow you to compete with other online players by typing texts on time. ' +
+    'However, we also want to let you know that you can use this game not just for fun but for different ' +
+    'purposes. ' +
+    'Some examples: if you decided that you need to improve your typing skills or you want to learn a new language ' +
+    'and adjust your typing skills accordingly or even if you want to be the best among typers, then this is ' +
+    'what you will be able to accomplish with our app!',
+    secondP: 'By playing this interesting game you will realize that both of your typing speed and typing accuracy are ' +
+    'increased. ' +
+    'Comparing to other similar applications, this app will make your learning experience more engaging and motivational, ' +
+    'because each game you will be matched with different people around the globe just like you ' +
+    'and will have a chance to compare yourself with others! ',
+    thirdP: 'This is just a very first version which combines only basic functionality and design, ' +
+    'however we will also try to update this app heavily with new features, and with even more pleasant design. ' +
+    'The app is also supported on both iOS and Android devices. ' +
+    'We hope that this app will bring you much joy and happiness!',
+    fourthP: 'You can have more personalized experience, if you adjust the settings in the Settings tab.',
+    fifthP: 'You can:\n' +
+    '* Change the language of your typing text\n' +
+    '* Change whether you want to play rated or unrated games\n' +
+    '* Change the country of yours and compare with other typers within your country\n' +
+    '* Change your nickname to make yourself more recognized',
+    sixthP: 'Also, do not forget to sign up on this app! This will help us to save your progress and deliver you ' +
+    'more precise statistics about your typing improvement history. This will also add your nickname on ' +
+    'Leaderboards page, if you show really good results!',
+    seventhP: 'Otherwise, unfortunately if you use the app anonymously, then you will have a limit of playing up to 50 ' +
+    'games per day.',
+    eighthP: 'Please rate us on App Store or Google Play and let us know your valuable feedback!',
+    ninethP: 'If you have any suggestions or complaints please contact us at: typemasters.game@gmail.com. Your opinion ' +
+    'is important to us!'
   },
   emailVerification: {
     header: 'Please verify your email',
@@ -198,7 +231,38 @@ export const ru = {
     ratedSwitch: 'Рейтинговая игра'
   },
   about: {
-    header: 'О нас'
+    header: 'О нас',
+    subHeader1: 'Об игре',
+    subHeader2: 'Получите персонализированный опыт',
+    subHeader3: 'Свяжитесь с нами',
+    firstP: 'Добро пожаловатьв Typemasters, мы искренне надеемся что вам тут нравится! ' +
+    'Мы разработали эту игру чтобы позволить вам соревноваться с другими онлайн игроками по скорости печатания на время. ' +
+    'Однако, мы также хотим чтобы вы знали, что вы можете использовать эту игру и для больших целей. ' +
+    'Например: если вы решили что хотите улучшить свое умение печатать или хотите научиться быстро печатать на иностранном языке ' +
+    'или даже если вы хотели бы стать чемпионом среди быстро печатающих людей, тогда с помощью этой игры вы сможете ' +
+    'исполнить все эти желания!',
+    secondP: 'Играя в эту интересную игру вы обнаружите, что скорость и точность вашего печатания значительно увеличились. ' +
+    'Сравнивая с другими похожими приложениями, это приложение сделает ваше обучение более захватывающим и мотивирующим, ' +
+    'поскольку каждую свою игру вы будете играть с разными игроками разбросанными по всему миру, с такими же людьми как и вы, ' +
+    'тем самым вы сможете сравнить себя с другими и получить уникальный опыт.',
+    thirdP: 'Это самая первая версия игры которая комбинирует в себе самую базовую функциональность и дизайн, ' +
+    'но мы обязательно постараемся улучшить это приложение новыми возможностями и с более отлаженным дизайном в скором будущем. ' +
+    'Игра поддерживается как на Android, так и на iOS. ' +
+    'Мы надеемся что эта игра принесет вам огромное удовольствие!',
+    fourthP: 'Вы можете получить более персонализированный опыт, если настроите приложение во вкладке с настройками.',
+    fifthP: 'Вы можете:\n' +
+    '* Поменять язык на котором хотите печатать\n' +
+    '* Выбрать хотите ли вы играть рейтинговые игры или нет\n' +
+    '* Поменять свою страну проживания и сравнить себя с другими игроками в своей стране\n' +
+    '* Поменять свой ник, чтобы сделать себя более узнаваемым',
+    sixthP: 'Также, не забудьте зарегистрироваться! Это позволит вам сохранить свой прогресс и предложить ' +
+    'более точную статистику о росте вашей техники печатания. Это также позволит отобразить ваш ник на ' +
+    'странице победителей, если вы покажите хороший результат!',
+    seventhP: 'Иначе, к сожалению если вы продолжите использовать это приложение анонимно, тогда вы сможете играть только 50 ' +
+    'игр в день.',
+    eighthP: 'Пожалуйста оцените нас на App Store или Google Play и дайте нам знать что вы думаете о нас!',
+    ninethP: 'Если у вас есть предложения или замечания пожалуйста напишите нам сюда: typemasters.game@gmail.com. Ваше ' +
+    'мнение важно для нас!'
   },
   emailVerification: {
     header: 'Пожалуйста подтвердите свой email',

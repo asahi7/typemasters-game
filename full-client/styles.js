@@ -38,7 +38,11 @@ const globalStyles = StyleSheet.create({
   normalText: {
     fontSize: FONTS.NORMAL_TEXT_FONT,
     color: '#340303',
-    textAlign: 'center'
+    textAlign: 'center',
+    paddingLeft: 5,
+    paddingRight: 5,
+    paddingTop: 5,
+    paddingBottom: 5
   },
   row: {
     flex: 0.1,
