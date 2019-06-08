@@ -191,7 +191,7 @@ export default class Settings extends React.Component {
       await AsyncStorage.setItem('textLanguage', 'en')
     } else {
       this.setState({
-        textLanguage: textLanguage.toLowerCase()
+        textLanguage: textLanguage
       })
     }
   }
@@ -351,7 +351,8 @@ export default class Settings extends React.Component {
               <Picker.Item value='en' label='English' />
               <Picker.Item value='fr' label='French' />
               <Picker.Item value='de' label='German' />
-              <Picker.Item value='kz' label='Kazakh' />
+              <Picker.Item value='kzLat' label='Kazakh (latin)' />
+              <Picker.Item value='kzCyr' label='Kazakh (cyrillic)' />
               <Picker.Item value='ko' label='Korean' />
               <Picker.Item value='pt' label='Portuguese' />
               <Picker.Item value='ru' label='Russian' />

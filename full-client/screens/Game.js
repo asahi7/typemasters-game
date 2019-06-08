@@ -126,7 +126,7 @@ export default class Game extends React.Component {
       await AsyncStorage.setItem('textLanguage', 'en')
     } else {
       this.setState({
-        textLanguage: textLanguage.toLowerCase()
+        textLanguage: textLanguage
       })
     }
   }
@@ -487,7 +487,7 @@ export default class Game extends React.Component {
           timeLeft={Math.round(this.state.timeLeft)} cpm={this.state.cpm} accuracy={this.state.accuracy ? this.state.accuracy : 100}
           gamePlaying={this.state.gamePlaying}
         />
-        <GameTextInput textArray={this.state.textArray} handler={this.gameInputHandler} refresh={this.state.gamePlaying}
+        <GameTextInput textArray={this.state.textArray} language={this.state.textLanguage} handler={this.gameInputHandler} refresh={this.state.gamePlaying}
           accuracyHandler={this.accuracyHandler} />
         <ScrollView style={styles.raceTextView}>
           <Text style={styles.raceText}>{this.state.text}</Text>

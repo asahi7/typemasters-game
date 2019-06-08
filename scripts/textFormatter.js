@@ -29,6 +29,9 @@ if (!text || text.length === 0) {
 text = text.replace(/(\r\n|\n|\r)/gm, ' ')
 text = text.replace(/\s\s+/g, ' ')
 
+// TODO(aibek): delete or replace non-ascii symbols
+text = text.replace(/(—)/g, '-')
+
 if (cmd.fromkazcyr) {
   text = convertKazToLat(text)
 }
@@ -41,7 +44,7 @@ let timeToComplete = Math.round(text.length * 0.5)
 
 console.log(`\n\nEstimated time to complete the text: ${timeToComplete} secs\n\n`)
 
-const supportedLangs = ['ar', 'de', 'en', 'es', 'fr', 'ko', 'kz', 'pt', 'ru', 'tr']
+const supportedLangs = ['ar', 'de', 'en', 'es', 'fr', 'ko', 'kzLat', 'kzCyr', 'pt', 'ru', 'tr']
 
 if (cmd.sql) {
   if (!cmd.lang) {

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+node textFormatter.js --fromkazcyr --sql \
+    -t "$1" \
+    -l kzLat

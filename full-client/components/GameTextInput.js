@@ -2,6 +2,7 @@ import React from 'react'
 import { StyleSheet, View, TextInput } from 'react-native'
 import _ from 'lodash'
 import i18n from 'i18n-js'
+import inputComparisonAdapter from '../utils/inputComparisonAdapter'
 
 export default class GameTextInput extends React.Component {
   constructor (props) {
@@ -52,7 +53,8 @@ export default class GameTextInput extends React.Component {
     if (!this.lastInputBackspace) {
       this.totalInputChars = this.totalInputChars + 1
     }
-    if (_.startsWith(word, input.trim())) {
+    const matchSuccess = inputComparisonAdapter(word, input, this.props.language)
+    if (matchSuccess) {
       this.setState({
         correctInput: true
       })
@@ -78,13 +80,13 @@ export default class GameTextInput extends React.Component {
   isNotLastMatchingWordOfText (input) {
     const word = this.props.textArray[this.wordIndex]
     return input.charAt(input.length - 1) === ' ' && this.props.textArray.length - 1 !== this.wordIndex &&
-      input.slice(0, input.length - 1) === word
+      inputComparisonAdapter(word, input.slice(0, input.length - 1), this.props.language, true)
   }
 
   isLastMatchingWordOfText (input) {
     const word = this.props.textArray[this.wordIndex]
     return this.props.textArray.length - 1 === this.wordIndex &&
-      input === word
+      inputComparisonAdapter(word, input, this.props.language, true)
   }
 
   render () {

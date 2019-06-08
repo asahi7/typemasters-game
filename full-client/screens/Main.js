@@ -183,7 +183,7 @@ export default class Main extends React.Component {
       await AsyncStorage.setItem('textLanguage', 'en')
     } else {
       this.setState({
-        textLanguage: textLanguage.toLowerCase()
+        textLanguage: textLanguage
       })
     }
   }
