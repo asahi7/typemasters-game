@@ -12,7 +12,6 @@ const sequelize = new Sequelize('typemasters', config.username, config.password,
     idle: 10000
   },
   define: {
-    underscoredAll: true,
     timestamps: false
   },
   logging: false
@@ -46,6 +45,8 @@ const User = sequelize.define('user', {
     defaultValue: Sequelize.NOW,
     allowNull: false
   }
+}, {
+  tableName: 'users'
 })
 
 const Text = sequelize.define('text', {
@@ -67,18 +68,22 @@ const Text = sequelize.define('text', {
     defaultValue: Sequelize.NOW,
     allowNull: false
   }
+}, {
+  tableName: 'texts'
 })
 
 const Race = sequelize.define('race', {
   textId: {
     type: Sequelize.INTEGER,
-    allowNull: false
+    allowNull: true
   },
   date: {
     type: Sequelize.DATE,
     defaultValue: Sequelize.NOW,
     allowNull: false
   }
+}, {
+  tableName: 'races'
 })
 
 const RacePlayer = sequelize.define('racePlayer', {
@@ -112,6 +117,8 @@ const RacePlayer = sequelize.define('racePlayer', {
     type: Sequelize.INTEGER,
     allowNull: false
   }
+}, {
+  tableName: 'race_players'
 })
 
 Race.belongsTo(Text, { foreignKey: 'textId', targetKey: 'id' })

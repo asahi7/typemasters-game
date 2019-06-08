@@ -10,11 +10,7 @@ module.exports = {
       },
       textId: {
         type: Sequelize.INTEGER,
-        references: {
-          model: 'texts',
-          key: 'id'
-        },
-        allowNull: false
+        allowNull: true
       },
       date: {
         type: Sequelize.DATE,

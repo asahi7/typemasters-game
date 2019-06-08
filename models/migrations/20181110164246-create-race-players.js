@@ -10,18 +10,10 @@ module.exports = {
       },
       userUid: {
         type: Sequelize.STRING,
-        allowNull: false,
-        references: {
-          model: 'users',
-          key: 'uid'
-        }
+        allowNull: false
       },
       raceId: {
         type: Sequelize.INTEGER,
-        references: {
-          model: 'races',
-          key: 'id'
-        },
         allowNull: false
       },
       cpm: {

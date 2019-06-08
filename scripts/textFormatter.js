@@ -45,11 +45,11 @@ const supportedLangs = ['ar', 'de', 'en', 'es', 'fr', 'ko', 'kz', 'pt', 'ru', 't
 
 if (cmd.sql) {
   if (!cmd.lang) {
-    console.error('To pring SQL query, please specify the language of the text')
+    console.error('To print SQL query, please specify the language of the text')
     process.exit(1)
   }
   if (!_.includes(supportedLangs, cmd.lang)) {
-    console.error('To pring SQL query, please specify the supported language')
+    console.error('To print SQL query, please specify the supported language')
     process.exit(1)
   }
   console.log(`\n\nINSERT INTO texts (text, language, duration) VALUES ('${text}', '${cmd.lang}', ${timeToComplete});\n\n`)
