@@ -247,7 +247,7 @@ io.on('connection', function (socket) {
             console.log(err)
             throw err
           }
-          if (!_validateClient(room, data, socket)) {
+          if (!_validateClient(room, data, socket, false)) {
             return
           }
           let player = utils.getPlayer(room, data.playerId)
@@ -320,11 +320,13 @@ io.on('connection', function (socket) {
   })
 })
 
-function _validateClient (result, data, socket) {
+function _validateClient (result, data, socket, logsWrite = true) {
   if (!result) {
-    const err = new Error('Forbidden action ' + data.roomKey)
-    Sentry.captureException(err)
-    console.log(err)
+    if (logsWrite) {
+      const err = new Error('Forbidden action ' + data.roomKey)
+      Sentry.captureException(err)
+      console.log(err)
+    }
     utils.removePlayerWithRoomKey(data.roomKey, socket.id, io, redisClient)
     return false
   }
