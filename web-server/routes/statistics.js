@@ -23,13 +23,10 @@ router.get('/getLatestAverageCpm', [
       {
         model: models.Race,
         attributes: [],
-        required: true,
-        include: [{
-          model: models.Text, attributes: [], required: true, where: { language: req.query.language }
-        }]
+        required: true
       }
     ],
-    where: { userUid: req.query.uid },
+    where: { userUid: req.query.uid, language: req.query.language },
     order: [['id', 'DESC']],
     limit: 10,
     attributes: ['cpm']
@@ -64,13 +61,10 @@ router.get('/getAverageCpm', [
       {
         model: models.Race,
         attributes: [],
-        required: true,
-        include: [{
-          model: models.Text, attributes: [], required: true, where: { language: req.query.language }
-        }]
+        required: true
       }
     ],
-    where: { userUid: req.query.uid },
+    where: { userUid: req.query.uid, language: req.query.language },
     attributes: ['cpm']
   }).then((results) => {
     const sum = _.sumBy(results, (o) => {
@@ -101,12 +95,10 @@ router.get('/getRaceCount', [
   return models.Race.count({
     include: [
       {
-        model: models.Text, attributes: [], where: { language: req.query.language }
-      },
-      {
         model: models.RacePlayer, attributes: ['cpm'], where: { userUid: req.query.uid }
       }
-    ]
+    ],
+    where: { language: req.query.language }
   }).then((result) => {
     return res.send({ result })
   }).catch(err => {
@@ -130,12 +122,10 @@ router.get('/getFirstRace', [
   return models.Race.findOne({
     include: [
       {
-        model: models.Text, attributes: [], where: { language: req.query.language }
-      },
-      {
         model: models.RacePlayer, attributes: ['cpm'], where: { userUid: req.query.uid }
       }
     ],
+    where: { language: req.query.language },
     order: [['date', 'ASC']]
   }).then(result => {
     return res.send({ result })
@@ -160,12 +150,10 @@ router.get('/getLastPlayedGame', [
   return models.Race.findOne({
     include: [
       {
-        model: models.Text, attributes: [], where: { language: req.query.language }
-      },
-      {
         model: models.RacePlayer, attributes: ['cpm', 'accuracy'], where: { userUid: req.query.uid }
       }
     ],
+    where: { language: req.query.language },
     order: [['date', 'DESC']]
   }).then(result => {
     if (!result) {
@@ -202,13 +190,10 @@ router.get('/getBestResult', [
       {
         model: models.Race,
         attributes: [],
-        required: true,
-        include: [
-          { model: models.Text, attributes: [], where: { language: req.query.language }, required: true }
-        ]
+        required: true
       }
     ],
-    where: { userUid: req.query.uid },
+    where: { userUid: req.query.uid, language: req.query.language },
     order: [['cpm', 'DESC']]
   }).then((result) => {
     if (!result) {
@@ -236,12 +221,10 @@ router.get('/getGamesWon', [
   return models.Race.count({
     include: [
       {
-        model: models.Text, attributes: [], where: { language: req.query.language }
-      },
-      {
         model: models.RacePlayer, attributes: ['cpm'], where: { userUid: req.query.uid, isWinner: 1 }
       }
-    ]
+    ],
+    where: { language: req.query.language }
   }).then(function (result) {
     return res.send({ result })
   }).catch(err => {
@@ -343,13 +326,11 @@ router.get('/getAverageAccuracy', [
   return models.Race.findAll({
     include: [
       {
-        model: models.Text, attributes: [], where: { language: req.query.language }
-      },
-      {
         model: models.RacePlayer, attributes: ['accuracy'], where: { userUid: req.query.uid }
       }
     ],
-    attributes: ['id']
+    attributes: ['id'],
+    where: { language: req.query.language }
   }).then((results) => {
     const sum = _.sumBy(results, (o) => {
       return o.racePlayers[0].accuracy
@@ -379,12 +360,10 @@ router.get('/getLastAverageAccuracy', [
   return models.Race.findAll({
     include: [
       {
-        model: models.Text, attributes: [], where: { language: req.query.language }
-      },
-      {
         model: models.RacePlayer, attributes: ['accuracy'], where: { userUid: req.query.uid }
       }
     ],
+    where: { language: req.query.language },
     attributes: ['id', 'date'],
     order: [['date', 'DESC']],
     limit: 10
@@ -420,16 +399,11 @@ router.get('/getGameHistoryByDay', [
       {
         model: models.Race,
         attributes: ['date'],
-        required: true,
-        include: [
-          {
-            model: models.Text, attributes: [], required: true, where: { language: req.query.language }
-          }
-        ]
+        required: true
       }
     ],
     includeIgnoreAttributes: false,
-    where: { userUid: req.query.uid },
+    where: { userUid: req.query.uid, language: req.query.language },
     attributes: [
       [models.sequelize.fn('AVG', models.sequelize.col('cpm')), 'cpm'],
       [models.sequelize.fn('AVG', models.sequelize.col('accuracy')), 'accuracy'],

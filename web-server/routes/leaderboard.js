@@ -21,16 +21,13 @@ router.get('/getBestResults', [
       {
         model: models.Race,
         attributes: ['id', 'textId', 'date'],
-        required: true,
-        include: [{
-          model: models.Text, required: true, attributes: ['id', 'language']
-        }]
+        required: true
       },
       {
         model: models.User, attributes: ['id', 'uid', 'nickname', 'country'], required: true
       }
     ],
-    where: models.sequelize.where(models.sequelize.col('race->text.language'), '=', req.query.language),
+    where: { language: req.query.language },
     order: [['cpm', 'DESC']],
     limit: 20
   }).then((results) => {
@@ -57,16 +54,13 @@ router.get('/getBestAvgResults', [
       {
         model: models.Race,
         attributes: [],
-        required: true,
-        include: [{
-          model: models.Text, required: true, attributes: []
-        }]
+        required: true
       },
       {
         model: models.User, attributes: ['id', 'uid', 'nickname', 'country'], required: true
       }
     ],
-    where: models.sequelize.where(models.sequelize.col('race->text.language'), '=', req.query.language),
+    where: { language: req.query.language },
     group: 'uid',
     attributes: [[models.sequelize.fn('AVG', models.sequelize.col('cpm')), 'avg'], 'user.uid', 'user.nickname', 'user.country'],
     order: [[models.sequelize.fn('AVG', models.sequelize.col('cpm')), 'DESC']],
@@ -96,14 +90,6 @@ router.get('/getBestCpmTodayResults', [
         model: models.Race,
         attributes: ['id', 'textId', 'date'],
         required: true,
-        include: [{
-          model: models.Text,
-          required: true,
-          attributes: ['id', 'language'],
-          where: {
-            language: req.query.language
-          }
-        }],
         where: {
           date: {
             [Op.lt]: new Date(),
@@ -116,6 +102,7 @@ router.get('/getBestCpmTodayResults', [
       }
     ],
     order: [['cpm', 'DESC']],
+    where: { language: req.query.language },
     limit: 20
   }).then((results) => {
     return res.send(results)
@@ -142,14 +129,6 @@ router.get('/getBestAccTodayResults', [
         model: models.Race,
         attributes: ['id', 'textId', 'date'],
         required: true,
-        include: [{
-          model: models.Text,
-          required: true,
-          attributes: ['id', 'language'],
-          where: {
-            language: req.query.language
-          }
-        }],
         where: {
           date: {
             [Op.lt]: new Date(),
@@ -162,6 +141,7 @@ router.get('/getBestAccTodayResults', [
       }
     ],
     order: [['accuracy', 'DESC']],
+    where: { language: req.query.language },
     limit: 20
   }).then((results) => {
     return res.send(results)

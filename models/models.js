@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize')
-const config = require('./config/config.json')[process.env.NODE_ENV || 'dev'];
+const config = require('./config/config.json')[process.env.NODE_ENV || 'dev']
 
 const sequelize = new Sequelize('typemasters', config.username, config.password, {
   host: config.host,
@@ -81,6 +81,10 @@ const Race = sequelize.define('race', {
     type: Sequelize.DATE,
     defaultValue: Sequelize.NOW,
     allowNull: false
+  },
+  language: {
+    type: Sequelize.STRING,
+    allowNull: false
   }
 }, {
   tableName: 'races'
@@ -115,6 +119,10 @@ const RacePlayer = sequelize.define('racePlayer', {
   },
   position: {
     type: Sequelize.INTEGER,
+    allowNull: false
+  },
+  language: {
+    type: Sequelize.STRING,
     allowNull: false
   }
 }, {

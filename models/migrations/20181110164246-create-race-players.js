@@ -36,6 +36,10 @@ module.exports = {
       position: {
         type: Sequelize.INTEGER,
         allowNull: false
+      },
+      language: {
+        type: Sequelize.STRING,
+        allowNull: false
       }
     })
   },

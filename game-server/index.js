@@ -446,7 +446,7 @@ function playGame (roomKey) {
       // Means that the text was not present in DB, then do not save the game data
       if (room.textId !== -1) {
         models.sequelize.transaction((t) => {
-          return models.Race.create({ textId: room.textId }, { transaction: t }).then((race) => {
+          return models.Race.create({ textId: room.textId, language: room.language }, { transaction: t }).then((race) => {
             const playerPromises = []
             _.forEach(players, (player) => {
               if (!utils.isBot(player) && (!player.disconnected || player.isWinner) && player.uid !== -1 && player.ratedGames) {
@@ -457,7 +457,8 @@ function playGame (roomKey) {
                   isWinner: player.isWinner,
                   position: player.position,
                   points: 0, // TODO(aibek): compute points for game
-                  accuracy: player.accuracy
+                  accuracy: player.accuracy,
+                  language: room.language
                 }, { transaction: t }))
               }
             })
