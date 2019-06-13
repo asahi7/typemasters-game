@@ -1,0 +1,5 @@
+#!/bin/bash
+
+node textFormatter.js --sql \
+    -t "$1" \
+    -l ru

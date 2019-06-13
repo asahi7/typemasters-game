@@ -28,6 +28,7 @@ if (!text || text.length === 0) {
 // replacing double whitespaces with single space character
 text = text.replace(/(\r\n|\n|\r)/gm, ' ')
 text = text.replace(/\s\s+/g, ' ')
+text = text.replace(/’/gm, "'")
 
 // TODO(aibek): delete or replace non-ascii symbols
 text = text.replace(/(—)/g, '-')
@@ -55,5 +56,5 @@ if (cmd.sql) {
     console.error('To print SQL query, please specify the supported language')
     process.exit(1)
   }
-  console.log(`\n\nINSERT INTO texts (text, language, duration) VALUES ('${text}', '${cmd.lang}', ${timeToComplete});\n\n`)
+  console.log(`\n\nINSERT INTO texts (text, language, duration) VALUES ("${text}", '${cmd.lang}', ${timeToComplete});`)
 }
