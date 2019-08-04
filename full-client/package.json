@@ -28,12 +28,5 @@
   },
   "devDependencies": {
     "babel-preset-expo": "^5.0.0"
-  },
-  "standard": {
-    "globals": [
-      "fetch",
-      "FormData",
-      "__DEV__"
-    ]
   }
 }

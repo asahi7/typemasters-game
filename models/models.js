@@ -72,6 +72,25 @@ const Text = sequelize.define('text', {
   tableName: 'texts'
 })
 
+const SupportedLang = sequelize.define('supportedLang', {
+  label: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  value: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    primaryKey: true
+  },
+  createdAt: {
+    type: Sequelize.DATE,
+    defaultValue: Sequelize.NOW,
+    allowNull: false
+  }
+}, {
+  tableName: 'supported_langs'
+})
+
 const Race = sequelize.define('race', {
   textId: {
     type: Sequelize.INTEGER,
@@ -141,5 +160,6 @@ module.exports = {
   User,
   Text,
   Race,
-  RacePlayer
+  RacePlayer,
+  SupportedLang
 }

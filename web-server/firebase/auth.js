@@ -18,6 +18,7 @@ firebaseAdmin.initializeApp({
 */
 const EXCLUDED_ROUTES_FROM_VERIFICATION = [
   '/users',
+  '/users/supportedLanguages',
   '/users/getNickname',
   '/statistics/getAverageCpm',
   '/statistics/getRaceCount',
