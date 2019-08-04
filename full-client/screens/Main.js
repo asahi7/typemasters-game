@@ -9,7 +9,7 @@ import {
   AsyncStorage,
   StatusBar
 } from "react-native";
-import { LinearGradient } from "expo";
+import { LinearGradient } from "expo-linear-gradient";
 import globalStyles from "../styles";
 import Commons from "../Commons";
 import WebAPI from "../WebAPI";

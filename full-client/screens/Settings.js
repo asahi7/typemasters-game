@@ -12,7 +12,7 @@ import {
   NetInfo,
   Switch
 } from "react-native";
-import { LinearGradient } from "expo";
+import { LinearGradient } from "expo-linear-gradient";
 import WebAPI from "../WebAPI";
 import Loading from "./Loading";
 import firebase from "firebase";

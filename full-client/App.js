@@ -1,7 +1,7 @@
 import { createRootNavigator } from "./router";
 import * as firebase from "firebase";
 import i18n from "i18n-js";
-import { Localization } from "expo";
+import * as Localization from "expo-localization";
 import { en, ru } from "./i18n";
 import Sentry from "sentry-expo";
 

@@ -10,7 +10,7 @@ import {
 import firebase from "firebase";
 import WebAPI from "../WebAPI";
 import Loading from "./Loading";
-import { LinearGradient } from "expo";
+import { LinearGradient } from "expo-linear-gradient";
 import Commons from "../Commons";
 import globalStyles from "../styles";
 import moment from "moment";

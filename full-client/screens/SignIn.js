@@ -8,7 +8,7 @@ import {
   NetInfo
 } from "react-native";
 import firebase from "firebase";
-import { LinearGradient } from "expo";
+import { LinearGradient } from "expo-linear-gradient";
 import WebAPI from "../WebAPI";
 import Commons from "../Commons";
 import globalStyles from "../styles";

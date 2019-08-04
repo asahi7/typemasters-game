@@ -9,7 +9,8 @@ import {
 } from "react-native";
 import firebase from "firebase";
 import io from "socket.io-client";
-import { AdMobBanner, LinearGradient } from "expo";
+import { AdMobBanner } from "expo-ads-admob";
+import { LinearGradient } from "expo-linear-gradient";
 import _ from "lodash";
 import Config from "../config/Config";
 import Commons from "../Commons";
