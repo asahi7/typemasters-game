@@ -9,11 +9,23 @@ import globalStyles from "../styles";
 import PureChart from "react-native-pure-chart";
 import i18n from "i18n-js";
 import ConnectionContext from "../context/ConnnectionContext";
+import TypingLanguageContext from "../context/TypingLanguageContext";
 
 export default React.forwardRef((props, ref) => (
-  <ConnectionContext.Consumer>
-    {online => <PersonalCharts {...props} online={online} ref={ref} />}
-  </ConnectionContext.Consumer>
+  <TypingLanguageContext.Consumer>
+    {typingLanguageState => (
+      <ConnectionContext.Consumer>
+        {online => (
+          <PersonalCharts
+            {...props}
+            typingLanguage={typingLanguageState.typingLanguage}
+            online={online}
+            ref={ref}
+          />
+        )}
+      </ConnectionContext.Consumer>
+    )}
+  </TypingLanguageContext.Consumer>
 ));
 
 // TODO(aibek): make the limit configurable, current is 100, could be 500, 1000
@@ -30,11 +42,9 @@ export class PersonalCharts extends React.Component {
     this.updateScreen = this.updateScreen.bind(this);
     this.getPersistentDataOffline = this.getPersistentDataOffline.bind(this);
     this.getApiDataOnline = this.getApiDataOnline.bind(this);
-    this.updateTextLanguageState = this.updateTextLanguageState.bind(this);
   }
 
   async componentDidMount() {
-    await this.updateTextLanguageState();
     if (__DEV__) {
       console.log("User is " + (this.props.online ? "online" : "offline"));
     }
@@ -67,7 +77,6 @@ export class PersonalCharts extends React.Component {
     if (__DEV__) {
       console.log("Updated screen");
     }
-    await this.updateTextLanguageState();
     if (this.props.online) {
       this.getApiDataOnline();
     } else {
@@ -96,7 +105,7 @@ export class PersonalCharts extends React.Component {
     let accData = {};
     const user = firebase.auth().currentUser;
     return Promise.all([
-      WebAPI.getGameHistoryByDay(user.uid, this.state.textLanguage)
+      WebAPI.getGameHistoryByDay(user.uid, this.props.typingLanguage)
     ])
       .then(results => {
         cpmData = results[0].result.map(res => {
@@ -130,20 +139,6 @@ export class PersonalCharts extends React.Component {
         }
         throw error;
       });
-  }
-
-  async updateTextLanguageState() {
-    const textLanguage = await AsyncStorage.getItem("textLanguage");
-    if (!textLanguage) {
-      this.setState({
-        textLanguage: "en"
-      });
-      await AsyncStorage.setItem("textLanguage", "en");
-    } else {
-      this.setState({
-        textLanguage: textLanguage
-      });
-    }
   }
 
   render() {

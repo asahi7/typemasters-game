@@ -41,11 +41,9 @@ export class Main extends React.Component {
     this.updateScreen = this.updateScreen.bind(this);
     this.getPersistentDataOffline = this.getPersistentDataOffline.bind(this);
     this.getApiDataOnline = this.getApiDataOnline.bind(this);
-    this.updateTextLanguageState = this.updateTextLanguageState.bind(this);
   }
 
   async componentDidMount() {
-    await this.updateTextLanguageState();
     if (__DEV__) {
       console.log("User is " + (this.props.online ? "online" : "offline"));
     }
@@ -78,7 +76,6 @@ export class Main extends React.Component {
     if (__DEV__) {
       console.log("Updated screen");
     }
-    await this.updateTextLanguageState();
     this.setState({ errorMessage: null });
     if (this.props.online) {
       this.getApiDataOnline();
@@ -168,23 +165,6 @@ export class Main extends React.Component {
           }
           throw error;
         });
-    }
-  }
-
-  async updateTextLanguageState() {
-    const textLanguage = await AsyncStorage.getItem("textLanguage");
-    if (__DEV__) {
-      console.log("Typing language " + textLanguage);
-    }
-    if (!textLanguage) {
-      this.setState({
-        textLanguage: "en"
-      });
-      await AsyncStorage.setItem("textLanguage", "en");
-    } else {
-      this.setState({
-        textLanguage: textLanguage
-      });
     }
   }
 

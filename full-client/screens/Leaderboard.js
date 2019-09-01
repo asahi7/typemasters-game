@@ -9,18 +9,29 @@ import moment from "moment";
 import i18n from "i18n-js";
 import _ from "lodash";
 import ConnectionContext from "../context/ConnnectionContext";
+import TypingLanguageContext from "../context/TypingLanguageContext";
 
 export default React.forwardRef((props, ref) => (
-  <ConnectionContext.Consumer>
-    {online => <Leaderboard {...props} online={online} ref={ref} />}
-  </ConnectionContext.Consumer>
+  <TypingLanguageContext.Consumer>
+    {typingLanguageState => (
+      <ConnectionContext.Consumer>
+        {online => (
+          <Leaderboard
+            {...props}
+            typingLanguage={typingLanguageState.typingLanguage}
+            online={online}
+            ref={ref}
+          />
+        )}
+      </ConnectionContext.Consumer>
+    )}
+  </TypingLanguageContext.Consumer>
 ));
 
 export class Leaderboard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      textLanguage: null,
       loading: true,
       data: {
         bestResults: [],
@@ -32,11 +43,9 @@ export class Leaderboard extends React.Component {
     this.updateScreen = this.updateScreen.bind(this);
     this.getPersistentDataOffline = this.getPersistentDataOffline.bind(this);
     this.getApiDataOnline = this.getApiDataOnline.bind(this);
-    this.updateTextLanguageState = this.updateTextLanguageState.bind(this);
   }
 
   async componentDidMount() {
-    await this.updateTextLanguageState();
     if (__DEV__) {
       console.log("User is " + (this.props.online ? "online" : "offline"));
     }
@@ -69,7 +78,6 @@ export class Leaderboard extends React.Component {
     if (__DEV__) {
       console.log("Updated screen");
     }
-    await this.updateTextLanguageState();
     if (this.props.online) {
       this.getApiDataOnline();
     } else {
@@ -100,10 +108,10 @@ export class Leaderboard extends React.Component {
   getApiDataOnline() {
     let data = {};
     return Promise.all([
-      WebAPI.getBestResults(this.state.textLanguage),
-      WebAPI.getBestAvgResults(this.state.textLanguage),
-      WebAPI.getBestCpmTodayResults(this.state.textLanguage),
-      WebAPI.getBestAccTodayResults(this.state.textLanguage)
+      WebAPI.getBestResults(this.props.typingLanguage),
+      WebAPI.getBestAvgResults(this.props.typingLanguage),
+      WebAPI.getBestCpmTodayResults(this.props.typingLanguage),
+      WebAPI.getBestAccTodayResults(this.props.typingLanguage)
     ])
       .then(results => {
         data = {
@@ -130,20 +138,6 @@ export class Leaderboard extends React.Component {
         }
         throw error;
       });
-  }
-
-  async updateTextLanguageState() {
-    const textLanguage = await AsyncStorage.getItem("textLanguage");
-    if (!textLanguage) {
-      this.setState({
-        textLanguage: "en"
-      });
-      await AsyncStorage.setItem("textLanguage", "en");
-    } else {
-      this.setState({
-        textLanguage: textLanguage
-      });
-    }
   }
 
   render() {

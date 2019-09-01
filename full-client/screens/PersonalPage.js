@@ -10,18 +10,30 @@ import moment from "moment";
 import DropdownAlert from "react-native-dropdownalert";
 import i18n from "i18n-js";
 import ConnectionContext from "../context/ConnnectionContext";
+import TypingLanguageContext from "../context/TypingLanguageContext";
+import { PersonalCharts } from "./PersonalCharts";
 
 export default React.forwardRef((props, ref) => (
-  <ConnectionContext.Consumer>
-    {online => <PersonalPage {...props} online={online} ref={ref} />}
-  </ConnectionContext.Consumer>
+  <TypingLanguageContext.Consumer>
+    {typingLanguageState => (
+      <ConnectionContext.Consumer>
+        {online => (
+          <PersonalPage
+            {...props}
+            typingLanguage={typingLanguageState.typingLanguage}
+            online={online}
+            ref={ref}
+          />
+        )}
+      </ConnectionContext.Consumer>
+    )}
+  </TypingLanguageContext.Consumer>
 ));
 
 export class PersonalPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      textLanguage: null,
       loading: true,
       userData: null
     };
@@ -29,11 +41,9 @@ export class PersonalPage extends React.Component {
     this.updateScreen = this.updateScreen.bind(this);
     this.getPersistentDataOffline = this.getPersistentDataOffline.bind(this);
     this.getApiDataOnline = this.getApiDataOnline.bind(this);
-    this.updateTextLanguageState = this.updateTextLanguageState.bind(this);
   }
 
   async componentDidMount() {
-    await this.updateTextLanguageState();
     if (__DEV__) {
       console.log("User is " + (this.props.online ? "online" : "offline"));
     }
@@ -64,9 +74,9 @@ export class PersonalPage extends React.Component {
 
   async updateScreen() {
     if (__DEV__) {
+      console.log(this.props.typingLanguage);
       console.log("Updated screen");
     }
-    await this.updateTextLanguageState();
     if (this.props.online) {
       this.getApiDataOnline(firebase.auth().currentUser);
     } else {
@@ -98,15 +108,15 @@ export class PersonalPage extends React.Component {
       })
       .then(() => {
         return Promise.all([
-          WebAPI.getRaceCount(user.uid, this.state.textLanguage),
-          WebAPI.getAverageCpm(user.uid, this.state.textLanguage),
-          WebAPI.getLatestAverageCpm(user.uid, this.state.textLanguage),
-          WebAPI.getLastPlayedGame(user.uid, this.state.textLanguage),
-          WebAPI.getBestResult(user.uid, this.state.textLanguage),
-          WebAPI.getGamesWon(user.uid, this.state.textLanguage),
-          WebAPI.getFirstRace(user.uid, this.state.textLanguage),
-          WebAPI.getAverageAccuracy(user.uid, this.state.textLanguage),
-          WebAPI.getLastAverageAccuracy(user.uid, this.state.textLanguage)
+          WebAPI.getRaceCount(user.uid, this.props.typingLanguage),
+          WebAPI.getAverageCpm(user.uid, this.props.typingLanguage),
+          WebAPI.getLatestAverageCpm(user.uid, this.props.typingLanguage),
+          WebAPI.getLastPlayedGame(user.uid, this.props.typingLanguage),
+          WebAPI.getBestResult(user.uid, this.props.typingLanguage),
+          WebAPI.getGamesWon(user.uid, this.props.typingLanguage),
+          WebAPI.getFirstRace(user.uid, this.props.typingLanguage),
+          WebAPI.getAverageAccuracy(user.uid, this.props.typingLanguage),
+          WebAPI.getLastAverageAccuracy(user.uid, this.props.typingLanguage)
         ]).then(results => {
           // TODO(aibek): remove .result from each response
           userData = {
@@ -147,20 +157,6 @@ export class PersonalPage extends React.Component {
         }
         throw error;
       });
-  }
-
-  async updateTextLanguageState() {
-    const textLanguage = await AsyncStorage.getItem("textLanguage");
-    if (!textLanguage) {
-      this.setState({
-        textLanguage: "en"
-      });
-      await AsyncStorage.setItem("textLanguage", "en");
-    } else {
-      this.setState({
-        textLanguage: textLanguage
-      });
-    }
   }
 
   handleSignOut() {
@@ -256,7 +252,7 @@ export class PersonalPage extends React.Component {
                   {i18n.t("personalPage.typingLanguage")}:
                 </Text>
                 <Text style={globalStyles.column}>
-                  {this.state.textLanguage}
+                  {this.props.typingLanguage}
                 </Text>
               </View>
               <View style={globalStyles.row}>

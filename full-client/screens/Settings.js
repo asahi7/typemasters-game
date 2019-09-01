@@ -9,7 +9,6 @@ import {
   Button,
   Keyboard,
   ScrollView,
-  NetInfo,
   Switch
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
@@ -22,11 +21,24 @@ import DropdownAlert from "react-native-dropdownalert";
 import i18n from "i18n-js";
 import countryList from "../consts/countryList";
 import ConnectionContext from "../context/ConnnectionContext";
+import TypingLanguageContext from "../context/TypingLanguageContext";
 
 export default React.forwardRef((props, ref) => (
-  <ConnectionContext.Consumer>
-    {online => <Settings {...props} online={online} ref={ref} />}
-  </ConnectionContext.Consumer>
+  <TypingLanguageContext.Consumer>
+    {typingLanguageState => (
+      <ConnectionContext.Consumer>
+        {online => (
+          <Settings
+            {...props}
+            typingLanguage={typingLanguageState.typingLanguage}
+            changeTypingLanguage={typingLanguageState.changeTypingLanguage}
+            online={online}
+            ref={ref}
+          />
+        )}
+      </ConnectionContext.Consumer>
+    )}
+  </TypingLanguageContext.Consumer>
 ));
 
 // TODO(aibek): refactor in future to avoid duplication, maybe use template pattern
@@ -50,13 +62,11 @@ export class Settings extends React.Component {
     this.countrySelected = this.countrySelected.bind(this);
     this.getPersistentDataOffline = this.getPersistentDataOffline.bind(this);
     this.getApiDataOnline = this.getApiDataOnline.bind(this);
-    this.updateTextLanguageState = this.updateTextLanguageState.bind(this);
     this.getRatedSwitchValue = this.getRatedSwitchValue.bind(this);
     this.handleRatedSwitch = this.handleRatedSwitch.bind(this);
   }
 
   async componentDidMount() {
-    await this.updateTextLanguageState();
     await this.getRatedSwitchValue();
     if (__DEV__) {
       console.log("User is " + (this.props.online ? "online" : "offline"));
@@ -90,7 +100,6 @@ export class Settings extends React.Component {
     if (__DEV__) {
       console.log("Updated screen");
     }
-    await this.updateTextLanguageState();
     this.setState({ errorMessage: null });
     if (this.props.online) {
       this.getApiDataOnline();
@@ -129,7 +138,6 @@ export class Settings extends React.Component {
     }
     Promise.all(promises)
       .then(results => {
-        console.log(results);
         this.setState({
           supportedLangs: results[0]
         });
@@ -158,23 +166,6 @@ export class Settings extends React.Component {
       });
   }
 
-  async updateTextLanguageState() {
-    const textLanguage = await AsyncStorage.getItem("textLanguage");
-    if (__DEV__) {
-      console.log("Language " + textLanguage);
-    }
-    if (!textLanguage) {
-      this.setState({
-        textLanguage: "en"
-      });
-      await AsyncStorage.setItem("textLanguage", "en");
-    } else {
-      this.setState({
-        textLanguage: textLanguage
-      });
-    }
-  }
-
   async getRatedSwitchValue() {
     const value = await AsyncStorage.getItem("ratedSwitchValue");
     if (__DEV__) {
@@ -194,7 +185,7 @@ export class Settings extends React.Component {
 
   saveSettings() {
     this.setState({ errorMessage: null });
-    AsyncStorage.setItem("textLanguage", this.state.textLanguage);
+    this.props.changeTypingLanguage(this.state.textLanguage);
     AsyncStorage.setItem(
       "ratedSwitchValue",
       this.state.ratedSwitch === true ? "true" : "false"
@@ -281,6 +272,9 @@ export class Settings extends React.Component {
 
   render() {
     if (this.state.loading) return <Loading />;
+    const typingLanguageSelection = this.state.textLanguage
+      ? this.state.textLanguage
+      : this.props.typingLanguage;
     return (
       <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
         <View style={{ marginTop: 30 }}>
@@ -368,9 +362,9 @@ export class Settings extends React.Component {
             <Text style={globalStyles.column}>
               {i18n.t("settings.typingLanguage")}:
             </Text>
-            {this.state.textLanguage && this.state.supportedLangs && (
+            {typingLanguageSelection && this.state.supportedLangs && (
               <Picker
-                selectedValue={this.state.textLanguage}
+                selectedValue={typingLanguageSelection}
                 prompt={i18n.t("settings.selectTypingLanguage")}
                 style={[{ width: 150, height: 100 }, styles.column]}
                 itemStyle={{ height: 100, fontSize: FONTS.TABLE_HEADER_FONT }}

@@ -21,9 +21,9 @@ import DropdownAlert from "react-native-dropdownalert";
 import i18n from "i18n-js";
 import Sentry from "sentry-expo";
 import { encode as btoa } from "base-64";
-
 import * as offlineTexts from "../offline_texts";
 import ConnectionContext from "../context/ConnnectionContext";
+import TypingLanguageContext from "../context/TypingLanguageContext";
 import { Main } from "./Main";
 
 const env = process.env.REACT_NATIVE_ENV || "dev";
@@ -35,9 +35,20 @@ if (__DEV__) {
 let socket;
 
 export default React.forwardRef((props, ref) => (
-  <ConnectionContext.Consumer>
-    {online => <Game {...props} online={online} ref={ref} />}
-  </ConnectionContext.Consumer>
+  <TypingLanguageContext.Consumer>
+    {typingLanguageState => (
+      <ConnectionContext.Consumer>
+        {online => (
+          <Game
+            {...props}
+            typingLanguage={typingLanguageState.typingLanguage}
+            online={online}
+            ref={ref}
+          />
+        )}
+      </ConnectionContext.Consumer>
+    )}
+  </TypingLanguageContext.Consumer>
 ));
 
 export class Game extends React.Component {
@@ -69,7 +80,6 @@ export class Game extends React.Component {
     this.setModalVisible = this.setModalVisible.bind(this);
     this.gameInputHandler = this.gameInputHandler.bind(this);
     this.accuracyHandler = this.accuracyHandler.bind(this);
-    this.updateTextLanguageState = this.updateTextLanguageState.bind(this);
     this.countCpm = this.countCpm.bind(this);
     this.setOfflineGameData = this.setOfflineGameData.bind(this);
     this.handlePlayGamePressedOffline = this.handlePlayGamePressedOffline.bind(
@@ -86,7 +96,6 @@ export class Game extends React.Component {
     BackHandler.addEventListener("hardwareBackPress", () => {
       this.dicsonnectPlayer();
     });
-    await this.updateTextLanguageState();
     await this.getRatedSwitchValue();
     if (__DEV__) {
       console.log("User is " + (this.props.online ? "online" : "offline"));
@@ -98,23 +107,6 @@ export class Game extends React.Component {
     BackHandler.removeEventListener("hardwareBackPress", () => {
       this.dicsonnectPlayer();
     });
-  }
-
-  async updateTextLanguageState() {
-    const textLanguage = await AsyncStorage.getItem("textLanguage");
-    if (__DEV__) {
-      console.log("Language " + textLanguage);
-    }
-    if (!textLanguage) {
-      this.setState({
-        textLanguage: "en"
-      });
-      await AsyncStorage.setItem("textLanguage", "en");
-    } else {
-      this.setState({
-        textLanguage: textLanguage
-      });
-    }
   }
 
   async getRatedSwitchValue() {
@@ -164,30 +156,24 @@ export class Game extends React.Component {
       return;
     }
     if (this.props.online === false) {
-      this.updateTextLanguageState().then(() => {
-        this.dropdown.alertWithType(
-          "info",
-          i18n.t("game.info"),
-          i18n.t("game.playingOffline")
-        );
-        this.handlePlayGamePressedOffline();
-      });
+      this.dropdown.alertWithType(
+        "info",
+        i18n.t("game.info"),
+        i18n.t("game.playingOffline")
+      );
+      this.handlePlayGamePressedOffline();
     } else {
-      this.updateTextLanguageState()
-        .then(() => {
-          return this.getRatedSwitchValue();
-        })
-        .then(() => {
-          this.handlePlayGamePressed();
-        });
+      this.getRatedSwitchValue().then(() => {
+        this.handlePlayGamePressed();
+      });
     }
   }
 
   handlePlayGamePressedOffline() {
     if (__DEV__) {
-      console.log("Game started in offline mode " + this.state.textLanguage);
+      console.log("Game started in offline mode " + this.props.typingLanguage);
     }
-    const data = _.get(offlineTexts[this.state.textLanguage], "data");
+    const data = _.get(offlineTexts[this.props.typingLanguage], "data");
     if (!data) {
       this.dropdown.alertWithType(
         "warn",
@@ -328,7 +314,7 @@ export class Game extends React.Component {
           console.log(socket.id);
         }
         socket.emit("newgame", {
-          language: this.state.textLanguage,
+          language: this.props.typingLanguage,
           ratedGames: this.state.ratedGames
         });
         this.setState({
@@ -549,7 +535,7 @@ export class Game extends React.Component {
         />
         <GameTextInput
           textArray={this.state.textArray}
-          language={this.state.textLanguage}
+          language={this.props.typingLanguage}
           handler={this.gameInputHandler}
           refresh={this.state.gamePlaying}
           accuracyHandler={this.accuracyHandler}
