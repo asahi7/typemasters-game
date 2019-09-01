@@ -4,8 +4,7 @@ import {
   Text,
   ScrollView,
   BackHandler,
-  AsyncStorage,
-  NetInfo
+  AsyncStorage
 } from "react-native";
 import firebase from "firebase";
 import io from "socket.io-client";
@@ -24,6 +23,8 @@ import Sentry from "sentry-expo";
 import { encode as btoa } from "base-64";
 
 import * as offlineTexts from "../offline_texts";
+import ConnectionContext from "../context/ConnnectionContext";
+import { Main } from "./Main";
 
 const env = process.env.REACT_NATIVE_ENV || "dev";
 
@@ -33,7 +34,13 @@ if (__DEV__) {
 
 let socket;
 
-export default class Game extends React.Component {
+export default React.forwardRef((props, ref) => (
+  <ConnectionContext.Consumer>
+    {online => <Game {...props} online={online} ref={ref} />}
+  </ConnectionContext.Consumer>
+));
+
+export class Game extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -62,7 +69,6 @@ export default class Game extends React.Component {
     this.setModalVisible = this.setModalVisible.bind(this);
     this.gameInputHandler = this.gameInputHandler.bind(this);
     this.accuracyHandler = this.accuracyHandler.bind(this);
-    this.handleConnectivityChange = this.handleConnectivityChange.bind(this);
     this.updateTextLanguageState = this.updateTextLanguageState.bind(this);
     this.countCpm = this.countCpm.bind(this);
     this.setOfflineGameData = this.setOfflineGameData.bind(this);
@@ -82,20 +88,9 @@ export default class Game extends React.Component {
     });
     await this.updateTextLanguageState();
     await this.getRatedSwitchValue();
-    NetInfo.isConnected.fetch().then(isConnected => {
-      if (__DEV__) {
-        console.log("User is " + (isConnected ? "online" : "offline"));
-      }
-      if (!isConnected) {
-        this.online = false;
-      } else {
-        this.online = true;
-      }
-    });
-    NetInfo.isConnected.addEventListener(
-      "connectionChange",
-      this.handleConnectivityChange
-    );
+    if (__DEV__) {
+      console.log("User is " + (this.props.online ? "online" : "offline"));
+    }
   }
 
   componentWillUnmount() {
@@ -103,31 +98,6 @@ export default class Game extends React.Component {
     BackHandler.removeEventListener("hardwareBackPress", () => {
       this.dicsonnectPlayer();
     });
-    NetInfo.isConnected.removeEventListener(
-      "connectionChange",
-      this.handleConnectivityChange
-    );
-  }
-
-  handleConnectivityChange(isConnected) {
-    if (isConnected) {
-      this.online = true;
-      this.dropdown.alertWithType(
-        "success",
-        i18n.t("common.success"),
-        i18n.t("common.backOnline")
-      );
-    } else {
-      this.online = false;
-      this.dropdown.alertWithType(
-        "warn",
-        i18n.t("common.warn"),
-        i18n.t("common.noInternet")
-      );
-      if (this.state.gamePlaying && !this.state.offlineMode) {
-        this.dicsonnectPlayer();
-      }
-    }
   }
 
   async updateTextLanguageState() {
@@ -193,7 +163,7 @@ export default class Game extends React.Component {
       this.dicsonnectPlayer();
       return;
     }
-    if (this.online === false) {
+    if (this.props.online === false) {
       this.updateTextLanguageState().then(() => {
         this.dropdown.alertWithType(
           "info",
@@ -534,6 +504,13 @@ export default class Game extends React.Component {
   }
 
   render() {
+    if (
+      !this.props.online &&
+      this.state.gamePlaying &&
+      !this.state.offlineMode
+    ) {
+      this.dicsonnectPlayer();
+    }
     const admobBanner = (
       <AdMobBanner
         bannerSize="mediumRectangle"

@@ -101,96 +101,111 @@ const AuthSwitchNavigator = createSwitchNavigator(
 
 const tabBarIconSize = 25;
 
-const Tabs = () =>
-  createBottomTabNavigator(
-    {
-      Main: {
-        screen: MainStack,
-        navigationOptions: {
-          tabBarLabel: i18n.t("navigation.main"),
-          tabBarIcon: ({ tintColor }) => (
-            <Icon
-              name="md-home"
-              type="ionicon"
-              size={tabBarIconSize}
-              color={tintColor}
-            />
-          )
-        }
-      },
-      Leaderboard: {
-        screen: Leaderboard,
-        navigationOptions: {
-          tabBarLabel: i18n.t("navigation.leaderboard"),
-          tabBarIcon: ({ tintColor }) => (
-            <Icon
-              name="md-stats"
-              type="ionicon"
-              size={tabBarIconSize}
-              color={tintColor}
-            />
-          )
-        }
-      },
-      PersonalPage: {
-        screen: AuthSwitchNavigator,
-        navigationOptions: {
-          tabBarLabel: i18n.t("navigation.personalPage"),
-          tabBarIcon: ({ tintColor }) => (
-            <Icon
-              name="md-body"
-              type="ionicon"
-              size={tabBarIconSize}
-              color={tintColor}
-            />
-          )
-        }
-      },
-      Settings: {
-        screen: Settings,
-        navigationOptions: {
-          tabBarLabel: i18n.t("navigation.settings"),
-          tabBarIcon: ({ tintColor }) => (
-            <Icon
-              name="md-build"
-              type="ionicon"
-              size={tabBarIconSize}
-              color={tintColor}
-            />
-          )
-        }
-      },
-      About: {
-        screen: About,
-        navigationOptions: {
-          tabBarLabel: i18n.t("navigation.about"),
-          tabBarIcon: ({ tintColor }) => (
-            <Icon
-              name="md-information-circle"
-              type="ionicon"
-              size={tabBarIconSize}
-              color={tintColor}
-            />
-          )
-        }
-      }
-    },
-    { initialRouteName: "Main" }
-  );
+const mainLabel = i18n.t("navigation.main");
+const leaderboardLabel = i18n.t("navigation.leaderboard");
+const personalPageLabel = i18n.t("navigation.personalPage");
+const settingsLabel = i18n.t("navigation.settings");
+const aboutLabel = i18n.t("navigation.about");
 
-export const createRootNavigator = () => {
-  return createStackNavigator(
-    {
-      Tabs: {
-        screen: Tabs(),
-        navigationOptions: ({ navigation }) => ({
-          gesturesEnabled: false
-        })
+const Tabs = createBottomTabNavigator(
+  {
+    Main: {
+      screen: MainStack,
+      navigationOptions: {
+        tabBarLabel: (() => {
+          mainLabel;
+        })(),
+        tabBarIcon: ({ tintColor }) => (
+          <Icon
+            name="md-home"
+            type="ionicon"
+            size={tabBarIconSize}
+            color={tintColor}
+          />
+        )
       }
     },
-    {
-      headerMode: "none",
-      mode: "modal"
+    Leaderboard: {
+      screen: Leaderboard,
+      navigationOptions: {
+        tabBarLabel: (() => {
+          leaderboardLabel;
+        })(),
+        tabBarIcon: ({ tintColor }) => (
+          <Icon
+            name="md-stats"
+            type="ionicon"
+            size={tabBarIconSize}
+            color={tintColor}
+          />
+        )
+      }
+    },
+    PersonalPage: {
+      screen: AuthSwitchNavigator,
+      navigationOptions: {
+        tabBarLabel: (() => {
+          personalPageLabel;
+        })(),
+        tabBarIcon: ({ tintColor }) => (
+          <Icon
+            name="md-body"
+            type="ionicon"
+            size={tabBarIconSize}
+            color={tintColor}
+          />
+        )
+      }
+    },
+    Settings: {
+      screen: Settings,
+      navigationOptions: {
+        tabBarLabel: (() => {
+          settingsLabel;
+        })(),
+        tabBarIcon: ({ tintColor }) => (
+          <Icon
+            name="md-build"
+            type="ionicon"
+            size={tabBarIconSize}
+            color={tintColor}
+          />
+        )
+      }
+    },
+    About: {
+      screen: About,
+      navigationOptions: {
+        tabBarLabel: (() => {
+          aboutLabel;
+        })(),
+        tabBarIcon: ({ tintColor }) => (
+          <Icon
+            name="md-information-circle"
+            type="ionicon"
+            size={tabBarIconSize}
+            color={tintColor}
+          />
+        )
+      }
     }
-  );
-};
+  },
+  { initialRouteName: "Main" }
+);
+
+const RootStack = createStackNavigator(
+  {
+    Tabs: {
+      screen: Tabs,
+      navigationOptions: ({ navigation }) => ({
+        gesturesEnabled: false
+      })
+    }
+  },
+  {
+    headerMode: "none",
+    mode: "modal"
+  }
+);
+
+export default RootStack;

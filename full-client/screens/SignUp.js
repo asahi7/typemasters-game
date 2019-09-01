@@ -1,20 +1,20 @@
 import React from "react";
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  Button,
-  View,
-  NetInfo
-} from "react-native";
+import { StyleSheet, Text, TextInput, Button, View } from "react-native";
 import firebase from "firebase";
 import { LinearGradient } from "expo-linear-gradient";
 import Commons from "../Commons";
 import globalStyles from "../styles";
 import DropdownAlert from "react-native-dropdownalert";
 import i18n from "i18n-js";
+import ConnectionContext from "../context/ConnnectionContext";
 
-export default class SignUp extends React.Component {
+export default React.forwardRef((props, ref) => (
+  <ConnectionContext.Consumer>
+    {online => <SignUp {...props} online={online} ref={ref} />}
+  </ConnectionContext.Consumer>
+));
+
+export class SignUp extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -23,53 +23,16 @@ export default class SignUp extends React.Component {
       errorMessage: null
     };
     this.handleSignUp = this.handleSignUp.bind(this);
-    this.handleConnectivityChange = this.handleConnectivityChange.bind(this);
   }
 
   async componentDidMount() {
-    NetInfo.isConnected.fetch().then(isConnected => {
-      if (__DEV__) {
-        console.log("User is " + (isConnected ? "online" : "offline"));
-      }
-      if (!isConnected) {
-        this.online = false;
-      } else {
-        this.online = true;
-      }
-    });
-    NetInfo.isConnected.addEventListener(
-      "connectionChange",
-      this.handleConnectivityChange
-    );
-  }
-
-  componentWillUnmount() {
-    NetInfo.isConnected.removeEventListener(
-      "connectionChange",
-      this.handleConnectivityChange
-    );
-  }
-
-  handleConnectivityChange(isConnected) {
-    if (isConnected) {
-      this.online = true;
-      this.dropdown.alertWithType(
-        "success",
-        i18n.t("common.success"),
-        i18n.t("common.backOnline")
-      );
-    } else {
-      this.online = false;
-      this.dropdown.alertWithType(
-        "warn",
-        i18n.t("common.warn"),
-        i18n.t("common.noInternet")
-      );
+    if (__DEV__) {
+      console.log("User is " + (this.props.online ? "online" : "offline"));
     }
   }
 
   handleSignUp() {
-    if (this.online) {
+    if (this.props.online) {
       firebase
         .auth()
         .createUserWithEmailAndPassword(this.state.email, this.state.password)

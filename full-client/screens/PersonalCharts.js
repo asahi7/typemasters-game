@@ -7,13 +7,19 @@ import { LinearGradient } from "expo-linear-gradient";
 import Commons from "../Commons";
 import globalStyles from "../styles";
 import PureChart from "react-native-pure-chart";
-import DropdownAlert from "react-native-dropdownalert";
 import i18n from "i18n-js";
+import ConnectionContext from "../context/ConnnectionContext";
+
+export default React.forwardRef((props, ref) => (
+  <ConnectionContext.Consumer>
+    {online => <PersonalCharts {...props} online={online} ref={ref} />}
+  </ConnectionContext.Consumer>
+));
 
 // TODO(aibek): make the limit configurable, current is 100, could be 500, 1000
 // TODO(aibek): current chart shows the cpm results from beginning, but it has more sense to show the last N ones.
 // in increasing order
-export default class PersonalCharts extends React.Component {
+export class PersonalCharts extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -23,37 +29,28 @@ export default class PersonalCharts extends React.Component {
     };
     this.updateScreen = this.updateScreen.bind(this);
     this.getPersistentDataOffline = this.getPersistentDataOffline.bind(this);
-    this.handleConnectivityChange = this.handleConnectivityChange.bind(this);
     this.getApiDataOnline = this.getApiDataOnline.bind(this);
     this.updateTextLanguageState = this.updateTextLanguageState.bind(this);
   }
 
   async componentDidMount() {
     await this.updateTextLanguageState();
-    NetInfo.isConnected.fetch().then(isConnected => {
-      if (__DEV__) {
-        console.log("User is " + (isConnected ? "online" : "offline"));
-      }
-      if (!isConnected) {
-        this.online = false;
-        this.getPersistentDataOffline().then(() => {
-          this.setState({
-            loading: false
-          });
+    if (__DEV__) {
+      console.log("User is " + (this.props.online ? "online" : "offline"));
+    }
+    if (this.props.online) {
+      this.getApiDataOnline().then(() => {
+        this.setState({
+          loading: false
         });
-      } else {
-        this.online = true;
-        this.getApiDataOnline().then(() => {
-          this.setState({
-            loading: false
-          });
+      });
+    } else {
+      this.getPersistentDataOffline().then(() => {
+        this.setState({
+          loading: false
         });
-      }
-    });
-    NetInfo.isConnected.addEventListener(
-      "connectionChange",
-      this.handleConnectivityChange
-    );
+      });
+    }
     this.willFocusSubscription = this.props.navigation.addListener(
       "willFocus",
       () => {
@@ -64,10 +61,6 @@ export default class PersonalCharts extends React.Component {
 
   componentWillUnmount() {
     this.willFocusSubscription.remove();
-    NetInfo.isConnected.removeEventListener(
-      "connectionChange",
-      this.handleConnectivityChange
-    );
   }
 
   async updateScreen() {
@@ -75,7 +68,7 @@ export default class PersonalCharts extends React.Component {
       console.log("Updated screen");
     }
     await this.updateTextLanguageState();
-    if (this.online) {
+    if (this.props.online) {
       this.getApiDataOnline();
     } else {
       this.getPersistentDataOffline();
@@ -139,25 +132,6 @@ export default class PersonalCharts extends React.Component {
       });
   }
 
-  handleConnectivityChange(isConnected) {
-    if (isConnected) {
-      this.online = true;
-      this.dropdown.alertWithType(
-        "success",
-        i18n.t("common.success"),
-        i18n.t("common.backOnline")
-      );
-      this.getApiDataOnline();
-    } else {
-      this.online = false;
-      this.dropdown.alertWithType(
-        "warn",
-        i18n.t("common.warn"),
-        i18n.t("common.noInternet")
-      );
-    }
-  }
-
   async updateTextLanguageState() {
     const textLanguage = await AsyncStorage.getItem("textLanguage");
     if (!textLanguage) {
@@ -195,11 +169,6 @@ export default class PersonalCharts extends React.Component {
             <PureChart data={this.state.accData} type="line" />
           </View>
         </ScrollView>
-        <DropdownAlert
-          ref={ref => {
-            this.dropdown = ref;
-          }}
-        />
       </LinearGradient>
     );
   }

@@ -21,9 +21,16 @@ import { globalStyles, FONTS } from "../styles";
 import DropdownAlert from "react-native-dropdownalert";
 import i18n from "i18n-js";
 import countryList from "../consts/countryList";
+import ConnectionContext from "../context/ConnnectionContext";
+
+export default React.forwardRef((props, ref) => (
+  <ConnectionContext.Consumer>
+    {online => <Settings {...props} online={online} ref={ref} />}
+  </ConnectionContext.Consumer>
+));
 
 // TODO(aibek): refactor in future to avoid duplication, maybe use template pattern
-export default class Settings extends React.Component {
+export class Settings extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -42,7 +49,6 @@ export default class Settings extends React.Component {
     this.updateScreen = this.updateScreen.bind(this);
     this.countrySelected = this.countrySelected.bind(this);
     this.getPersistentDataOffline = this.getPersistentDataOffline.bind(this);
-    this.handleConnectivityChange = this.handleConnectivityChange.bind(this);
     this.getApiDataOnline = this.getApiDataOnline.bind(this);
     this.updateTextLanguageState = this.updateTextLanguageState.bind(this);
     this.getRatedSwitchValue = this.getRatedSwitchValue.bind(this);
@@ -52,30 +58,22 @@ export default class Settings extends React.Component {
   async componentDidMount() {
     await this.updateTextLanguageState();
     await this.getRatedSwitchValue();
-    NetInfo.isConnected.fetch().then(isConnected => {
-      if (__DEV__) {
-        console.log("User is " + (isConnected ? "online" : "offline"));
-      }
-      if (!isConnected) {
-        this.online = false;
-        this.getPersistentDataOffline().then(() => {
-          this.setState({
-            loading: false
-          });
+    if (__DEV__) {
+      console.log("User is " + (this.props.online ? "online" : "offline"));
+    }
+    if (this.props.online) {
+      this.getApiDataOnline().then(() => {
+        this.setState({
+          loading: false
         });
-      } else {
-        this.online = true;
-        this.getApiDataOnline().then(() => {
-          this.setState({
-            loading: false
-          });
+      });
+    } else {
+      this.getPersistentDataOffline().then(() => {
+        this.setState({
+          loading: false
         });
-      }
-    });
-    NetInfo.isConnected.addEventListener(
-      "connectionChange",
-      this.handleConnectivityChange
-    );
+      });
+    }
     this.willFocusSubscription = this.props.navigation.addListener(
       "willFocus",
       () => {
@@ -86,10 +84,6 @@ export default class Settings extends React.Component {
 
   componentWillUnmount() {
     this.willFocusSubscription.remove();
-    NetInfo.isConnected.removeEventListener(
-      "connectionChange",
-      this.handleConnectivityChange
-    );
   }
 
   async updateScreen() {
@@ -98,7 +92,7 @@ export default class Settings extends React.Component {
     }
     await this.updateTextLanguageState();
     this.setState({ errorMessage: null });
-    if (this.online) {
+    if (this.props.online) {
       this.getApiDataOnline();
     } else {
       this.getPersistentDataOffline();
@@ -164,25 +158,6 @@ export default class Settings extends React.Component {
       });
   }
 
-  handleConnectivityChange(isConnected) {
-    if (isConnected) {
-      this.online = true;
-      this.dropdown.alertWithType(
-        "success",
-        i18n.t("common.success"),
-        i18n.t("common.backOnline")
-      );
-      this.getApiDataOnline();
-    } else {
-      this.online = false;
-      this.dropdown.alertWithType(
-        "warn",
-        i18n.t("common.warning"),
-        i18n.t("common.noInternet")
-      );
-    }
-  }
-
   async updateTextLanguageState() {
     const textLanguage = await AsyncStorage.getItem("textLanguage");
     if (__DEV__) {
@@ -224,7 +199,7 @@ export default class Settings extends React.Component {
       "ratedSwitchValue",
       this.state.ratedSwitch === true ? "true" : "false"
     );
-    if (this.online) {
+    if (this.props.online) {
       if (this.state.authenticated) {
         const nicknameInput = this.state.nicknameInput;
         if (nicknameInput.length !== 0) {

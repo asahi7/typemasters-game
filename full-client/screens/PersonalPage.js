@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  View,
-  Text,
-  Button,
-  AsyncStorage,
-  ScrollView,
-  NetInfo
-} from "react-native";
+import { View, Text, Button, AsyncStorage, ScrollView } from "react-native";
 import firebase from "firebase";
 import WebAPI from "../WebAPI";
 import Loading from "./Loading";
@@ -16,8 +9,15 @@ import globalStyles from "../styles";
 import moment from "moment";
 import DropdownAlert from "react-native-dropdownalert";
 import i18n from "i18n-js";
+import ConnectionContext from "../context/ConnnectionContext";
 
-export default class PersonalPage extends React.Component {
+export default React.forwardRef((props, ref) => (
+  <ConnectionContext.Consumer>
+    {online => <PersonalPage {...props} online={online} ref={ref} />}
+  </ConnectionContext.Consumer>
+));
+
+export class PersonalPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -28,37 +28,28 @@ export default class PersonalPage extends React.Component {
     this.handleSignOut = this.handleSignOut.bind(this);
     this.updateScreen = this.updateScreen.bind(this);
     this.getPersistentDataOffline = this.getPersistentDataOffline.bind(this);
-    this.handleConnectivityChange = this.handleConnectivityChange.bind(this);
     this.getApiDataOnline = this.getApiDataOnline.bind(this);
     this.updateTextLanguageState = this.updateTextLanguageState.bind(this);
   }
 
   async componentDidMount() {
     await this.updateTextLanguageState();
-    NetInfo.isConnected.fetch().then(isConnected => {
-      if (__DEV__) {
-        console.log("User is " + (isConnected ? "online" : "offline"));
-      }
-      if (!isConnected) {
-        this.online = false;
-        this.getPersistentDataOffline().then(() => {
-          this.setState({
-            loading: false
-          });
+    if (__DEV__) {
+      console.log("User is " + (this.props.online ? "online" : "offline"));
+    }
+    if (this.props.online) {
+      this.getApiDataOnline(firebase.auth().currentUser).then(() => {
+        this.setState({
+          loading: false
         });
-      } else {
-        this.online = true;
-        this.getApiDataOnline(firebase.auth().currentUser).then(() => {
-          this.setState({
-            loading: false
-          });
+      });
+    } else {
+      this.getPersistentDataOffline().then(() => {
+        this.setState({
+          loading: false
         });
-      }
-    });
-    NetInfo.isConnected.addEventListener(
-      "connectionChange",
-      this.handleConnectivityChange
-    );
+      });
+    }
     this.willFocusSubscription = this.props.navigation.addListener(
       "willFocus",
       () => {
@@ -69,10 +60,6 @@ export default class PersonalPage extends React.Component {
 
   componentWillUnmount() {
     this.willFocusSubscription.remove();
-    NetInfo.isConnected.removeEventListener(
-      "connectionChange",
-      this.handleConnectivityChange
-    );
   }
 
   async updateScreen() {
@@ -80,7 +67,7 @@ export default class PersonalPage extends React.Component {
       console.log("Updated screen");
     }
     await this.updateTextLanguageState();
-    if (this.online) {
+    if (this.props.online) {
       this.getApiDataOnline(firebase.auth().currentUser);
     } else {
       this.getPersistentDataOffline();
@@ -162,25 +149,6 @@ export default class PersonalPage extends React.Component {
       });
   }
 
-  handleConnectivityChange(isConnected) {
-    if (isConnected) {
-      this.online = true;
-      this.dropdown.alertWithType(
-        "success",
-        i18n.t("common.success"),
-        i18n.t("common.backOnline")
-      );
-      this.getApiDataOnline(firebase.auth().currentUser);
-    } else {
-      this.online = false;
-      this.dropdown.alertWithType(
-        "warn",
-        i18n.t("common.warn"),
-        i18n.t("common.noInternet")
-      );
-    }
-  }
-
   async updateTextLanguageState() {
     const textLanguage = await AsyncStorage.getItem("textLanguage");
     if (!textLanguage) {
@@ -196,7 +164,7 @@ export default class PersonalPage extends React.Component {
   }
 
   handleSignOut() {
-    if (this.online) {
+    if (this.props.online) {
       firebase
         .auth()
         .signOut()
