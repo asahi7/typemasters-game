@@ -39,6 +39,7 @@ export default class App extends React.Component {
         changeTypingLanguage: () => {}
       }
     };
+    this.passInitialRender = false;
     this.handleConnectivityChange = this.handleConnectivityChange.bind(this);
     this.changeTypingLanguage = this.changeTypingLanguage.bind(this);
     this.initTypingLanguage = this.initTypingLanguage.bind(this);
@@ -84,6 +85,10 @@ export default class App extends React.Component {
   }
 
   handleConnectivityChange(isOnline) {
+    if (!this.passInitialRender) {
+      this.passInitialRender = true;
+      return;
+    }
     if (isOnline) {
       this.setState({
         online: true

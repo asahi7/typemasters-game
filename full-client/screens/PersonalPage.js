@@ -74,7 +74,6 @@ export class PersonalPage extends React.Component {
 
   async updateScreen() {
     if (__DEV__) {
-      console.log(this.props.typingLanguage);
       console.log("Updated screen");
     }
     if (this.props.online) {

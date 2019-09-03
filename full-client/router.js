@@ -27,12 +27,7 @@ const MainStack = createStackNavigator(
         header: null
       })
     },
-    Game: {
-      screen: Game,
-      navigationOptions: ({ navigation }) => ({
-        header: null
-      })
-    }
+    Game: Game
   },
   { initialRouteName: "Main" }
 );
@@ -45,12 +40,7 @@ const PersonalPageStack = createStackNavigator(
         header: null
       })
     },
-    PersonalCharts: {
-      screen: PersonalCharts,
-      navigationOptions: ({ navigation }) => ({
-        header: null
-      })
-    }
+    PersonalCharts: PersonalCharts
   },
   { initialRouteName: "PersonalPage" }
 );
@@ -75,12 +65,7 @@ const AuthStack = createStackNavigator(
         header: null
       })
     },
-    ForgotPassword: {
-      screen: ForgotPassword,
-      navigationOptions: ({ navigation }) => ({
-        header: null
-      })
-    }
+    ForgotPassword: ForgotPassword
   },
   { initialRouteName: "SignIn" }
 );

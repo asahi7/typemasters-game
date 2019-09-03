@@ -24,7 +24,6 @@ import { encode as btoa } from "base-64";
 import * as offlineTexts from "../offline_texts";
 import ConnectionContext from "../context/ConnnectionContext";
 import TypingLanguageContext from "../context/TypingLanguageContext";
-import { Main } from "./Main";
 
 const env = process.env.REACT_NATIVE_ENV || "dev";
 
