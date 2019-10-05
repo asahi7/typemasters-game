@@ -10,9 +10,6 @@ export default class About extends React.Component {
   render() {
     return (
       <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
-        <View style={{ marginTop: 30 }}>
-          <Text style={globalStyles.header}>{i18n.t("about.header")}</Text>
-        </View>
         <ScrollView style={{ marginTop: 10, marginBottom: 10 }}>
           <View style={{ marginTop: 10 }}>
             <Text style={globalStyles.tableHeader}>

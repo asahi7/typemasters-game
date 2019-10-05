@@ -1,9 +1,11 @@
 import React from "react";
 import {
   createStackNavigator,
-  createBottomTabNavigator,
-  createSwitchNavigator
+  createSwitchNavigator,
+  createAppContainer
 } from "react-navigation";
+import { createBottomTabNavigator } from "react-navigation-tabs";
+import Commons from "./Commons";
 import { Icon } from "react-native-elements";
 import Main from "./screens/Main";
 import Game from "./screens/Game";
@@ -18,29 +20,92 @@ import PersonalCharts from "./screens/PersonalCharts";
 import EmailVerificationPage from "./screens/EmailVerificationPage";
 import ForgotPassword from "./screens/ForgotPassword";
 import i18n from "i18n-js";
+import { Button } from "react-native";
+import { en, ru } from "./i18n";
+import * as Localization from "expo-localization";
+
+i18n.fallbacks = true;
+i18n.translations = { en, ru, kk: ru };
+i18n.locale = Localization.locale;
+
+const mainLabel = i18n.t("navigation.main");
+const leaderboardLabel = i18n.t("navigation.leaderboard");
+const personalPageLabel = i18n.t("navigation.personalPage");
+const settingsLabel = i18n.t("navigation.settings");
+const aboutLabel = i18n.t("navigation.about");
+const gameLabel = i18n.t("navigation.game");
+const personalChartsLabel = i18n.t("navigation.personalCharts");
+
+console.log(mainLabel, leaderboardLabel, personalPageLabel);
 
 const MainStack = createStackNavigator(
   {
     Main: {
       screen: Main,
-      navigationOptions: ({ navigation }) => ({
-        header: null
-      })
+      navigationOptions: {
+        headerTitle: mainLabel
+      }
     },
-    Game: Game
+    Game: {
+      screen: Game,
+      navigationOptions: {
+        headerTitle: gameLabel
+      }
+    }
   },
   { initialRouteName: "Main" }
+);
+
+const LeaderboardStack = createStackNavigator(
+  {
+    Leaderboard: {
+      screen: Leaderboard,
+      navigationOptions: {
+        headerTitle: leaderboardLabel
+      }
+    }
+  },
+  { initialRouteName: "Leaderboard" }
+);
+
+const SettingsStack = createStackNavigator(
+  {
+    Settings: {
+      screen: Settings,
+      navigationOptions: {
+        headerTitle: settingsLabel
+      }
+    }
+  },
+  { initialRouteName: "Settings" }
+);
+
+const AboutStack = createStackNavigator(
+  {
+    About: {
+      screen: About,
+      navigationOptions: {
+        headerTitle: aboutLabel
+      }
+    }
+  },
+  { initialRouteName: "About" }
 );
 
 const PersonalPageStack = createStackNavigator(
   {
     PersonalPage: {
       screen: PersonalPage,
-      navigationOptions: ({ navigation }) => ({
-        header: null
-      })
+      navigationOptions: {
+        headerTitle: personalPageLabel
+      }
     },
-    PersonalCharts: PersonalCharts
+    PersonalCharts: {
+      screen: PersonalCharts,
+      navigationOptions: {
+        headerTitle: personalChartsLabel
+      }
+    }
   },
   { initialRouteName: "PersonalPage" }
 );
@@ -86,20 +151,11 @@ const AuthSwitchNavigator = createSwitchNavigator(
 
 const tabBarIconSize = 25;
 
-const mainLabel = i18n.t("navigation.main");
-const leaderboardLabel = i18n.t("navigation.leaderboard");
-const personalPageLabel = i18n.t("navigation.personalPage");
-const settingsLabel = i18n.t("navigation.settings");
-const aboutLabel = i18n.t("navigation.about");
-
 const Tabs = createBottomTabNavigator(
   {
     Main: {
       screen: MainStack,
       navigationOptions: {
-        tabBarLabel: (() => {
-          mainLabel;
-        })(),
         tabBarIcon: ({ tintColor }) => (
           <Icon
             name="md-home"
@@ -107,12 +163,14 @@ const Tabs = createBottomTabNavigator(
             size={tabBarIconSize}
             color={tintColor}
           />
-        )
+        ),
+        header: null
       }
     },
     Leaderboard: {
-      screen: Leaderboard,
+      screen: LeaderboardStack,
       navigationOptions: {
+        headerTitle: leaderboardLabel,
         tabBarLabel: (() => {
           leaderboardLabel;
         })(),
@@ -143,23 +201,25 @@ const Tabs = createBottomTabNavigator(
       }
     },
     Settings: {
-      screen: Settings,
-      navigationOptions: {
-        tabBarLabel: (() => {
-          settingsLabel;
-        })(),
-        tabBarIcon: ({ tintColor }) => (
-          <Icon
-            name="md-build"
-            type="ionicon"
-            size={tabBarIconSize}
-            color={tintColor}
-          />
-        )
+      screen: SettingsStack,
+      navigationOptions: ({ navigation }) => {
+        return {
+          tabBarLabel: (() => {
+            settingsLabel;
+          })(),
+          tabBarIcon: ({ tintColor }) => (
+            <Icon
+              name="md-build"
+              type="ionicon"
+              size={tabBarIconSize}
+              color={tintColor}
+            />
+          )
+        };
       }
     },
     About: {
-      screen: About,
+      screen: AboutStack,
       navigationOptions: {
         tabBarLabel: (() => {
           aboutLabel;
@@ -178,19 +238,13 @@ const Tabs = createBottomTabNavigator(
   { initialRouteName: "Main" }
 );
 
-const RootStack = createStackNavigator(
-  {
-    Tabs: {
-      screen: Tabs,
-      navigationOptions: ({ navigation }) => ({
-        gesturesEnabled: false
-      })
+const RootStack = createStackNavigator({
+  Tabs: {
+    screen: Tabs,
+    navigationOptions: {
+      header: null
     }
-  },
-  {
-    headerMode: "none",
-    mode: "modal"
   }
-);
+});
 
-export default RootStack;
+export default createAppContainer(RootStack);

@@ -1,11 +1,11 @@
 import React from "react";
-import RootStack from "./router";
 import * as firebase from "firebase";
 import * as Localization from "expo-localization";
 import { en, ru } from "./i18n";
 import Sentry from "sentry-expo";
 import DropdownAlert from "react-native-dropdownalert";
 import i18n from "i18n-js";
+import RootStack from "./router";
 import firebaseConfig from "./consts/firebase";
 import { AsyncStorage, NetInfo } from "react-native";
 import ConnectionContext from "./context/ConnnectionContext";
@@ -15,6 +15,10 @@ if (__DEV__) {
   console.log("__DEV__: " + __DEV__);
 }
 
+i18n.fallbacks = true;
+i18n.translations = { en, ru, kk: ru };
+i18n.locale = Localization.locale;
+
 // Remove this once Sentry is correctly setup.
 Sentry.enableInExpoDevelopment = true;
 
@@ -23,9 +27,6 @@ Sentry.config(
 ).install();
 
 // TODO(aibek): check if async call is needed for Android in order to detect language change
-i18n.fallbacks = true;
-i18n.translations = { en, ru, kk: ru };
-i18n.locale = Localization.locale;
 
 firebase.initializeApp(firebaseConfig);
 

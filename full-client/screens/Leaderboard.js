@@ -144,11 +144,6 @@ export class Leaderboard extends React.Component {
     if (this.state.loading) return <Loading />;
     return (
       <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
-        <View style={{ marginTop: 30 }}>
-          <Text style={globalStyles.header}>
-            {i18n.t("leaderboard.header")}
-          </Text>
-        </View>
         <ScrollView style={{ marginTop: 10, marginBottom: 10 }}>
           {!_.isEmpty(this.state.data.bestCpmTodayResults) && (
             <View style={{ marginTop: 10 }}>

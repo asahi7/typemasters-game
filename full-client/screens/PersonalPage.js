@@ -188,11 +188,6 @@ export class PersonalPage extends React.Component {
     if (this.state.loading) return <Loading />;
     return (
       <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
-        <View style={{ marginTop: 30 }}>
-          <Text style={globalStyles.header}>
-            {i18n.t("personalPage.header")}
-          </Text>
-        </View>
         {!this.state.userData && (
           <View>
             <Text style={globalStyles.tableHeader}>
