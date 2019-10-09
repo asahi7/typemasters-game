@@ -8,7 +8,6 @@ import {
   AsyncStorage,
   StatusBar
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import globalStyles from "../styles";
 import Commons from "../Commons";
 import WebAPI from "../WebAPI";
@@ -175,7 +174,7 @@ export class Main extends React.Component {
   render() {
     if (this.state.loading) return <Loading />;
     return (
-      <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
+      <View style={globalStyles.container}>
         <StatusBar barStyle="dark-content" />
         <View style={{ marginTop: 30 }}>
           <Text style={globalStyles.header}>{i18n.t("main.header")}</Text>
@@ -252,7 +251,7 @@ export class Main extends React.Component {
             )}
           </ScrollView>
         )}
-      </LinearGradient>
+      </View>
     );
   }
 }

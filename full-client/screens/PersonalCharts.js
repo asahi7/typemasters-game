@@ -3,7 +3,6 @@ import { View, Text, AsyncStorage, ScrollView, NetInfo } from "react-native";
 import firebase from "firebase";
 import WebAPI from "../WebAPI";
 import Loading from "./Loading";
-import { LinearGradient } from "expo-linear-gradient";
 import Commons from "../Commons";
 import globalStyles from "../styles";
 import PureChart from "react-native-pure-chart";
@@ -144,7 +143,7 @@ export class PersonalCharts extends React.Component {
   render() {
     if (this.state.loading) return <Loading />;
     return (
-      <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
+      <View style={globalStyles.container}>
         <View style={{ marginTop: 30 }}>
           <Text style={globalStyles.header}>
             {i18n.t("personalCharts.header")}
@@ -164,7 +163,7 @@ export class PersonalCharts extends React.Component {
             <PureChart data={this.state.accData} type="line" />
           </View>
         </ScrollView>
-      </LinearGradient>
+      </View>
     );
   }
 }

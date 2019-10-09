@@ -1,5 +1,4 @@
 import React from "react";
-import { LinearGradient } from "expo-linear-gradient";
 import { View, Text, AsyncStorage, ScrollView, NetInfo } from "react-native";
 import WebAPI from "../WebAPI";
 import Loading from "./Loading";
@@ -143,7 +142,7 @@ export class Leaderboard extends React.Component {
   render() {
     if (this.state.loading) return <Loading />;
     return (
-      <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
+      <View style={globalStyles.container}>
         <ScrollView style={{ marginTop: 10, marginBottom: 10 }}>
           {!_.isEmpty(this.state.data.bestCpmTodayResults) && (
             <View style={{ marginTop: 10 }}>
@@ -239,7 +238,7 @@ export class Leaderboard extends React.Component {
             </View>
           )}
         </ScrollView>
-      </LinearGradient>
+      </View>
     );
   }
 }

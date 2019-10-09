@@ -4,12 +4,12 @@ import {
   Text,
   ScrollView,
   BackHandler,
+  View,
   AsyncStorage
 } from "react-native";
 import firebase from "firebase";
 import io from "socket.io-client";
 import { AdMobBanner } from "expo-ads-admob";
-import { LinearGradient } from "expo-linear-gradient";
 import _ from "lodash";
 import Config from "../config/Config";
 import Commons from "../Commons";
@@ -520,7 +520,7 @@ export class Game extends React.Component {
       />
     );
     return (
-      <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
+      <View style={globalStyles.container}>
         <GameEndModal
           admobBanner={admobBanner}
           headerText={this.state.modalText}
@@ -557,7 +557,7 @@ export class Game extends React.Component {
             this.dropdown = ref;
           }}
         />
-      </LinearGradient>
+      </View>
     );
   }
 }

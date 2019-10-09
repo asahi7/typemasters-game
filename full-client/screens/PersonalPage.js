@@ -3,7 +3,6 @@ import { View, Text, Button, AsyncStorage, ScrollView } from "react-native";
 import firebase from "firebase";
 import WebAPI from "../WebAPI";
 import Loading from "./Loading";
-import { LinearGradient } from "expo-linear-gradient";
 import Commons from "../Commons";
 import globalStyles from "../styles";
 import moment from "moment";
@@ -188,7 +187,7 @@ export class PersonalPage extends React.Component {
   render() {
     if (this.state.loading) return <Loading />;
     return (
-      <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
+      <View style={globalStyles.container}>
         {!this.state.userData && (
           <View>
             <Text style={globalStyles.tableHeader}>
@@ -374,7 +373,7 @@ export class PersonalPage extends React.Component {
             this.dropdown = ref;
           }}
         />
-      </LinearGradient>
+      </View>
     );
   }
 }

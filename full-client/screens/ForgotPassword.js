@@ -1,7 +1,6 @@
 import React from "react";
 import { Text, Button, View, TextInput, StyleSheet } from "react-native";
 import firebase from "firebase";
-import { LinearGradient } from "expo-linear-gradient";
 import Commons from "../Commons";
 import globalStyles from "../styles";
 import Loading from "./Loading";
@@ -45,7 +44,7 @@ export default class ForgotPassword extends React.Component {
   render() {
     if (this.state.loading) return <Loading />;
     return (
-      <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
+      <View style={globalStyles.container}>
         <View style={{ marginTop: 30 }}>
           <Text style={globalStyles.header}>
             {i18n.t("forgotPassword.header")}
@@ -73,7 +72,7 @@ export default class ForgotPassword extends React.Component {
             this.dropdown = ref;
           }}
         />
-      </LinearGradient>
+      </View>
     );
   }
 }

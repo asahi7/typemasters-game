@@ -1,6 +1,5 @@
 import React from "react";
 import { Text, View, ScrollView } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import Commons from "../Commons";
 import globalStyles from "../styles";
 import i18n from "i18n-js";
@@ -9,7 +8,7 @@ import Hr from "../components/Hr";
 export default class About extends React.Component {
   render() {
     return (
-      <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
+      <View style={globalStyles.container}>
         <ScrollView style={{ marginTop: 10, marginBottom: 10 }}>
           <View style={{ marginTop: 10 }}>
             <Text style={globalStyles.tableHeader}>
@@ -60,7 +59,7 @@ export default class About extends React.Component {
             </Text>
           </View>
         </ScrollView>
-      </LinearGradient>
+      </View>
     );
   }
 }

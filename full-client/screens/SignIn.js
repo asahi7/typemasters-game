@@ -1,7 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, TextInput, Button, View } from "react-native";
 import firebase from "firebase";
-import { LinearGradient } from "expo-linear-gradient";
 import WebAPI from "../WebAPI";
 import Commons from "../Commons";
 import globalStyles from "../styles";
@@ -73,7 +72,7 @@ export class SignIn extends React.Component {
 
   render() {
     return (
-      <LinearGradient colors={Commons.bgColors} style={globalStyles.container}>
+      <View style={globalStyles.container}>
         <View style={{ marginTop: 30 }}>
           <Text style={globalStyles.header}>{i18n.t("signIn.header")}</Text>
         </View>
@@ -121,7 +120,7 @@ export class SignIn extends React.Component {
             this.dropdown = ref;
           }}
         />
-      </LinearGradient>
+      </View>
     );
   }
 }

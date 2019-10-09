@@ -6,12 +6,10 @@ import {
   Picker,
   View,
   TextInput,
-  Button,
   Keyboard,
   ScrollView,
   Switch
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import WebAPI from "../WebAPI";
 import Loading from "./Loading";
 import firebase from "firebase";
