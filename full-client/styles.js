@@ -1,11 +1,11 @@
-import { StyleSheet, PixelRatio } from 'react-native'
+import { StyleSheet, PixelRatio } from "react-native";
 
 let FONTS = {
   HEADER_FONT: 30,
   TABLE_HEADER_FONT: 20,
   NORMAL_TEXT_FONT: 16,
   TABLE_FONT: 13
-}
+};
 
 if (PixelRatio.get() <= 2) {
   FONTS = {
@@ -13,32 +13,32 @@ if (PixelRatio.get() <= 2) {
     TABLE_HEADER_FONT: 16,
     NORMAL_TEXT_FONT: 12,
     TABLE_FONT: 10
-  }
+  };
 }
 
 const globalStyles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center'
+    alignItems: "center"
   },
   header: {
     fontSize: FONTS.HEADER_FONT,
-    color: '#ed4747',
+    color: "#ed4747",
     letterSpacing: 1,
-    textAlign: 'center',
-    fontWeight: '700'
+    textAlign: "center",
+    fontWeight: "700"
   },
   tableHeader: {
     fontSize: FONTS.TABLE_HEADER_FONT,
-    color: '#7f1717',
+    color: "#7f1717",
     letterSpacing: 1,
-    textAlign: 'center',
-    fontWeight: '700'
+    textAlign: "center",
+    fontWeight: "700"
   },
   normalText: {
     fontSize: FONTS.NORMAL_TEXT_FONT,
-    color: '#340303',
-    textAlign: 'center',
+    color: "#340303",
+    textAlign: "center",
     paddingLeft: 5,
     paddingRight: 5,
     paddingTop: 5,
@@ -48,30 +48,30 @@ const globalStyles = StyleSheet.create({
     flex: 0.1,
     borderWidth: 1,
     marginTop: 1,
-    flexDirection: 'row',
-    alignSelf: 'stretch',
-    alignItems: 'center',
-    justifyContent: 'space-between'
+    flexDirection: "row",
+    alignSelf: "stretch",
+    alignItems: "center",
+    justifyContent: "space-between"
   },
   column: {
     marginLeft: 10,
     marginRight: 10,
-    color: '#340303',
+    color: "#340303",
     fontSize: FONTS.TABLE_FONT
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
+    justifyContent: "center",
+    alignItems: "center"
   },
   normalButton: {
     marginTop: 10,
     flex: 0.1,
-    flexDirection: 'row',
-    alignSelf: 'stretch',
-    alignItems: 'center',
-    justifyContent: 'center'
+    flexDirection: "row",
+    alignSelf: "stretch",
+    alignItems: "center",
+    justifyContent: "center"
   }
-})
+});
 
-export { globalStyles as default, globalStyles, FONTS }
+export { globalStyles as default, globalStyles, FONTS };

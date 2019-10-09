@@ -92,6 +92,10 @@ export class Game extends React.Component {
   }
 
   async componentDidMount() {
+    this.props.navigation.setParams({
+      playButtonPressed: this.playButtonPressed,
+      gamePlaying: this.state.gamePlaying
+    });
     BackHandler.addEventListener("hardwareBackPress", () => {
       this.dicsonnectPlayer();
     });
@@ -106,6 +110,14 @@ export class Game extends React.Component {
     BackHandler.removeEventListener("hardwareBackPress", () => {
       this.dicsonnectPlayer();
     });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.gamePlaying !== prevState.gamePlaying) {
+      this.props.navigation.setParams({
+        gamePlaying: this.state.gamePlaying
+      });
+    }
   }
 
   async getRatedSwitchValue() {
@@ -524,13 +536,11 @@ export class Game extends React.Component {
           }}
         />
         <GameTopMenu
-          playButtonPressed={this.playButtonPressed}
           position={this.state.position}
           numOfPlayers={this.state.numOfPlayers}
           timeLeft={Math.round(this.state.timeLeft)}
           cpm={this.state.cpm}
           accuracy={this.state.accuracy ? this.state.accuracy : 100}
-          gamePlaying={this.state.gamePlaying}
         />
         <GameTextInput
           textArray={this.state.textArray}

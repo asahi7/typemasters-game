@@ -20,8 +20,9 @@ import PersonalCharts from "./screens/PersonalCharts";
 import EmailVerificationPage from "./screens/EmailVerificationPage";
 import ForgotPassword from "./screens/ForgotPassword";
 import i18n from "i18n-js";
-import { Button } from "react-native";
+import { Button, Text, TouchableOpacity, View } from "react-native";
 import { en, ru } from "./i18n";
+import { gameStyles } from "./styles";
 import * as Localization from "expo-localization";
 
 i18n.fallbacks = true;
@@ -36,8 +37,6 @@ const aboutLabel = i18n.t("navigation.about");
 const gameLabel = i18n.t("navigation.game");
 const personalChartsLabel = i18n.t("navigation.personalCharts");
 
-console.log(mainLabel, leaderboardLabel, personalPageLabel);
-
 const MainStack = createStackNavigator(
   {
     Main: {
@@ -48,8 +47,25 @@ const MainStack = createStackNavigator(
     },
     Game: {
       screen: Game,
-      navigationOptions: {
-        headerTitle: gameLabel
+      navigationOptions: ({ navigation }) => {
+        return {
+          headerTitle: gameLabel,
+          headerRight: (
+            <View style={{ marginRight: 10 }}>
+              {navigation.getParam("gamePlaying") === true ? (
+                <Button
+                  onPress={() => navigation.getParam("playButtonPressed")()}
+                  title={i18n.t("game.stop")}
+                />
+              ) : (
+                <Button
+                  onPress={() => navigation.getParam("playButtonPressed")()}
+                  title={i18n.t("game.play")}
+                />
+              )}
+            </View>
+          )
+        };
       }
     }
   },
@@ -72,12 +88,24 @@ const SettingsStack = createStackNavigator(
   {
     Settings: {
       screen: Settings,
-      navigationOptions: {
-        headerTitle: settingsLabel
+      navigationOptions: ({ navigation }) => {
+        return {
+          headerTitle: settingsLabel,
+          headerRight: (
+            <View style={{ marginRight: 10 }}>
+              <Button
+                onPress={() => navigation.getParam("saveSettings")()}
+                title={i18n.t("settings.save")}
+              />
+            </View>
+          )
+        };
       }
     }
   },
-  { initialRouteName: "Settings" }
+  {
+    initialRouteName: "Settings"
+  }
 );
 
 const AboutStack = createStackNavigator(
@@ -96,8 +124,18 @@ const PersonalPageStack = createStackNavigator(
   {
     PersonalPage: {
       screen: PersonalPage,
-      navigationOptions: {
-        headerTitle: personalPageLabel
+      navigationOptions: ({ navigation }) => {
+        return {
+          headerTitle: personalPageLabel,
+          headerRight: (
+            <View style={{ marginRight: 10 }}>
+              <Button
+                onPress={() => navigation.getParam("handleSignOut")()}
+                title={i18n.t("personalPage.signOut")}
+              />
+            </View>
+          )
+        };
       }
     },
     PersonalCharts: {

@@ -44,6 +44,7 @@ export class PersonalPage extends React.Component {
   }
 
   async componentDidMount() {
+    this.props.navigation.setParams({ handleSignOut: this.handleSignOut });
     if (__DEV__) {
       console.log("User is " + (this.props.online ? "online" : "offline"));
     }
@@ -364,13 +365,6 @@ export class PersonalPage extends React.Component {
                 onPress={() => this.props.navigation.navigate("PersonalCharts")}
                 title={i18n.t("personalPage.showCharts")}
                 color="#841584"
-              />
-            </View>
-            <View style={globalStyles.normalButton}>
-              <Button
-                onPress={this.handleSignOut}
-                title={i18n.t("personalPage.signOut")}
-                color={Commons.buttonColor}
               />
             </View>
           </ScrollView>

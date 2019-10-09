@@ -44,22 +44,6 @@ export default React.forwardRef((props, ref) => (
 
 // TODO(aibek): refactor in future to avoid duplication, maybe use template pattern
 export class Settings extends React.Component {
-  // static navigationOptions = ({ navigation }) => {
-  //   return {
-  //     headerTitle: "Settings",
-  //     headerStyle: {
-  //       backgroundColor: "#000",
-  //       color: "#fff"
-  //     },
-  //     headerRight: (
-  //       <Button
-  //         onPress={navigation.getParam("saveSettings")}
-  //         title={i18n.t("settings.save")}
-  //         color={Commons.buttonColor}
-  //       />
-  //     )
-  //   };
-  // };
   constructor(props) {
     super(props);
     this.state = {
@@ -84,7 +68,7 @@ export class Settings extends React.Component {
   }
 
   async componentDidMount() {
-    this.props.navigation.setParams({ saveSettings: this.saveSettings() });
+    this.props.navigation.setParams({ saveSettings: this.saveSettings });
     await this.getRatedSwitchValue();
     if (__DEV__) {
       console.log("User is " + (this.props.online ? "online" : "offline"));
