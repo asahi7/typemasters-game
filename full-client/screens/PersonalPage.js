@@ -82,24 +82,28 @@ export class PersonalPage extends React.Component {
         valuePath: "userData.totalRaces"
       },
       averageCpm: {
-        key: i18n.t("personalPage.averageCpm") + " cpm",
+        key: i18n.t("personalPage.averageCpm"),
         accessorObject: () => this.state,
-        valuePath: "userData.avgCpm"
+        valuePath: "userData.avgCpm",
+        preprocessor: val => val + " cpm"
       },
       averageAccuracy: {
-        key: i18n.t("personalPage.averageAccuracy") + " %",
+        key: i18n.t("personalPage.averageAccuracy"),
         accessorObject: () => this.state,
-        valuePath: "userData.avgAccuracy"
+        valuePath: "userData.avgAccuracy",
+        preprocessor: val => val + " %"
       },
       averageCpm10: {
-        key: i18n.t("personalPage.averageCpm10") + " cpm",
+        key: i18n.t("personalPage.averageCpm10"),
         accessorObject: () => this.state,
-        valuePath: "userData.lastAvgCpm"
+        valuePath: "userData.lastAvgCpm",
+        preprocessor: val => val + " cpm"
       },
       averageAccuracy10: {
-        key: i18n.t("personalPage.averageAccuracy10") + " %",
+        key: i18n.t("personalPage.averageAccuracy10"),
         accessorObject: () => this.state,
-        valuePath: "userData.lastAvgAccuracy"
+        valuePath: "userData.lastAvgAccuracy",
+        preprocessor: val => val + " %"
       },
       gamesWon: {
         key: i18n.t("personalPage.gamesWon"),
@@ -107,9 +111,10 @@ export class PersonalPage extends React.Component {
         valuePath: "userData.gamesWon"
       },
       bestResult: {
-        key: i18n.t("personalPage.bestResult") + " cpm",
+        key: i18n.t("personalPage.bestResult"),
         accessorObject: () => this.state,
-        valuePath: "userData.bestResult"
+        valuePath: "userData.bestResult",
+        preprocessor: val => val + " cpm"
       },
       lastGame: {
         key: i18n.t("personalPage.lastGame"),
@@ -118,19 +123,22 @@ export class PersonalPage extends React.Component {
         preprocessor: val => moment(val).format("HH:mm, D MMMM, YYYY")
       },
       lastGameCpm: {
-        key: i18n.t("personalPage.lastGameCpm") + " cpm",
+        key: i18n.t("personalPage.lastGameCpm"),
         accessorObject: () => this.state,
-        valuePath: "userData.lastScore"
+        valuePath: "userData.lastScore",
+        preprocessor: val => val + " cpm"
       },
       lastGameAccuracy: {
-        key: i18n.t("personalPage.lastGameAccuracy") + " %",
+        key: i18n.t("personalPage.lastGameAccuracy"),
         accessorObject: () => this.state,
-        valuePath: "userData.lastAccuracy"
+        valuePath: "userData.lastAccuracy",
+        preprocessor: val => val + " %"
       },
       firstGameCpm: {
-        key: i18n.t("personalPage.firstGameCpm") + " cpm",
+        key: i18n.t("personalPage.firstGameCpm"),
         accessorObject: () => this.state,
-        valuePath: "userData.firstRaceData.racePlayers[0].cpm"
+        valuePath: "userData.firstRaceData.racePlayers[0].cpm",
+        preprocessor: val => val + " cpm"
       },
       firstGame: {
         key: i18n.t("personalPage.firstGame"),
