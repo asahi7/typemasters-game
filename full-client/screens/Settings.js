@@ -7,6 +7,7 @@ import {
   View,
   TextInput,
   Keyboard,
+  FlatList,
   ScrollView,
   Switch
 } from "react-native";
@@ -21,6 +22,9 @@ import countryList from "../consts/countryList";
 import ConnectionContext from "../context/ConnnectionContext";
 import TypingLanguageContext from "../context/TypingLanguageContext";
 import { Icon, Header } from "react-native-elements";
+import moment from "moment";
+import _ from "lodash";
+import { prepareFlatListElements, renderItem } from "../utils/utils";
 
 export default React.forwardRef((props, ref) => (
   <TypingLanguageContext.Consumer>
@@ -63,6 +67,88 @@ export class Settings extends React.Component {
     this.getApiDataOnline = this.getApiDataOnline.bind(this);
     this.getRatedSwitchValue = this.getRatedSwitchValue.bind(this);
     this.handleRatedSwitch = this.handleRatedSwitch.bind(this);
+    this.elementMapper = {
+      nickname: {
+        key: i18n.t("settings.changeYourNickname"),
+        accessorObject: () => this.state,
+        valuePath: "userData.nickname",
+        executeIf: () => this.state.authenticated,
+        wrapIntoElement: val => {
+          // TODO(aibek): make textinput more visible
+          return (
+            <TextInput
+              style={styles.textInput}
+              autoCapitalize="none"
+              onChangeText={this.handleNicknameInput}
+              placeholder={val}
+            />
+          );
+        }
+      },
+      country: {
+        key: i18n.t("common.country"),
+        accessorObject: () => this.state,
+        valuePath: "userData.country",
+        defaultValue: "Select",
+        executeIf: () => this.state.authenticated && this.state.userData,
+        wrapIntoElement: val => {
+          return (
+            <Picker
+              selectedValue={val}
+              style={[{ width: 150, height: 100 }, styles.column]}
+              itemStyle={{
+                height: 100,
+                fontSize: FONTS.TABLE_HEADER_FONT
+              }}
+              onValueChange={this.countrySelected}
+            >
+              {countryList.map(country => {
+                return (
+                  <Picker.Item value={country} label={country} key={country} />
+                );
+              })}
+            </Picker>
+          );
+        }
+      },
+      typingLanguage: {
+        key: i18n.t("settings.typingLanguage"),
+        accessorObject: () => this.state,
+        defaultValue: () => this.props.typingLanguage,
+        valuePath: "textLanguage",
+        executeIf: () => this.state.supportedLangs,
+        wrapIntoElement: val => {
+          return (
+            <Picker
+              selectedValue={val}
+              prompt={i18n.t("settings.selectTypingLanguage")}
+              style={[{ width: 150, height: 100 }, styles.column]}
+              itemStyle={{ height: 100, fontSize: FONTS.TABLE_HEADER_FONT }}
+              onValueChange={this.textLanguageSelected}
+            >
+              {this.state.supportedLangs.map((lang, index) => {
+                return (
+                  <Picker.Item
+                    value={lang.value}
+                    label={lang.label}
+                    key={index}
+                  />
+                );
+              })}
+            </Picker>
+          );
+        }
+      },
+      ratedSwitch: {
+        key: i18n.t("settings.ratedSwitch"),
+        accessorObject: () => this.state,
+        valuePath: "ratedSwitch",
+        wrapIntoElement: val => {
+          // TODO(aibek): make textinput more visible
+          return <Switch onValueChange={this.handleRatedSwitch} value={val} />;
+        }
+      }
+    };
   }
 
   async componentDidMount() {
@@ -94,6 +180,20 @@ export class Settings extends React.Component {
 
   componentWillUnmount() {
     this.willFocusSubscription.remove();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      prevState.userData !== this.state.userData ||
+      prevProps.typingLanguage !== this.props.typingLanguage ||
+      prevState.ratedSwitch !== this.state.ratedSwitch ||
+      prevState.textLanguage !== this.state.textLanguage
+    ) {
+      const listElements = prepareFlatListElements(this.elementMapper);
+      this.setState({
+        listElements
+      });
+    }
   }
 
   async updateScreen() {
@@ -272,17 +372,8 @@ export class Settings extends React.Component {
 
   render() {
     if (this.state.loading) return <Loading />;
-    const typingLanguageSelection = this.state.textLanguage
-      ? this.state.textLanguage
-      : this.props.typingLanguage;
     return (
       <View>
-        {/*<Header*/}
-        {/*  placement="left"*/}
-        {/*  leftComponent={{ icon: "menu", color: "#fff" }}*/}
-        {/*  centerComponent={{ text: "MY TITLE", style: { color: "#fff" } }}*/}
-        {/*  rightComponent={{ icon: "home", color: "#fff" }}*/}
-        {/*/>*/}
         {!this.state.userData && (
           <View>
             <Text style={globalStyles.tableHeader}>
@@ -294,106 +385,7 @@ export class Settings extends React.Component {
           style={{ marginTop: 10, marginBottom: 10 }}
           keyboardShouldPersistTaps={"always"}
         >
-          {this.state.userData && (
-            <View>
-              {this.state.errorMessage && (
-                <Text style={{ color: "red" }}>{this.state.errorMessage}</Text>
-              )}
-              <View style={{ marginTop: 10 }}>
-                {this.state.authenticated && (
-                  <View style={globalStyles.row}>
-                    <Text style={globalStyles.column}>
-                      {i18n.t("settings.yourNickname")}:
-                    </Text>
-                    <Text style={globalStyles.column}>
-                      {this.state.userData.nickname
-                        ? this.state.userData.nickname
-                        : i18n.t("settings.notSpecified")}
-                    </Text>
-                  </View>
-                )}
-                {this.state.authenticated && (
-                  <View style={globalStyles.row}>
-                    <Text style={globalStyles.column}>
-                      {i18n.t("settings.changeNickname")}:
-                    </Text>
-                    <View style={globalStyles.column}>
-                      <TextInput
-                        style={styles.textInput}
-                        autoCapitalize="none"
-                        placeholder={i18n.t("settings.yourNicknameInput")}
-                        onChangeText={this.handleNicknameInput}
-                        value={this.state.nicknameInput}
-                      />
-                    </View>
-                  </View>
-                )}
-                {this.state.authenticated && (
-                  <View style={globalStyles.row}>
-                    <Text style={globalStyles.column}>
-                      {i18n.t("common.country")}:
-                    </Text>
-                    <Picker
-                      selectedValue={
-                        this.state.userData.country
-                          ? this.state.userData.country
-                          : "Select"
-                      }
-                      style={[{ width: 150, height: 100 }, styles.column]}
-                      itemStyle={{
-                        height: 100,
-                        fontSize: FONTS.TABLE_HEADER_FONT
-                      }}
-                      onValueChange={this.countrySelected}
-                    >
-                      {countryList.map(country => {
-                        return (
-                          <Picker.Item
-                            value={country}
-                            label={country}
-                            key={country}
-                          />
-                        );
-                      })}
-                    </Picker>
-                  </View>
-                )}
-              </View>
-            </View>
-          )}
-          <View style={globalStyles.row}>
-            <Text style={globalStyles.column}>
-              {i18n.t("settings.typingLanguage")}:
-            </Text>
-            {typingLanguageSelection && this.state.supportedLangs && (
-              <Picker
-                selectedValue={typingLanguageSelection}
-                prompt={i18n.t("settings.selectTypingLanguage")}
-                style={[{ width: 150, height: 100 }, styles.column]}
-                itemStyle={{ height: 100, fontSize: FONTS.TABLE_HEADER_FONT }}
-                onValueChange={this.textLanguageSelected}
-              >
-                {this.state.supportedLangs.map((lang, index) => {
-                  return (
-                    <Picker.Item
-                      value={lang.value}
-                      label={lang.label}
-                      key={index}
-                    />
-                  );
-                })}
-              </Picker>
-            )}
-          </View>
-          <View style={globalStyles.row}>
-            <Text style={globalStyles.column}>
-              {i18n.t("settings.ratedSwitch")}:
-            </Text>
-            <Switch
-              onValueChange={this.handleRatedSwitch}
-              value={this.state.ratedSwitch}
-            />
-          </View>
+          <FlatList data={this.state.listElements} renderItem={renderItem} />
         </ScrollView>
         <DropdownAlert
           ref={ref => {

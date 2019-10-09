@@ -19,6 +19,7 @@ import i18n from "i18n-js";
 import ConnectionContext from "../context/ConnnectionContext";
 import TypingLanguageContext from "../context/TypingLanguageContext";
 import { PersonalCharts } from "./PersonalCharts";
+import { prepareFlatListElements, renderItem } from "../utils/utils";
 
 export default React.forwardRef((props, ref) => (
   <TypingLanguageContext.Consumer>
@@ -48,8 +49,6 @@ export class PersonalPage extends React.Component {
     this.updateScreen = this.updateScreen.bind(this);
     this.getPersistentDataOffline = this.getPersistentDataOffline.bind(this);
     this.getApiDataOnline = this.getApiDataOnline.bind(this);
-    this.renderItem = this.renderItem.bind(this);
-    this.prepareListElements = this.prepareListElements.bind(this);
     this.elementMapper = {
       nickname: {
         key: i18n.t("personalPage.nickname"),
@@ -184,7 +183,7 @@ export class PersonalPage extends React.Component {
       prevState.userData !== this.state.userData ||
       prevProps.typingLanguage !== this.props.typingLanguage
     ) {
-      const listElements = this.prepareListElements();
+      const listElements = prepareFlatListElements(this.elementMapper);
       this.setState({
         listElements
       });
@@ -303,37 +302,6 @@ export class PersonalPage extends React.Component {
     }
   }
 
-  prepareListElements() {
-    const listElements = [];
-    Object.keys(this.elementMapper).forEach(key => {
-      let value = _.get(
-        this.elementMapper[key].accessorObject(),
-        this.elementMapper[key].valuePath,
-        null
-      );
-      if (!value) {
-        return null;
-      }
-      if (this.elementMapper[key].preprocessor) {
-        value = this.elementMapper[key].preprocessor(value);
-      }
-      listElements.push({
-        key: this.elementMapper[key].key,
-        value
-      });
-    });
-    return listElements;
-  }
-
-  renderItem({ item }) {
-    return (
-      <View style={globalStyles.row}>
-        <Text style={globalStyles.column}>{item.key}</Text>
-        <Text style={globalStyles.column}>{item.value}</Text>
-      </View>
-    );
-  }
-
   render() {
     if (this.state.loading) return <Loading />;
     return (
@@ -353,7 +321,7 @@ export class PersonalPage extends React.Component {
               </Text>
               <FlatList
                 data={this.state.listElements}
-                renderItem={this.renderItem}
+                renderItem={renderItem}
               />
             </View>
             <View style={{ marginTop: 10 }}>
