@@ -1,9 +1,17 @@
 import React from "react";
-import { View, Text, Button, AsyncStorage, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  Button,
+  FlatList,
+  AsyncStorage,
+  ScrollView
+} from "react-native";
 import firebase from "firebase";
 import WebAPI from "../WebAPI";
 import Loading from "./Loading";
 import Commons from "../Commons";
+import _ from "lodash";
 import globalStyles from "../styles";
 import moment from "moment";
 import DropdownAlert from "react-native-dropdownalert";
@@ -40,6 +48,97 @@ export class PersonalPage extends React.Component {
     this.updateScreen = this.updateScreen.bind(this);
     this.getPersistentDataOffline = this.getPersistentDataOffline.bind(this);
     this.getApiDataOnline = this.getApiDataOnline.bind(this);
+    this.renderItem = this.renderItem.bind(this);
+    this.prepareListElements = this.prepareListElements.bind(this);
+    this.elementMapper = {
+      nickname: {
+        key: i18n.t("personalPage.nickname"),
+        accessorObject: () => this.state,
+        valuePath: "userData.userInfo.nickname"
+      },
+      email: {
+        key: i18n.t("common.email"),
+        accessorObject: () => this.state,
+        valuePath: "userData.userInfo.email"
+      },
+      country: {
+        key: i18n.t("common.country"),
+        accessorObject: () => this.state,
+        valuePath: "userData.userInfo.country"
+      },
+      UID: {
+        key: "UID",
+        accessorObject: () => this.state,
+        valuePath: "userData.userInfo.uid"
+      },
+      typingLanguage: {
+        key: i18n.t("personalPage.typingLanguage"),
+        accessorObject: () => this.props,
+        valuePath: "typingLanguage"
+      },
+      totalGames: {
+        key: i18n.t("personalPage.totalGames"),
+        accessorObject: () => this.state,
+        valuePath: "userData.totalRaces"
+      },
+      averageCpm: {
+        key: i18n.t("personalPage.averageCpm") + " cpm",
+        accessorObject: () => this.state,
+        valuePath: "userData.avgCpm"
+      },
+      averageAccuracy: {
+        key: i18n.t("personalPage.averageAccuracy") + " %",
+        accessorObject: () => this.state,
+        valuePath: "userData.avgAccuracy"
+      },
+      averageCpm10: {
+        key: i18n.t("personalPage.averageCpm10") + " cpm",
+        accessorObject: () => this.state,
+        valuePath: "userData.lastAvgCpm"
+      },
+      averageAccuracy10: {
+        key: i18n.t("personalPage.averageAccuracy10") + " %",
+        accessorObject: () => this.state,
+        valuePath: "userData.lastAvgAccuracy"
+      },
+      gamesWon: {
+        key: i18n.t("personalPage.gamesWon"),
+        accessorObject: () => this.state,
+        valuePath: "userData.gamesWon"
+      },
+      bestResult: {
+        key: i18n.t("personalPage.bestResult") + " cpm",
+        accessorObject: () => this.state,
+        valuePath: "userData.bestResult"
+      },
+      lastGame: {
+        key: i18n.t("personalPage.lastGame"),
+        accessorObject: () => this.state,
+        valuePath: "userData.lastPlayed",
+        preprocessor: val => moment(val).format("HH:mm, D MMMM, YYYY")
+      },
+      lastGameCpm: {
+        key: i18n.t("personalPage.lastGameCpm") + " cpm",
+        accessorObject: () => this.state,
+        valuePath: "userData.lastScore"
+      },
+      lastGameAccuracy: {
+        key: i18n.t("personalPage.lastGameAccuracy") + " %",
+        accessorObject: () => this.state,
+        valuePath: "userData.lastAccuracy"
+      },
+      firstGameCpm: {
+        key: i18n.t("personalPage.firstGameCpm") + " cpm",
+        accessorObject: () => this.state,
+        valuePath: "userData.firstRaceData.racePlayers[0].cpm"
+      },
+      firstGame: {
+        key: i18n.t("personalPage.firstGame"),
+        accessorObject: () => this.state,
+        valuePath: "userData.firstRaceData.date",
+        preprocessor: val => moment(val).format("HH:mm, D MMMM, YYYY")
+      }
+    };
   }
 
   async componentDidMount() {
@@ -70,6 +169,18 @@ export class PersonalPage extends React.Component {
 
   componentWillUnmount() {
     this.willFocusSubscription.remove();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      prevState.userData !== this.state.userData ||
+      prevProps.typingLanguage !== this.props.typingLanguage
+    ) {
+      const listElements = this.prepareListElements();
+      this.setState({
+        listElements
+      });
+    }
   }
 
   async updateScreen() {
@@ -184,6 +295,37 @@ export class PersonalPage extends React.Component {
     }
   }
 
+  prepareListElements() {
+    const listElements = [];
+    Object.keys(this.elementMapper).forEach(key => {
+      let value = _.get(
+        this.elementMapper[key].accessorObject(),
+        this.elementMapper[key].valuePath,
+        null
+      );
+      if (!value) {
+        return null;
+      }
+      if (this.elementMapper[key].preprocessor) {
+        value = this.elementMapper[key].preprocessor(value);
+      }
+      listElements.push({
+        key: this.elementMapper[key].key,
+        value
+      });
+    });
+    return listElements;
+  }
+
+  renderItem({ item }) {
+    return (
+      <View style={globalStyles.row}>
+        <Text style={globalStyles.column}>{item.key}</Text>
+        <Text style={globalStyles.column}>{item.value}</Text>
+      </View>
+    );
+  }
+
   render() {
     if (this.state.loading) return <Loading />;
     return (
@@ -201,158 +343,10 @@ export class PersonalPage extends React.Component {
               <Text style={globalStyles.tableHeader}>
                 {i18n.t("personalPage.general")}:
               </Text>
-              {this.state.userData.userInfo &&
-                this.state.userData.userInfo.nickname && (
-                  <View style={globalStyles.row}>
-                    <Text style={globalStyles.column}>
-                      {i18n.t("personalPage.nickname")}:
-                    </Text>
-                    <Text style={globalStyles.column}>
-                      {this.state.userData.userInfo.nickname}
-                    </Text>
-                  </View>
-                )}
-              {this.state.userData.userInfo &&
-                this.state.userData.userInfo.email && (
-                  <View style={globalStyles.row}>
-                    <Text style={globalStyles.column}>
-                      {i18n.t("common.email")}:
-                    </Text>
-                    <Text style={globalStyles.column}>
-                      {this.state.userData.userInfo.email}
-                    </Text>
-                  </View>
-                )}
-              {this.state.userData.userInfo &&
-                this.state.userData.userInfo.country && (
-                  <View style={globalStyles.row}>
-                    <Text style={globalStyles.column}>
-                      {i18n.t("common.country")}:
-                    </Text>
-                    <Text style={globalStyles.column}>
-                      {this.state.userData.userInfo.country}
-                    </Text>
-                  </View>
-                )}
-              <View style={globalStyles.row}>
-                <Text style={globalStyles.column}>UID:</Text>
-                <Text style={globalStyles.column}>
-                  {this.state.userData.userInfo &&
-                    this.state.userData.userInfo.uid}
-                </Text>
-              </View>
-              <View style={globalStyles.row}>
-                <Text style={globalStyles.column}>
-                  {i18n.t("personalPage.typingLanguage")}:
-                </Text>
-                <Text style={globalStyles.column}>
-                  {this.props.typingLanguage}
-                </Text>
-              </View>
-              <View style={globalStyles.row}>
-                <Text style={globalStyles.column}>
-                  {i18n.t("personalPage.totalGames")}:
-                </Text>
-                <Text style={globalStyles.column}>
-                  {this.state.userData.totalRaces}
-                </Text>
-              </View>
-              <View style={globalStyles.row}>
-                <Text style={globalStyles.column}>
-                  {i18n.t("personalPage.averageCpm")}:
-                </Text>
-                <Text style={globalStyles.column}>
-                  {this.state.userData.avgCpm} cpm
-                </Text>
-              </View>
-              <View style={globalStyles.row}>
-                <Text style={globalStyles.column}>
-                  {i18n.t("personalPage.averageAccuracy")}:
-                </Text>
-                <Text style={globalStyles.column}>
-                  {this.state.userData.avgAccuracy}%
-                </Text>
-              </View>
-              <View style={globalStyles.row}>
-                <Text style={globalStyles.column}>
-                  {i18n.t("personalPage.averageCpm10")}:
-                </Text>
-                <Text style={globalStyles.column}>
-                  {this.state.userData.lastAvgCpm} cpm
-                </Text>
-              </View>
-              <View style={globalStyles.row}>
-                <Text style={globalStyles.column}>
-                  {i18n.t("personalPage.averageAccuracy10")}:
-                </Text>
-                <Text style={globalStyles.column}>
-                  {this.state.userData.lastAvgAccuracy}%
-                </Text>
-              </View>
-              <View style={globalStyles.row}>
-                <Text style={globalStyles.column}>
-                  {i18n.t("personalPage.gamesWon")}:
-                </Text>
-                <Text style={globalStyles.column}>
-                  {this.state.userData.gamesWon}
-                </Text>
-              </View>
-              <View style={globalStyles.row}>
-                <Text style={globalStyles.column}>
-                  {i18n.t("personalPage.bestResult")}:
-                </Text>
-                <Text style={globalStyles.column}>
-                  {this.state.userData.bestResult} cpm
-                </Text>
-              </View>
-              <View style={globalStyles.row}>
-                <Text style={globalStyles.column}>
-                  {i18n.t("personalPage.lastGame")}:
-                </Text>
-                <Text style={globalStyles.column}>
-                  {moment(this.state.userData.lastPlayed).format(
-                    "HH:mm, D MMMM, YYYY"
-                  )}
-                </Text>
-              </View>
-              <View style={globalStyles.row}>
-                <Text style={globalStyles.column}>
-                  {i18n.t("personalPage.lastGame")}:
-                </Text>
-                <Text style={globalStyles.column}>
-                  {this.state.userData.lastScore} cpm
-                </Text>
-              </View>
-              <View style={globalStyles.row}>
-                <Text style={globalStyles.column}>
-                  {i18n.t("personalPage.lastGameAccuracy")}:
-                </Text>
-                <Text style={globalStyles.column}>
-                  {this.state.userData.lastAccuracy}%
-                </Text>
-              </View>
-              {this.state.userData.firstRaceData && (
-                <View style={globalStyles.row}>
-                  <Text style={globalStyles.column}>
-                    {i18n.t("personalPage.firstGame")}:
-                  </Text>
-                  <Text style={globalStyles.column}>
-                    {this.state.userData.firstRaceData.racePlayers[0].cpm} cpm
-                  </Text>
-                </View>
-              )}
-              {this.state.userData.firstRaceData && (
-                <View style={globalStyles.row}>
-                  <Text style={globalStyles.column}>
-                    {i18n.t("personalPage.firstGame")}:
-                  </Text>
-                  <Text style={globalStyles.column}>
-                    {moment(this.state.userData.firstRaceData.date).format(
-                      "HH:mm, D MMMM, YYYY"
-                    )}
-                  </Text>
-                </View>
-              )}
+              <FlatList
+                data={this.state.listElements}
+                renderItem={this.renderItem}
+              />
             </View>
             <View style={{ marginTop: 10 }}>
               <Text style={[globalStyles.normalText, { color: "red" }]}>

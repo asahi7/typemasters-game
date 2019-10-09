@@ -53,8 +53,10 @@ export const en = {
     gamesWon: "Games won",
     bestResult: "Best result",
     lastGame: "Last game",
+    lastGameCpm: "Last game cpm",
     lastGameAccuracy: "Last game accuracy",
-    firstGame: "First game data",
+    firstGame: "First game",
+    firstGameCpm: "First game cpm",
     showCharts: "Show charts",
     signOut: "Sign out",
     dataMayNotUpdate: "*Data may not update instantly after the race."
@@ -229,8 +231,10 @@ export const ru = {
     gamesWon: "Число выигранных игр",
     bestResult: "Лучший результат",
     lastGame: "Последняя игра",
+    lastGameCpm: "CPM последней игры",
     lastGameAccuracy: "Точность последней игры",
     firstGame: "Первая игра",
+    firstGameCpm: "CPM первой игры",
     showCharts: "Показать графики",
     signOut: "Выйти",
     dataMayNotUpdate: "*Данные могут обновляться не сразу."
