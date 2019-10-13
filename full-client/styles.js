@@ -65,7 +65,7 @@ const globalStyles = StyleSheet.create({
     alignItems: "center"
   },
   normalButton: {
-    marginTop: 10,
+    marginTop: 5,
     flex: 0.1,
     flexDirection: "row",
     alignSelf: "stretch",

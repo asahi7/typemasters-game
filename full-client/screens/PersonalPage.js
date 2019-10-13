@@ -149,6 +149,12 @@ export class PersonalPage extends React.Component {
   }
 
   async componentDidMount() {
+    this.willFocusSubscription = this.props.navigation.addListener(
+      "willFocus",
+      () => {
+        this.updateScreen();
+      }
+    );
     this.props.navigation.setParams({ handleSignOut: this.handleSignOut });
     if (__DEV__) {
       console.log("User is " + (this.props.online ? "online" : "offline"));
@@ -166,12 +172,6 @@ export class PersonalPage extends React.Component {
         });
       });
     }
-    this.willFocusSubscription = this.props.navigation.addListener(
-      "willFocus",
-      () => {
-        this.updateScreen();
-      }
-    );
   }
 
   componentWillUnmount() {
@@ -192,7 +192,7 @@ export class PersonalPage extends React.Component {
 
   async updateScreen() {
     if (__DEV__) {
-      console.log("Updated screen");
+      console.log("Personal page updated screen");
     }
     if (this.props.online) {
       this.getApiDataOnline(firebase.auth().currentUser);
@@ -333,7 +333,6 @@ export class PersonalPage extends React.Component {
               <Button
                 onPress={() => this.props.navigation.navigate("PersonalCharts")}
                 title={i18n.t("personalPage.showCharts")}
-                color="#841584"
               />
             </View>
           </ScrollView>

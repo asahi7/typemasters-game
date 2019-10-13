@@ -45,6 +45,12 @@ export class Leaderboard extends React.Component {
   }
 
   async componentDidMount() {
+    this.willFocusSubscription = this.props.navigation.addListener(
+      "willFocus",
+      () => {
+        this.updateScreen();
+      }
+    );
     if (__DEV__) {
       console.log("User is " + (this.props.online ? "online" : "offline"));
     }
@@ -61,12 +67,6 @@ export class Leaderboard extends React.Component {
         });
       });
     }
-    this.willFocusSubscription = this.props.navigation.addListener(
-      "willFocus",
-      () => {
-        this.updateScreen();
-      }
-    );
   }
 
   componentWillUnmount() {
@@ -75,7 +75,7 @@ export class Leaderboard extends React.Component {
 
   async updateScreen() {
     if (__DEV__) {
-      console.log("Updated screen");
+      console.log("Leaderboard updated screen");
     }
     if (this.props.online) {
       this.getApiDataOnline();

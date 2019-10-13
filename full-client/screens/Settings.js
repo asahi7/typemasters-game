@@ -152,6 +152,12 @@ export class Settings extends React.Component {
   }
 
   async componentDidMount() {
+    this.willFocusSubscription = this.props.navigation.addListener(
+      "willFocus",
+      () => {
+        this.updateScreen();
+      }
+    );
     this.props.navigation.setParams({ saveSettings: this.saveSettings });
     await this.getRatedSwitchValue();
     if (__DEV__) {
@@ -170,12 +176,6 @@ export class Settings extends React.Component {
         });
       });
     }
-    this.willFocusSubscription = this.props.navigation.addListener(
-      "willFocus",
-      () => {
-        this.updateScreen();
-      }
-    );
   }
 
   componentWillUnmount() {
@@ -187,7 +187,8 @@ export class Settings extends React.Component {
       prevState.userData !== this.state.userData ||
       prevProps.typingLanguage !== this.props.typingLanguage ||
       prevState.ratedSwitch !== this.state.ratedSwitch ||
-      prevState.textLanguage !== this.state.textLanguage
+      prevState.textLanguage !== this.state.textLanguage ||
+      prevState.supportedLangs !== this.state.supportedLangs
     ) {
       const listElements = prepareFlatListElements(this.elementMapper);
       this.setState({
@@ -196,9 +197,9 @@ export class Settings extends React.Component {
     }
   }
 
-  async updateScreen() {
+  updateScreen() {
     if (__DEV__) {
-      console.log("Updated screen");
+      console.log("Settings updated screen");
     }
     this.setState({ errorMessage: null });
     if (this.props.online) {
@@ -374,13 +375,6 @@ export class Settings extends React.Component {
     if (this.state.loading) return <Loading />;
     return (
       <View>
-        {!this.state.userData && (
-          <View>
-            <Text style={globalStyles.tableHeader}>
-              {i18n.t("common.noData")}
-            </Text>
-          </View>
-        )}
         <ScrollView
           style={{ marginTop: 10, marginBottom: 10 }}
           keyboardShouldPersistTaps={"always"}

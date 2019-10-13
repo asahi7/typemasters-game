@@ -42,7 +42,13 @@ export class Main extends React.Component {
     this.getApiDataOnline = this.getApiDataOnline.bind(this);
   }
 
-  async componentDidMount() {
+  componentDidMount() {
+    this.willFocusSubscription = this.props.navigation.addListener(
+      "willFocus",
+      () => {
+        this.updateScreen();
+      }
+    );
     if (__DEV__) {
       console.log("User is " + (this.props.online ? "online" : "offline"));
     }
@@ -59,12 +65,6 @@ export class Main extends React.Component {
         });
       });
     }
-    this.willFocusSubscription = this.props.navigation.addListener(
-      "willFocus",
-      () => {
-        this.updateScreen();
-      }
-    );
   }
 
   componentWillUnmount() {
@@ -73,7 +73,7 @@ export class Main extends React.Component {
 
   async updateScreen() {
     if (__DEV__) {
-      console.log("Updated screen");
+      console.log("Main updated screen");
     }
     this.setState({ errorMessage: null });
     if (this.props.online) {

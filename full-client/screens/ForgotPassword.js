@@ -45,11 +45,6 @@ export default class ForgotPassword extends React.Component {
     if (this.state.loading) return <Loading />;
     return (
       <View style={globalStyles.container}>
-        <View style={{ marginTop: 30 }}>
-          <Text style={globalStyles.header}>
-            {i18n.t("forgotPassword.header")}
-          </Text>
-        </View>
         <Text style={globalStyles.normalText}>
           {i18n.t("forgotPassword.text")}
         </Text>
@@ -64,7 +59,6 @@ export default class ForgotPassword extends React.Component {
           <Button
             onPress={this.sendResetLink}
             title={i18n.t("forgotPassword.resetPassword")}
-            color={Commons.buttonColor}
           />
         </View>
         <DropdownAlert

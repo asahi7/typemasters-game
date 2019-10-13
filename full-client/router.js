@@ -36,6 +36,10 @@ const settingsLabel = i18n.t("navigation.settings");
 const aboutLabel = i18n.t("navigation.about");
 const gameLabel = i18n.t("navigation.game");
 const personalChartsLabel = i18n.t("navigation.personalCharts");
+const signInLabel = i18n.t("navigation.signIn");
+const signUpLabel = i18n.t("navigation.signUp");
+const forgotPasswordLabel = i18n.t("navigation.forgotPassword");
+const confirmEmailLabel = i18n.t("navigation.confirmEmail");
 
 const MainStack = createStackNavigator(
   {
@@ -152,23 +156,28 @@ const AuthStack = createStackNavigator(
   {
     SignUp: {
       screen: SignUp,
-      navigationOptions: ({ navigation }) => ({
-        header: null
-      })
+      navigationOptions: {
+        headerTitle: signUpLabel
+      }
     },
     SignIn: {
       screen: SignIn,
-      navigationOptions: ({ navigation }) => ({
-        header: null
-      })
+      navigationOptions: {
+        headerTitle: signInLabel
+      }
     },
     EmailVerificationPage: {
       screen: EmailVerificationPage,
-      navigationOptions: ({ navigation }) => ({
-        header: null
-      })
+      navigationOptions: {
+        headerTitle: confirmEmailLabel
+      }
     },
-    ForgotPassword: ForgotPassword
+    ForgotPassword: {
+      screen: ForgotPassword,
+      navigationOptions: {
+        headerTitle: forgotPasswordLabel
+      }
+    }
   },
   { initialRouteName: "SignIn" }
 );

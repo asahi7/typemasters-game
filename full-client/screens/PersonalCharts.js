@@ -44,6 +44,12 @@ export class PersonalCharts extends React.Component {
   }
 
   async componentDidMount() {
+    this.willFocusSubscription = this.props.navigation.addListener(
+      "willFocus",
+      () => {
+        this.updateScreen();
+      }
+    );
     if (__DEV__) {
       console.log("User is " + (this.props.online ? "online" : "offline"));
     }
@@ -60,12 +66,6 @@ export class PersonalCharts extends React.Component {
         });
       });
     }
-    this.willFocusSubscription = this.props.navigation.addListener(
-      "willFocus",
-      () => {
-        this.updateScreen();
-      }
-    );
   }
 
   componentWillUnmount() {
@@ -74,7 +74,7 @@ export class PersonalCharts extends React.Component {
 
   async updateScreen() {
     if (__DEV__) {
-      console.log("Updated screen");
+      console.log("Personal charts updated screen");
     }
     if (this.props.online) {
       this.getApiDataOnline();
@@ -144,11 +144,6 @@ export class PersonalCharts extends React.Component {
     if (this.state.loading) return <Loading />;
     return (
       <View style={globalStyles.container}>
-        <View style={{ marginTop: 30 }}>
-          <Text style={globalStyles.header}>
-            {i18n.t("personalCharts.header")}
-          </Text>
-        </View>
         <ScrollView style={{ marginTop: 10, marginBottom: 10 }}>
           <View style={{ marginTop: 10 }}>
             <Text style={globalStyles.tableHeader}>

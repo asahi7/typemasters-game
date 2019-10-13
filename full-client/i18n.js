@@ -6,7 +6,11 @@ export const en = {
     settings: "Settings",
     about: "About",
     game: "Game",
-    personalCharts: "Personal Charts"
+    personalCharts: "Personal Charts",
+    signIn: "Sign In",
+    signUp: "Sign Up",
+    forgotPassword: "Forgot Password",
+    confirmEmail: "Confirm Email"
   },
   common: {
     noData:
@@ -33,14 +37,12 @@ export const en = {
     playButton: "PLAY"
   },
   leaderboard: {
-    header: "Leaderboard",
     bestTodayByCpm: "Best Today Results By CPM",
     bestTodayByAcc: "Best Today Results By Accuracy",
     bestTodayByAvgCpm: "Best Average Results By CPM",
     bestByCpm: "Best Results By CPM"
   },
   personalPage: {
-    header: "Personal Page",
     cantSignOutOffline: "Can not sign out during offline mode",
     general: "General",
     nickname: "Nickname",
@@ -62,7 +64,6 @@ export const en = {
     dataMayNotUpdate: "*Data may not update instantly after the race."
   },
   settings: {
-    header: "Settings",
     notSpecified: "Not Specified",
     changeNickname: "Change nickname",
     yourNickname: "Your nickname",
@@ -75,7 +76,6 @@ export const en = {
     ratedSwitch: "Rated games"
   },
   about: {
-    header: "About",
     subHeader1: "The Game",
     subHeader2: "Get More Personalized Experience",
     subHeader3: "Contact us",
@@ -120,14 +120,12 @@ export const en = {
       "is important to us!"
   },
   emailVerification: {
-    header: "Please verify your email",
     text:
       "An email verification link has been sent to your email, please click on it in order to verify your email and finish the registration.\nAfter that you can sign in again",
     sendLink: "Send a new link?",
     signOut: "Sign out"
   },
   forgotPassword: {
-    header: "Password Reset Page",
     linkSent: "The link was successfully sent",
     somethingWrong: "Something is not correct. Please try again",
     text: "Input your email and we will send you the reset link",
@@ -163,17 +161,14 @@ export const en = {
     loading: "Loading"
   },
   personalCharts: {
-    header: "Personal Charts",
     last100DaysCpm: "Last 100 Days Cpm",
     last100DaysAcc: "Last 100 Days Accuracy"
   },
   signIn: {
-    header: "Sign In",
     dontHaveAccount: "Don't have an account? Sign Up",
     forgotPassword: "Forgot password?"
   },
   signUp: {
-    header: "Sign up",
     signUp: "Sign up",
     haveAccount: "Already have an account? Sign in"
   }
@@ -185,7 +180,13 @@ export const ru = {
     leaderboard: "Статистика",
     personalPage: "Страница",
     settings: "Настройки",
-    about: "О нас"
+    about: "О нас",
+    game: "Игра",
+    personalCharts: "Графики",
+    signIn: "Войти",
+    signUp: "Зарегистрироваться",
+    forgotPassword: "Восстановить пароль",
+    confirmEmail: "Подтвердить email"
   },
   common: {
     noData:
@@ -211,14 +212,12 @@ export const ru = {
     playButton: "ИГРАЙ"
   },
   leaderboard: {
-    header: "Статистика",
     bestTodayByCpm: "Лучшие результаты CPM за сегодня",
     bestTodayByAcc: "Лучшие результаты по точности за сегодня",
     bestTodayByAvgCpm: "Лучшие средние результаты CPM за сегодня",
     bestByCpm: "Лучшие результаты CPM за все время"
   },
   personalPage: {
-    header: "Личная страница",
     cantSignOutOffline: "Невозможно выйти из аккаунта во время оффлайн режима",
     general: "Общее",
     nickname: "Ник",
@@ -240,7 +239,6 @@ export const ru = {
     dataMayNotUpdate: "*Данные могут обновляться не сразу."
   },
   settings: {
-    header: "Настройки",
     notSpecified: "Не указано",
     changeNickname: "Поменять ник",
     yourNickname: "Ваш ник",
@@ -253,7 +251,6 @@ export const ru = {
     ratedSwitch: "Рейтинговая игра"
   },
   about: {
-    header: "О нас",
     subHeader1: "Об игре",
     subHeader2: "Получите персонализированный опыт",
     subHeader3: "Свяжитесь с нами",
@@ -296,14 +293,12 @@ export const ru = {
       "мнение важно для нас!"
   },
   emailVerification: {
-    header: "Пожалуйста подтвердите свой email",
     text:
       "Ссылка для подтверждения вашего электронного адреса была отправлена, пожалуйста кликните на нее и закончите регистрацию.\nПосле этого вы сможете зайти в свой аккаунт",
     sendLink: "Отправить новую ссылку?",
     signOut: "Выйти"
   },
   forgotPassword: {
-    header: "Страница восстановления пароля",
     linkSent: "Ссылка была успешно отправлена на ваш электронный адрес",
     somethingWrong: "Что-то пошло не так. Пожалуйста попробуйте снова",
     text: "Введите свой email и мы отправим вам ссылку для восстановления",
@@ -339,17 +334,14 @@ export const ru = {
     loading: "Загрузка"
   },
   personalCharts: {
-    header: "Графики",
     last100DaysCpm: "CPM за последние 100 дней",
     last100DaysAcc: "Точность за последние 100 дней"
   },
   signIn: {
-    header: "Войти",
     dontHaveAccount: "Нету аккаунта? Зарегистрироваться",
     forgotPassword: "Забыли пароль?"
   },
   signUp: {
-    header: "Зарегистрироваться",
     signUp: "Зарегистрироваться",
     haveAccount: "Уже есть аккаунт? Войти"
   }

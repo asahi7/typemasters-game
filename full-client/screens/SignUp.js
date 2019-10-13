@@ -24,7 +24,7 @@ export class SignUp extends React.Component {
     this.handleSignUp = this.handleSignUp.bind(this);
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     if (__DEV__) {
       console.log("User is " + (this.props.online ? "online" : "offline"));
     }
@@ -51,9 +51,6 @@ export class SignUp extends React.Component {
   render() {
     return (
       <View style={globalStyles.container}>
-        <View style={{ marginTop: 30 }}>
-          <Text style={globalStyles.header}>{i18n.t("signUp.header")}</Text>
-        </View>
         {this.state.errorMessage && (
           <Text style={{ color: "red" }}>{this.state.errorMessage}</Text>
         )}
@@ -73,17 +70,12 @@ export class SignUp extends React.Component {
           value={this.state.password}
         />
         <View style={globalStyles.normalButton}>
-          <Button
-            title={i18n.t("signUp.signUp")}
-            color={Commons.buttonColor}
-            onPress={this.handleSignUp}
-          />
+          <Button title={i18n.t("signUp.signUp")} onPress={this.handleSignUp} />
         </View>
         <View style={globalStyles.normalButton}>
           <Button
             onPress={() => this.props.navigation.navigate("SignIn")}
             title={i18n.t("signUp.haveAccount")}
-            color={Commons.buttonColor}
           />
         </View>
         <DropdownAlert

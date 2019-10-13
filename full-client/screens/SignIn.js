@@ -26,7 +26,7 @@ export class SignIn extends React.Component {
     this.handleSignIn = this.handleSignIn.bind(this);
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     if (__DEV__) {
       console.log("User is " + (this.props.online ? "online" : "offline"));
     }
@@ -73,9 +73,6 @@ export class SignIn extends React.Component {
   render() {
     return (
       <View style={globalStyles.container}>
-        <View style={{ marginTop: 30 }}>
-          <Text style={globalStyles.header}>{i18n.t("signIn.header")}</Text>
-        </View>
         {this.state.errorMessage && (
           <Text style={{ color: "red" }}>{this.state.errorMessage}</Text>
         )}
@@ -95,24 +92,18 @@ export class SignIn extends React.Component {
           value={this.state.password}
         />
         <View style={globalStyles.normalButton}>
-          <Button
-            onPress={this.handleSignIn}
-            title={i18n.t("common.signIn")}
-            color={Commons.buttonColor}
-          />
+          <Button onPress={this.handleSignIn} title={i18n.t("common.signIn")} />
         </View>
         <View style={globalStyles.normalButton}>
           <Button
             onPress={() => this.props.navigation.navigate("SignUp")}
             title={i18n.t("signIn.dontHaveAccount")}
-            color={Commons.buttonColor}
           />
         </View>
         <View style={globalStyles.normalButton}>
           <Button
             onPress={() => this.props.navigation.navigate("ForgotPassword")}
             title={i18n.t("signIn.forgotPassword")}
-            color={Commons.buttonColor}
           />
         </View>
         <DropdownAlert
