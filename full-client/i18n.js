@@ -30,8 +30,8 @@ export const en = {
   },
   main: {
     header: "Compete With Others And Increase Your Typing Speed",
-    yourGamesCount: "You played games today",
-    totalGamesCount: "Total played games today",
+    yourGamesCount: "Your games today",
+    totalGamesCount: "Total games today",
     lastGames: "Last games today",
     chooseLangText: "Choose your typing language and",
     playButton: "PLAY"
@@ -139,7 +139,7 @@ export const en = {
     noTextsLangOffline:
       "No texts exists in selected language during offline mode",
     modal: {
-      winner: "You are the winner!",
+      winner: "You are the Winner!",
       timeUp: "Time is up!",
       anonymGamesExpiredHeader: "Anonymous games limit expired!",
       anonymGamesExpired:
@@ -312,7 +312,7 @@ export const ru = {
     noTextsLangOffline:
       "К сожалению, у нас нет текста с выбранным языком в режиме оффлайн",
     modal: {
-      winner: "Вы победитель!",
+      winner: "Вы победили!",
       timeUp: "Время вышло!",
       anonymGamesExpiredHeader: "Лимит анонимных игр закончен!",
       anonymGamesExpired:
