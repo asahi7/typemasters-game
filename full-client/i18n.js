@@ -133,7 +133,7 @@ export const en = {
     returnSignIn: "Return to sign in page"
   },
   game: {
-    initText: "To start press Play",
+    initText: "Press Play",
     playingOffline: "Playing in offline mode",
     noTextsLang: "No texts with desired language are present",
     noTextsLangOffline:
@@ -306,7 +306,7 @@ export const ru = {
     returnSignIn: "Обратно на страницу входа"
   },
   game: {
-    initText: "Нажмите Старт чтобы начать играть",
+    initText: "Нажмите Играть",
     playingOffline: "Игра в режиме оффлайн",
     noTextsLang: "К сожалению, у нас нет текста с выбранным языком",
     noTextsLangOffline:
@@ -319,7 +319,7 @@ export const ru = {
         "Ваш лимит анонимных игр за сегодня был исчерпан, пожалуйста зарегистрируйтесь или подождите один день"
     },
     stop: "Стоп",
-    play: "Старт",
+    play: "Играть",
     position: "позиция",
     accuracy: "точность",
     youAre: "Вы",

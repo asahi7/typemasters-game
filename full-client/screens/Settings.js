@@ -95,11 +95,13 @@ export class Settings extends React.Component {
           return (
             <Picker
               selectedValue={val}
-              style={[{ width: 150, height: 100 }, styles.column]}
-              itemStyle={{
-                height: 100,
-                fontSize: FONTS.TABLE_HEADER_FONT
-              }}
+              style={[
+                {
+                  width: 150,
+                  height: 50
+                },
+                styles.column
+              ]}
               onValueChange={this.countrySelected}
             >
               {countryList.map(country => {
@@ -122,8 +124,7 @@ export class Settings extends React.Component {
             <Picker
               selectedValue={val}
               prompt={i18n.t("settings.selectTypingLanguage")}
-              style={[{ width: 150, height: 100 }, styles.column]}
-              itemStyle={{ height: 100, fontSize: FONTS.TABLE_HEADER_FONT }}
+              style={[{ width: 150, height: 50 }, styles.column]}
               onValueChange={this.textLanguageSelected}
             >
               {this.state.supportedLangs.map((lang, index) => {
@@ -374,9 +375,9 @@ export class Settings extends React.Component {
   render() {
     if (this.state.loading) return <Loading />;
     return (
-      <View>
+      <View style={globalStyles.container}>
         <ScrollView
-          style={{ marginTop: 10, marginBottom: 10 }}
+          style={globalStyles.scrollView}
           keyboardShouldPersistTaps={"always"}
         >
           <FlatList data={this.state.listElements} renderItem={renderItem} />

@@ -143,7 +143,7 @@ export class Leaderboard extends React.Component {
     if (this.state.loading) return <Loading />;
     return (
       <View style={globalStyles.container}>
-        <ScrollView style={{ marginTop: 10, marginBottom: 10 }}>
+        <ScrollView style={globalStyles.scrollView}>
           {!_.isEmpty(this.state.data.bestCpmTodayResults) && (
             <View style={{ marginTop: 10 }}>
               <Text style={globalStyles.tableHeader}>

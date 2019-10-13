@@ -13,14 +13,17 @@ export default class GameTopMenu extends React.Component {
             {i18n.t("game.position")}
           </Text>
         </View>
+        <View style={styles.gameStatusBarSeparator}></View>
         <View style={styles.gameStatusBarItem}>
           <Text style={styles.gameStatusBarItemText}>
             {this.props.timeLeft} {i18n.t("game.timeLeft")}
           </Text>
         </View>
+        <View style={styles.gameStatusBarSeparator}></View>
         <View style={styles.gameStatusBarItem}>
           <Text style={styles.gameStatusBarItemText}>{this.props.cpm} cpm</Text>
         </View>
+        <View style={styles.gameStatusBarSeparator}></View>
         <View style={[styles.gameStatusBarItem, { borderRightWidth: 0 }]}>
           <Text style={styles.gameStatusBarItemText}>
             {this.props.accuracy}% {i18n.t("game.accuracy")}
@@ -33,20 +36,20 @@ export default class GameTopMenu extends React.Component {
 
 const styles = StyleSheet.create({
   gameStatusBar: {
-    flex: 0.1,
-    flexDirection: "row",
-    marginTop: 50,
-    marginBottom: 30
-  },
-  gameStatusBarItem: {
-    paddingLeft: 3,
-    paddingRight: 3,
-    borderRightWidth: 1,
-    borderRightColor: "#62bcff",
-    borderLeftWidth: 1,
-    borderLeftColor: "#62bcff",
+    marginTop: 10,
+    marginBottom: 20,
+    alignSelf: "stretch",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    flexDirection: "row"
+  },
+  gameStatusBarItem: {},
+  gameStatusBarSeparator: {
+    height: 15,
+    width: 2,
+    marginLeft: 5,
+    marginRight: 5,
+    backgroundColor: "#E8E8E8"
   },
   gameStatusBarItemText: {
     fontSize: FONTS.TABLE_FONT

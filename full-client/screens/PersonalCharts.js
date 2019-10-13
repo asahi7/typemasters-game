@@ -144,7 +144,7 @@ export class PersonalCharts extends React.Component {
     if (this.state.loading) return <Loading />;
     return (
       <View style={globalStyles.container}>
-        <ScrollView style={{ marginTop: 10, marginBottom: 10 }}>
+        <ScrollView style={globalStyles.scrollView}>
           <View style={{ marginTop: 10 }}>
             <Text style={globalStyles.tableHeader}>
               {i18n.t("personalCharts.last100DaysCpm")}

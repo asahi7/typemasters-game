@@ -187,7 +187,7 @@ export class Main extends React.Component {
           </View>
         )}
         {this.state.data && (
-          <ScrollView style={{ marginTop: 10, marginBottom: 10 }}>
+          <ScrollView style={globalStyles.scrollView}>
             {/* TODO(aibek): add link to settings for language */}
             <View style={{ marginTop: 10, alignItems: "center" }}>
               <Text style={globalStyles.normalText}>

@@ -314,7 +314,7 @@ export class PersonalPage extends React.Component {
           </View>
         )}
         {this.state.userData && (
-          <ScrollView style={{ marginTop: 10, marginBottom: 10 }}>
+          <ScrollView style={globalStyles.scrollView}>
             <View style={{ marginTop: 10 }}>
               <Text style={globalStyles.tableHeader}>
                 {i18n.t("personalPage.general")}:

@@ -19,6 +19,23 @@ if (PixelRatio.get() <= 2) {
 const globalStyles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: "column",
+    alignItems: "stretch"
+  },
+  scrollView: {
+    flex: 1,
+    marginTop: 10,
+    marginBottom: 10,
+    paddingLeft: 10,
+    paddingRight: 10
+  },
+  gameView: {
+    flex: 1,
+    flexDirection: "column",
+    marginTop: 10,
+    marginBottom: 10,
+    paddingLeft: 10,
+    paddingRight: 10,
     alignItems: "center"
   },
   header: {
