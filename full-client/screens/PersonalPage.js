@@ -1,25 +1,25 @@
-import React from "react";
+import React from 'react'
 import {
   View,
   Text,
   Button,
   FlatList,
   AsyncStorage,
-  ScrollView
-} from "react-native";
-import firebase from "firebase";
-import WebAPI from "../WebAPI";
-import Loading from "./Loading";
-import Commons from "../Commons";
-import _ from "lodash";
-import globalStyles from "../styles";
-import moment from "moment";
-import DropdownAlert from "react-native-dropdownalert";
-import i18n from "i18n-js";
-import ConnectionContext from "../context/ConnnectionContext";
-import TypingLanguageContext from "../context/TypingLanguageContext";
-import { PersonalCharts } from "./PersonalCharts";
-import { prepareFlatListElements, renderItem } from "../utils/utils";
+  ScrollView,
+} from 'react-native'
+import firebase from 'firebase'
+import WebAPI from '../WebAPI'
+import Loading from './Loading'
+import Commons from '../Commons'
+import _ from 'lodash'
+import globalStyles from '../styles'
+import moment from 'moment'
+import DropdownAlert from 'react-native-dropdownalert'
+import i18n from 'i18n-js'
+import ConnectionContext from '../context/ConnnectionContext'
+import TypingLanguageContext from '../context/TypingLanguageContext'
+import { PersonalCharts } from './PersonalCharts'
+import { prepareFlatListElements, renderItem } from '../utils/utils'
 
 export default React.forwardRef((props, ref) => (
   <TypingLanguageContext.Consumer>
@@ -36,313 +36,309 @@ export default React.forwardRef((props, ref) => (
       </ConnectionContext.Consumer>
     )}
   </TypingLanguageContext.Consumer>
-));
+))
 
 export class PersonalPage extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super(props)
     this.state = {
       loading: true,
-      userData: null
-    };
-    this.handleSignOut = this.handleSignOut.bind(this);
-    this.updateScreen = this.updateScreen.bind(this);
-    this.getPersistentDataOffline = this.getPersistentDataOffline.bind(this);
-    this.getApiDataOnline = this.getApiDataOnline.bind(this);
+      userData: null,
+    }
+    this.handleSignOut = this.handleSignOut.bind(this)
+    this.updateScreen = this.updateScreen.bind(this)
+    this.getPersistentDataOffline = this.getPersistentDataOffline.bind(this)
+    this.getApiDataOnline = this.getApiDataOnline.bind(this)
     this.elementMapper = {
       nickname: {
-        key: i18n.t("personalPage.nickname"),
+        key: i18n.t('personalPage.nickname'),
         accessorObject: () => this.state,
-        valuePath: "userData.userInfo.nickname"
+        valuePath: 'userData.userInfo.nickname',
       },
       email: {
-        key: i18n.t("common.email"),
+        key: i18n.t('common.email'),
         accessorObject: () => this.state,
-        valuePath: "userData.userInfo.email"
+        valuePath: 'userData.userInfo.email',
       },
       country: {
-        key: i18n.t("common.country"),
+        key: i18n.t('common.country'),
         accessorObject: () => this.state,
-        valuePath: "userData.userInfo.country"
+        valuePath: 'userData.userInfo.country',
       },
       UID: {
-        key: "UID",
+        key: 'UID',
         accessorObject: () => this.state,
-        valuePath: "userData.userInfo.uid"
+        valuePath: 'userData.userInfo.uid',
       },
       typingLanguage: {
-        key: i18n.t("personalPage.typingLanguage"),
+        key: i18n.t('personalPage.typingLanguage'),
         accessorObject: () => this.props,
-        valuePath: "typingLanguage"
+        valuePath: 'typingLanguage',
       },
       totalGames: {
-        key: i18n.t("personalPage.totalGames"),
+        key: i18n.t('personalPage.totalGames'),
         accessorObject: () => this.state,
-        valuePath: "userData.totalRaces"
+        valuePath: 'userData.totalRaces',
       },
       averageCpm: {
-        key: i18n.t("personalPage.averageCpm"),
+        key: i18n.t('personalPage.averageCpm'),
         accessorObject: () => this.state,
-        valuePath: "userData.avgCpm",
-        preprocessor: val => val + " cpm"
+        valuePath: 'userData.avgCpm',
+        preprocessor: val => val + ' cpm',
       },
       averageAccuracy: {
-        key: i18n.t("personalPage.averageAccuracy"),
+        key: i18n.t('personalPage.averageAccuracy'),
         accessorObject: () => this.state,
-        valuePath: "userData.avgAccuracy",
-        preprocessor: val => val + " %"
+        valuePath: 'userData.avgAccuracy',
+        preprocessor: val => val + ' %',
       },
       averageCpm10: {
-        key: i18n.t("personalPage.averageCpm10"),
+        key: i18n.t('personalPage.averageCpm10'),
         accessorObject: () => this.state,
-        valuePath: "userData.lastAvgCpm",
-        preprocessor: val => val + " cpm"
+        valuePath: 'userData.lastAvgCpm',
+        preprocessor: val => val + ' cpm',
       },
       averageAccuracy10: {
-        key: i18n.t("personalPage.averageAccuracy10"),
+        key: i18n.t('personalPage.averageAccuracy10'),
         accessorObject: () => this.state,
-        valuePath: "userData.lastAvgAccuracy",
-        preprocessor: val => val + " %"
+        valuePath: 'userData.lastAvgAccuracy',
+        preprocessor: val => val + ' %',
       },
       gamesWon: {
-        key: i18n.t("personalPage.gamesWon"),
+        key: i18n.t('personalPage.gamesWon'),
         accessorObject: () => this.state,
-        valuePath: "userData.gamesWon"
+        valuePath: 'userData.gamesWon',
       },
       bestResult: {
-        key: i18n.t("personalPage.bestResult"),
+        key: i18n.t('personalPage.bestResult'),
         accessorObject: () => this.state,
-        valuePath: "userData.bestResult",
-        preprocessor: val => val + " cpm"
+        valuePath: 'userData.bestResult',
+        preprocessor: val => val + ' cpm',
       },
       lastGame: {
-        key: i18n.t("personalPage.lastGame"),
+        key: i18n.t('personalPage.lastGame'),
         accessorObject: () => this.state,
-        valuePath: "userData.lastPlayed",
-        preprocessor: val => moment(val).format("HH:mm, D MMMM, YYYY")
+        valuePath: 'userData.lastPlayed',
+        preprocessor: val => moment(val).format('HH:mm, D MMMM, YYYY'),
       },
       lastGameCpm: {
-        key: i18n.t("personalPage.lastGameCpm"),
+        key: i18n.t('personalPage.lastGameCpm'),
         accessorObject: () => this.state,
-        valuePath: "userData.lastScore",
-        preprocessor: val => val + " cpm"
+        valuePath: 'userData.lastScore',
+        preprocessor: val => val + ' cpm',
       },
       lastGameAccuracy: {
-        key: i18n.t("personalPage.lastGameAccuracy"),
+        key: i18n.t('personalPage.lastGameAccuracy'),
         accessorObject: () => this.state,
-        valuePath: "userData.lastAccuracy",
-        preprocessor: val => val + " %"
+        valuePath: 'userData.lastAccuracy',
+        preprocessor: val => val + ' %',
       },
       firstGameCpm: {
-        key: i18n.t("personalPage.firstGameCpm"),
+        key: i18n.t('personalPage.firstGameCpm'),
         accessorObject: () => this.state,
-        valuePath: "userData.firstRaceData.racePlayers[0].cpm",
-        preprocessor: val => val + " cpm"
+        valuePath: 'userData.firstRaceData.racePlayers[0].cpm',
+        preprocessor: val => val + ' cpm',
       },
       firstGame: {
-        key: i18n.t("personalPage.firstGame"),
+        key: i18n.t('personalPage.firstGame'),
         accessorObject: () => this.state,
-        valuePath: "userData.firstRaceData.date",
-        preprocessor: val => moment(val).format("HH:mm, D MMMM, YYYY")
-      }
-    };
+        valuePath: 'userData.firstRaceData.date',
+        preprocessor: val => moment(val).format('HH:mm, D MMMM, YYYY'),
+      },
+    }
   }
 
-  async componentDidMount() {
+  async componentDidMount () {
     this.willFocusSubscription = this.props.navigation.addListener(
-      "willFocus",
+      'willFocus',
       () => {
-        this.updateScreen();
-      }
-    );
-    this.props.navigation.setParams({ handleSignOut: this.handleSignOut });
+        this.updateScreen()
+      },
+    )
+    this.props.navigation.setParams({handleSignOut: this.handleSignOut})
     if (__DEV__) {
-      console.log("User is " + (this.props.online ? "online" : "offline"));
+      console.log('User is ' + (this.props.online ? 'online' : 'offline'))
     }
     if (this.props.online) {
       this.getApiDataOnline(firebase.auth().currentUser).then(() => {
         this.setState({
-          loading: false
-        });
-      });
+          loading: false,
+        })
+      })
     } else {
       this.getPersistentDataOffline().then(() => {
         this.setState({
-          loading: false
-        });
-      });
+          loading: false,
+        })
+      })
     }
   }
 
-  componentWillUnmount() {
-    this.willFocusSubscription.remove();
+  componentWillUnmount () {
+    this.willFocusSubscription.remove()
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate (prevProps, prevState) {
     if (
       prevState.userData !== this.state.userData ||
       prevProps.typingLanguage !== this.props.typingLanguage
     ) {
-      const listElements = prepareFlatListElements(this.elementMapper);
+      const listElements = prepareFlatListElements(this.elementMapper)
       this.setState({
-        listElements
-      });
+        listElements,
+      })
     }
   }
 
-  async updateScreen() {
+  async updateScreen () {
     if (__DEV__) {
-      console.log("Personal page updated screen");
+      console.log('Personal page updated screen')
     }
     if (this.props.online) {
-      this.getApiDataOnline(firebase.auth().currentUser);
+      this.getApiDataOnline(firebase.auth().currentUser)
     } else {
-      this.getPersistentDataOffline();
+      this.getPersistentDataOffline()
     }
   }
 
-  getPersistentDataOffline() {
-    return AsyncStorage.getItem("personalPage-userData").then(value => {
+  getPersistentDataOffline () {
+    return AsyncStorage.getItem('personalPage-userData').then(value => {
       if (!value) {
         this.setState({
-          userData: null
-        });
+          userData: null,
+        })
       } else {
-        const userData = JSON.parse(value);
+        const userData = JSON.parse(value)
         this.setState({
-          userData
-        });
+          userData,
+        })
       }
-    });
+    })
   }
 
-  getApiDataOnline(user) {
-    let userData = {};
+  getApiDataOnline (user) {
+    let userData = {}
     // This is done because user might not exist on the database and will create it first
-    return WebAPI.getUserInfo(user.uid)
-      .then(result => {
-        userData.userInfo = result;
-      })
-      .then(() => {
-        return Promise.all([
-          WebAPI.getRaceCount(user.uid, this.props.typingLanguage),
-          WebAPI.getAverageCpm(user.uid, this.props.typingLanguage),
-          WebAPI.getLatestAverageCpm(user.uid, this.props.typingLanguage),
-          WebAPI.getLastPlayedGame(user.uid, this.props.typingLanguage),
-          WebAPI.getBestResult(user.uid, this.props.typingLanguage),
-          WebAPI.getGamesWon(user.uid, this.props.typingLanguage),
-          WebAPI.getFirstRace(user.uid, this.props.typingLanguage),
-          WebAPI.getAverageAccuracy(user.uid, this.props.typingLanguage),
-          WebAPI.getLastAverageAccuracy(user.uid, this.props.typingLanguage)
-        ]).then(results => {
-          // TODO(aibek): remove .result from each response
-          userData = {
-            ...userData,
-            totalRaces: results[0].result,
-            avgCpm: Math.round(
-              results[1].result !== null ? results[1].result : null
-            ),
-            lastAvgCpm: Math.round(results[2].result),
-            lastPlayed:
-              results[3].result !== null ? results[3].result.date : null,
-            lastScore:
-              results[3].result !== null ? results[3].result.cpm : null,
-            lastAccuracy:
-              results[3].result !== null ? results[3].result.accuracy : null,
-            bestResult: results[4].result,
-            gamesWon: results[5].result,
-            firstRaceData: results[6].result,
-            avgAccuracy: results[7].result,
-            lastAvgAccuracy: results[8].result
-          };
-        });
-      })
-      .then(() => {
-        return AsyncStorage.setItem(
-          "personalPage-userData",
-          JSON.stringify(userData)
-        ).then(() => {
-          this.setState({
-            userData,
-            loading: false
-          });
-        });
-      })
-      .catch(error => {
-        if (__DEV__) {
-          console.log(error);
+    return WebAPI.getUserInfo(user.uid).then(result => {
+      userData.userInfo = result
+    }).then(() => {
+      return Promise.all([
+        WebAPI.getRaceCount(user.uid, this.props.typingLanguage),
+        WebAPI.getAverageCpm(user.uid, this.props.typingLanguage),
+        WebAPI.getLatestAverageCpm(user.uid, this.props.typingLanguage),
+        WebAPI.getLastPlayedGame(user.uid, this.props.typingLanguage),
+        WebAPI.getBestResult(user.uid, this.props.typingLanguage),
+        WebAPI.getGamesWon(user.uid, this.props.typingLanguage),
+        WebAPI.getFirstRace(user.uid, this.props.typingLanguage),
+        WebAPI.getAverageAccuracy(user.uid, this.props.typingLanguage),
+        WebAPI.getLastAverageAccuracy(user.uid, this.props.typingLanguage),
+      ]).then(results => {
+        // TODO(aibek): remove .result from each response
+        userData = {
+          ...userData,
+          totalRaces: results[0].result,
+          avgCpm: Math.round(
+            results[1].result !== null ? results[1].result : null,
+          ),
+          lastAvgCpm: Math.round(results[2].result),
+          lastPlayed:
+            results[3].result !== null ? results[3].result.date : null,
+          lastScore:
+            results[3].result !== null ? results[3].result.cpm : null,
+          lastAccuracy:
+            results[3].result !== null ? results[3].result.accuracy : null,
+          bestResult: results[4].result,
+          gamesWon: results[5].result,
+          firstRaceData: results[6].result,
+          avgAccuracy: results[7].result,
+          lastAvgAccuracy: results[8].result,
         }
-        throw error;
-      });
+      })
+    }).then(() => {
+      return AsyncStorage.setItem(
+        'personalPage-userData',
+        JSON.stringify(userData),
+      ).then(() => {
+        this.setState({
+          userData,
+          loading: false,
+        })
+      })
+    }).catch(error => {
+      if (__DEV__) {
+        console.log(error)
+      }
+      throw error
+    })
   }
 
-  handleSignOut() {
+  handleSignOut () {
     if (this.props.online) {
-      firebase
-        .auth()
-        .signOut()
-        .then(
-          function() {
-            if (__DEV__) {
-              console.log("Signed out");
-            }
-          },
-          function(error) {
-            if (__DEV__) {
-              console.log(error);
-            }
+      firebase.auth().signOut().then(
+        function () {
+          if (__DEV__) {
+            console.log('Signed out')
           }
-        );
+        },
+        function (error) {
+          if (__DEV__) {
+            console.log(error)
+          }
+        },
+      )
     } else {
       this.dropdown.alertWithType(
-        "error",
-        i18n.t("common.error"),
-        i18n.t("personalPage.cantSignOutOffline")
-      );
+        'error',
+        i18n.t('common.error'),
+        i18n.t('personalPage.cantSignOutOffline'),
+      )
     }
   }
 
-  render() {
-    if (this.state.loading) return <Loading />;
+  render () {
+    if (this.state.loading) return <Loading/>
     return (
       <View style={globalStyles.container}>
-        {!this.state.userData && (
-          <View>
-            <Text style={globalStyles.tableHeader}>
-              {i18n.t("common.noData")}
-            </Text>
-          </View>
-        )}
-        {this.state.userData && (
-          <ScrollView style={globalStyles.scrollView}>
-            <View style={{ marginTop: 10 }}>
+        <View style={globalStyles.inside_container}>
+          {!this.state.userData && (
+            <View>
               <Text style={globalStyles.tableHeader}>
-                {i18n.t("personalPage.general")}:
-              </Text>
-              <FlatList
-                data={this.state.listElements}
-                renderItem={renderItem}
-              />
-            </View>
-            <View style={{ marginTop: 10 }}>
-              <Text style={[globalStyles.normalText, { color: "red" }]}>
-                {i18n.t("personalPage.dataMayNotUpdate")}
+                {i18n.t('common.noData')}
               </Text>
             </View>
-            <View style={globalStyles.normalButton}>
-              <Button
-                onPress={() => this.props.navigation.navigate("PersonalCharts")}
-                title={i18n.t("personalPage.showCharts")}
-              />
-            </View>
-          </ScrollView>
-        )}
-        <DropdownAlert
-          ref={ref => {
-            this.dropdown = ref;
-          }}
-        />
+          )}
+          {this.state.userData && (
+            <ScrollView style={globalStyles.scrollView}>
+              <View style={{marginTop: 10}}>
+                <Text style={globalStyles.tableHeader}>
+                  {i18n.t('personalPage.general')}:
+                </Text>
+                <FlatList
+                  data={this.state.listElements}
+                  renderItem={renderItem}
+                />
+              </View>
+              <View style={{marginTop: 10}}>
+                <Text style={[globalStyles.normalText, {color: 'red'}]}>
+                  {i18n.t('personalPage.dataMayNotUpdate')}
+                </Text>
+              </View>
+              <View style={globalStyles.normalButton}>
+                <Button
+                  onPress={() => this.props.navigation.navigate(
+                    'PersonalCharts')}
+                  title={i18n.t('personalPage.showCharts')}
+                />
+              </View>
+            </ScrollView>
+          )}
+          <DropdownAlert
+            ref={ref => {
+              this.dropdown = ref
+            }}
+          />
+        </View>
       </View>
-    );
+    )
   }
 }

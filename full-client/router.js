@@ -46,14 +46,14 @@ const MainStack = createStackNavigator(
     Main: {
       screen: Main,
       navigationOptions: {
-        headerTitle: mainLabel
+        headerTransparent: true
       }
     },
     Game: {
       screen: Game,
       navigationOptions: ({ navigation }) => {
         return {
-          headerTitle: gameLabel,
+          headerTransparent: true,
           headerRight: (
             <View style={{ marginRight: 10 }}>
               {navigation.getParam("gamePlaying") === true ? (
@@ -81,7 +81,7 @@ const LeaderboardStack = createStackNavigator(
     Leaderboard: {
       screen: Leaderboard,
       navigationOptions: {
-        headerTitle: leaderboardLabel
+        headerTransparent: true
       }
     }
   },
@@ -94,7 +94,7 @@ const SettingsStack = createStackNavigator(
       screen: Settings,
       navigationOptions: ({ navigation }) => {
         return {
-          headerTitle: settingsLabel,
+          headerTransparent: true,
           headerRight: (
             <View style={{ marginRight: 10 }}>
               <Button
@@ -117,7 +117,7 @@ const AboutStack = createStackNavigator(
     About: {
       screen: About,
       navigationOptions: {
-        headerTitle: aboutLabel
+        headerTransparent: true
       }
     }
   },
@@ -157,24 +157,28 @@ const AuthStack = createStackNavigator(
     SignUp: {
       screen: SignUp,
       navigationOptions: {
+        headerTransparent: true,
         headerTitle: signUpLabel
       }
     },
     SignIn: {
       screen: SignIn,
       navigationOptions: {
+        headerTransparent: true,
         headerTitle: signInLabel
       }
     },
     EmailVerificationPage: {
       screen: EmailVerificationPage,
       navigationOptions: {
+        headerTransparent: true,
         headerTitle: confirmEmailLabel
       }
     },
     ForgotPassword: {
       screen: ForgotPassword,
       navigationOptions: {
+        headerTransparent: true,
         headerTitle: forgotPasswordLabel
       }
     }

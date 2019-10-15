@@ -23,6 +23,15 @@ const globalStyles = StyleSheet.create({
     alignItems: "stretch",
     backgroundColor: "#71B6D5"
   },
+  inside_container: {
+    flex: 1,
+    marginTop: 100,
+    marginBottom: 50,
+    paddingLeft: 30,
+    paddingRight: 30,
+    flexDirection: "column",
+    alignItems: "stretch",
+  },
   scrollView: {
     flex: 1,
     marginTop: 10,
@@ -41,21 +50,21 @@ const globalStyles = StyleSheet.create({
   },
   header: {
     fontSize: FONTS.HEADER_FONT,
-    color: "#ed4747",
+    color: "#FFFFFF",
     letterSpacing: 1,
     textAlign: "center",
     fontWeight: "700"
   },
   tableHeader: {
     fontSize: FONTS.TABLE_HEADER_FONT,
-    color: "#7f1717",
+    color: "#FFFFFF",
     letterSpacing: 1,
     textAlign: "center",
     fontWeight: "700"
   },
   normalText: {
     fontSize: FONTS.NORMAL_TEXT_FONT,
-    color: "#340303",
+    color: "#FFFFFF",
     textAlign: "center",
     paddingLeft: 5,
     paddingRight: 5,
@@ -74,7 +83,7 @@ const globalStyles = StyleSheet.create({
   column: {
     marginLeft: 10,
     marginRight: 10,
-    color: "#340303",
+    color: "#FFFFFF",
     fontSize: FONTS.TABLE_FONT
   },
   loadingContainer: {
