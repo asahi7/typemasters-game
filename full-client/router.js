@@ -282,7 +282,21 @@ const Tabs = createBottomTabNavigator(
       }
     }
   },
-  { initialRouteName: "Main" }
+  { initialRouteName: "Main",
+    tabBarOptions: {
+      activeTintColor: '#7C4DFF',
+      inactiveTintColor: '#FFFFFF',
+
+      tabStyle: {
+        height: 48,
+        alignItems: 'center',
+        justifyContent: 'center',
+      },
+      style: {
+        backgroundColor: '#71B6D5',
+      },
+    },
+  }
 );
 
 const RootStack = createStackNavigator({

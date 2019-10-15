@@ -69,10 +69,10 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#00000080"
+    backgroundColor: "#71B6D5"
   },
   modalStyle: {
-    backgroundColor: "#fff",
+    backgroundColor: "#71B6D5",
     padding: 20,
     width: 320,
     height: 500,

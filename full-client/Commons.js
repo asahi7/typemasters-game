@@ -2,5 +2,5 @@
 
 export default {
   buttonColor: "#841584",
-  bgColors: ["#fff"]
+  bgColors: ["#71B6D5"]
 };

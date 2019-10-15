@@ -20,7 +20,8 @@ const globalStyles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: "column",
-    alignItems: "stretch"
+    alignItems: "stretch",
+    backgroundColor: "#71B6D5"
   },
   scrollView: {
     flex: 1,
