@@ -98,6 +98,12 @@ const globalStyles = StyleSheet.create({
     alignSelf: "stretch",
     alignItems: "center",
     justifyContent: "center"
+  },
+  backgroundImage: {
+    flex: 1,
+    alignSelf: 'stretch',
+    width: '100%',
+    height: '100%'
   }
 });
 

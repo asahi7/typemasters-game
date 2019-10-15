@@ -2,6 +2,8 @@ import React from 'react'
 import {
   View,
   Text,
+  Image,
+  ImageBackground,
   TouchableOpacity,
   StyleSheet,
   ScrollView,
@@ -169,107 +171,92 @@ export class Main extends React.Component {
     if (this.state.loading) return <Loading/>
     return (
       <View style={globalStyles.container}>
-        <View style={globalStyles.inside_container}>
-          <StatusBar barStyle="dark-content"/>
-          <View style={{marginTop: 30}}>
-            <Text style={globalStyles.header}>{i18n.t('main.header')}</Text>
-          </View>
-          {!this.state.data && (
-            <View>
-              <Text style={globalStyles.tableHeader}>
-                {i18n.t('common.noData')}
-              </Text>
-            </View>
-          )}
-          {this.state.data && (
-            <ScrollView style={globalStyles.scrollView}>
-              {/* TODO(aibek): add link to settings for language */}
-              <View style={{marginTop: 10, alignItems: 'center'}}>
-                <Text style={globalStyles.normalText}>
-                  {i18n.t('main.chooseLangText')}
-                </Text>
-                <TouchableOpacity
-                  style={styles.playButton}
-                  onPress={this.handlePlayPressed}
-                >
-                  <Text style={styles.playButtonText}>
-                    {i18n.t('main.playButton')}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              {!this.state.authenticated && (
-                <View style={{marginTop: 10}}>
-                  <Text style={[globalStyles.normalText, {color: 'red'}]}>
-                    {i18n.t('common.signInToSave')}
-                  </Text>
-                </View>
-              )}
-              {this.state.authenticated && (
-                <View style={{marginTop: 10}}>
-                  <Text style={globalStyles.tableHeader}>
-                    {i18n.t('main.yourGamesCount')}:{' '}
-                    {this.state.data.gamesPlayedCntUser}
-                  </Text>
-                </View>
-              )}
-              <View style={{marginTop: 10}}>
+        <ImageBackground source={require('./img/bkg.png')}
+                         style={globalStyles.backgroundImage}>
+          <View style={globalStyles.inside_container}>
+            <StatusBar barStyle="dark-content"/>
+            <View style={{marginTop: 70}}/>
+            {!this.state.data && (
+              <View>
                 <Text style={globalStyles.tableHeader}>
-                  {i18n.t('main.totalGamesCount')}:{' '}
-                  {this.state.data.gamesPlayedCnt}
+                  {i18n.t('common.noData')}
                 </Text>
               </View>
-              {/* TODO(aibek): fill out last played games from API */}
-              {!_.isEmpty(this.state.data.lastGames) && (
-                <View style={{marginTop: 20}}>
-                  <Text style={globalStyles.tableHeader}>
-                    {i18n.t('main.lastGames')}
-                  </Text>
-                  {this.state.data.lastGames.map((result, i) => {
-                    return (
-                      <View style={globalStyles.row} key={i}>
-                        <Text style={globalStyles.column}>
-                          {result.user.nickname
-                            ? result.user.nickname
-                            : 'noname'}
-                        </Text>
-                        <Text style={globalStyles.column}>
-                          {result.user.country
-                            ? result.user.country
-                            : 'not specified'}
-                        </Text>
-                        <Text style={globalStyles.column}>{result.cpm}</Text>
-                        <Text style={globalStyles.column}>
-                          {moment(result.race.date).fromNow()}
-                        </Text>
-                      </View>
-                    )
-                  })}
+            )}
+            {this.state.data && (
+              <ScrollView style={globalStyles.scrollView}>
+                {/* TODO(aibek): add link to settings for language */}
+                <View style={{marginTop: 10, alignItems: 'center'}}>
+                  <Image source={require('./img/bkg_txt.png')}/>
                 </View>
-              )}
-            </ScrollView>
-          )}
-        </View>
+                <View style={{marginTop: 200}}/>
+                <View style={{marginTop: 10, alignItems: 'center'}}>
+                  <TouchableOpacity
+                    onPress={this.handlePlayPressed}
+                  >
+                    <Image source={require('./img/play_btn.png')} style={styles.button}/>
+                  </TouchableOpacity>
+                </View>
+                <View style={{marginTop: 50}}/>
+                {!this.state.authenticated && (
+                  <View style={{marginTop: 10}}>
+                    <Image source={require('./img/signin_rem.png')}/>
+                  </View>
+                )}
+                {this.state.authenticated && (
+                  <View style={{marginTop: 10}}>
+                    <Text style={globalStyles.tableHeader}>
+                      {i18n.t('main.yourGamesCount')}:{' '}
+                      {this.state.data.gamesPlayedCntUser}
+                    </Text>
+                  </View>
+                )}
+                <View style={{marginTop: 10}}>
+                  <Text style={globalStyles.tableHeader}>
+                    {i18n.t('main.totalGamesCount')}:{' '}
+                    {this.state.data.gamesPlayedCnt}
+                  </Text>
+                </View>
+                {/* TODO(aibek): fill out last played games from API */}
+                {!_.isEmpty(this.state.data.lastGames) && (
+                  <View style={{marginTop: 20}}>
+                    <Text style={globalStyles.tableHeader}>
+                      {i18n.t('main.lastGames')}
+                    </Text>
+                    {this.state.data.lastGames.map((result, i) => {
+                      return (
+                        <View style={globalStyles.row} key={i}>
+                          <Text style={globalStyles.column}>
+                            {result.user.nickname
+                              ? result.user.nickname
+                              : 'noname'}
+                          </Text>
+                          <Text style={globalStyles.column}>
+                            {result.user.country
+                              ? result.user.country
+                              : 'not specified'}
+                          </Text>
+                          <Text style={globalStyles.column}>{result.cpm}</Text>
+                          <Text style={globalStyles.column}>
+                            {moment(result.race.date).fromNow()}
+                          </Text>
+                        </View>
+                      )
+                    })}
+                  </View>
+                )}
+              </ScrollView>
+            )}
+          </View>
+        </ImageBackground>
       </View>
     )
   }
 }
 
 const styles = StyleSheet.create({
-  playButton: {
-    borderWidth: 1,
-    borderColor: '#7f1717',
+  button: {
     alignItems: 'center',
     justifyContent: 'center',
-    minWidth: 150,
-    height: 100,
-    marginTop: 10,
-    backgroundColor: '#ed4747',
-    borderRadius: 10,
-    paddingLeft: 15,
-    paddingRight: 15,
-  },
-  playButtonText: {
-    color: '#fff',
-    fontSize: 40,
   },
 })

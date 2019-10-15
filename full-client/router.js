@@ -297,7 +297,7 @@ const Tabs = createBottomTabNavigator(
         justifyContent: 'center',
       },
       style: {
-        backgroundColor: '#71B6D5',
+        backgroundColor: '#53A4D0'
       },
     },
   }
