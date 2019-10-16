@@ -200,7 +200,6 @@ export class Main extends React.Component {
                 <View style={{marginTop: 50}}/>
                 {!this.state.authenticated && (
                   <View style={{marginTop: 10}}>
-                    <Image source={require('./img/signin_rem.png')}/>
                   </View>
                 )}
                 {this.state.authenticated && (

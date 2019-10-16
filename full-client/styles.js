@@ -58,6 +58,7 @@ const globalStyles = StyleSheet.create({
   tableHeader: {
     fontSize: FONTS.TABLE_HEADER_FONT,
     color: "#FFFFFF",
+    fontFamily:"monospace",
     letterSpacing: 1,
     textAlign: "center",
     fontWeight: "700"
@@ -65,6 +66,8 @@ const globalStyles = StyleSheet.create({
   normalText: {
     fontSize: FONTS.NORMAL_TEXT_FONT,
     color: "#FFFFFF",
+    fontFamily:"monospace",
+    fontWeight: "bold",
     textAlign: "center",
     paddingLeft: 5,
     paddingRight: 5,
@@ -104,7 +107,23 @@ const globalStyles = StyleSheet.create({
     alignSelf: 'stretch',
     width: '100%',
     height: '100%'
-  }
+  },
+  raceTextView: {
+    flex: 3,
+    flexDirection: 'column',
+    padding: 10,
+    paddingBottom: 30,
+  },
+  bigText: {
+    color: "#FFFFFF",
+    fontFamily:"monospace",
+    fontSize: 20,
+  },
+  smallText: {
+    color: "#FFFFFF",
+    fontFamily:"monospace",
+    fontSize: 10,
+  },
 });
 
 export { globalStyles as default, globalStyles, FONTS };

@@ -548,8 +548,8 @@ export class Game extends React.Component {
               refresh={this.state.gamePlaying}
               accuracyHandler={this.accuracyHandler}
             />
-            <ScrollView style={styles.raceTextView}>
-              <Text style={styles.raceText}>{this.state.text}</Text>
+            <ScrollView style={globalStyles.raceTextView}>
+              <Text style={globalStyles.bigText}>{this.state.text}</Text>
             </ScrollView>
             <DropdownAlert
               ref={ref => {
@@ -562,15 +562,3 @@ export class Game extends React.Component {
     )
   }
 }
-
-const styles = StyleSheet.create({
-  raceTextView: {
-    flex: 3,
-    flexDirection: 'column',
-    padding: 10,
-    paddingBottom: 30,
-  },
-  raceText: {
-    fontSize: 20,
-  },
-})

@@ -6,11 +6,11 @@ export default class Hr extends React.Component {
     return (
       <View
         style={{
-          borderBottomColor: 'black',
+          borderBottomColor: 'transparent',
           borderBottomWidth: 1,
           marginTop: 5,
           marginBottom: 5,
-          borderColor: '#666',
+          borderColor: 'transparent',
           width: '80%',
           alignSelf: 'center'
         }}
