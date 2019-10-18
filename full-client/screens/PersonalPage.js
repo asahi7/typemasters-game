@@ -5,7 +5,7 @@ import {
   Button,
   FlatList,
   AsyncStorage,
-  ScrollView,
+  ScrollView, TouchableOpacity,
 } from 'react-native'
 import firebase from 'firebase'
 import WebAPI from '../WebAPI'
@@ -323,12 +323,14 @@ export class PersonalPage extends React.Component {
                   {i18n.t('personalPage.dataMayNotUpdate')}
                 </Text>
               </View>
-              <View style={globalStyles.normalButton}>
-                <Button
+              <View style={globalStyles.smallButtonContainer}>
+                <TouchableOpacity
                   onPress={() => this.props.navigation.navigate(
                     'PersonalCharts')}
-                  title={i18n.t('personalPage.showCharts')}
-                />
+                >
+                  <Text style={globalStyles.smallButton}>{i18n.t(
+                    'personalPage.showCharts')}</Text>
+                </TouchableOpacity>
               </View>
             </ScrollView>
           )}

@@ -150,7 +150,7 @@ const PersonalPageStack = createStackNavigator(
       screen: PersonalPage,
       navigationOptions: ({navigation}) => {
         return {
-          headerTitle: personalPageLabel,
+          headerTransparent: true,
           headerTitleStyle: {
             color: 'white',
           },
@@ -159,7 +159,7 @@ const PersonalPageStack = createStackNavigator(
               <TouchableOpacity
                 onPress={() => navigation.getParam('handleSignOut')()}
               >
-                <Text style={globalStyles.smallButton}>={i18n.t(
+                <Text style={globalStyles.smallButton}>{i18n.t(
                   'personalPage.signOut')}</Text>
               </TouchableOpacity>
             </View>
@@ -170,7 +170,7 @@ const PersonalPageStack = createStackNavigator(
     PersonalCharts: {
       screen: PersonalCharts,
       navigationOptions: {
-        headerTitle: personalChartsLabel,
+        headerTransparent: true,
         headerTitleStyle: {
           color: 'white',
         },

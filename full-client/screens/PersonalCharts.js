@@ -9,6 +9,7 @@ import PureChart from 'react-native-pure-chart'
 import i18n from 'i18n-js'
 import ConnectionContext from '../context/ConnnectionContext'
 import TypingLanguageContext from '../context/TypingLanguageContext'
+import Hr from '../components/Hr'
 
 export default React.forwardRef((props, ref) => (
   <TypingLanguageContext.Consumer>
@@ -147,12 +148,15 @@ export class PersonalCharts extends React.Component {
               <Text style={globalStyles.tableHeader}>
                 {i18n.t('personalCharts.last100DaysCpm')}
               </Text>
+              <Hr/>
               <PureChart data={this.state.cpmData} type="line"/>
             </View>
+            <Hr/>
             <View style={{marginTop: 10}}>
               <Text style={globalStyles.tableHeader}>
                 {i18n.t('personalCharts.last100DaysAcc')}
               </Text>
+              <Hr/>
               <PureChart data={this.state.accData} type="line"/>
             </View>
           </ScrollView>
