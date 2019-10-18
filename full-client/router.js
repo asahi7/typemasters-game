@@ -31,6 +31,7 @@ import {
 import { en, ru } from './i18n'
 import { gameStyles } from './styles'
 import * as Localization from 'expo-localization'
+import globalStyles from './styles'
 
 i18n.fallbacks = true
 i18n.translations = {en, ru, kk: ru}
@@ -64,22 +65,25 @@ const MainStack = createStackNavigator(
           headerRight: (
             <View style={{marginRight: 10}}>
               {navigation.getParam('gamePlaying') === true ? (
-                <View style={{marginTop: 10, alignItems: 'center'}}>
+                < View style={globalStyles.smallButtonContainer}>
                   <TouchableOpacity
                     onPress={() => navigation.getParam('playButtonPressed')()}
                   >
-                    <Image source={require('./screens/img/stop_sm_btn.webp')}/>
+                    <Text style={globalStyles.smallButton}>{i18n.t(
+                      'game.stop')}</Text>
                   </TouchableOpacity>
                 </View>
 
               ) : (
-                <View style={{marginTop: 10, alignItems: 'center'}}>
+                < View style={globalStyles.smallButtonContainer}>
                   <TouchableOpacity
                     onPress={() => navigation.getParam('playButtonPressed')()}
                   >
-                    <Image source={require('./screens/img/play_sm_btn.webp')}/>
+                    <Text style={globalStyles.smallButton}>{i18n.t(
+                      'game.play')}</Text>
                   </TouchableOpacity>
                 </View>
+
               )}
             </View>
           ),
@@ -110,11 +114,12 @@ const SettingsStack = createStackNavigator(
         return {
           headerTransparent: true,
           headerRight: (
-            <View style={{marginTop: 10, marginRight: 20, alignItems: 'center'}}>
+            <View style={globalStyles.smallButtonContainer}>
               <TouchableOpacity
                 onPress={() => navigation.getParam('saveSettings')()}
               >
-                <Image source={require('./screens/img/save_sm_btn.webp')}/>
+                <Text style={globalStyles.smallButton}>{i18n.t(
+                  'settings.save')}</Text>
               </TouchableOpacity>
             </View>
           ),
@@ -147,14 +152,16 @@ const PersonalPageStack = createStackNavigator(
         return {
           headerTitle: personalPageLabel,
           headerTitleStyle: {
-            color: 'white'
+            color: 'white',
           },
           headerRight: (
-            <View style={{marginRight: 10}}>
-              <Button
+            <View style={globalStyles.smallButtonContainer}>
+              <TouchableOpacity
                 onPress={() => navigation.getParam('handleSignOut')()}
-                title={i18n.t('personalPage.signOut')}
-              />
+              >
+                <Text style={globalStyles.smallButton}>={i18n.t(
+                  'personalPage.signOut')}</Text>
+              </TouchableOpacity>
             </View>
           ),
         }
@@ -165,8 +172,8 @@ const PersonalPageStack = createStackNavigator(
       navigationOptions: {
         headerTitle: personalChartsLabel,
         headerTitleStyle: {
-          color: 'white'
-        }
+          color: 'white',
+        },
       },
     },
   },
@@ -181,8 +188,8 @@ const AuthStack = createStackNavigator(
         headerTransparent: true,
         headerTitle: signUpLabel,
         headerTitleStyle: {
-          color: 'white'
-        }
+          color: 'white',
+        },
       },
     },
     SignIn: {
@@ -191,8 +198,8 @@ const AuthStack = createStackNavigator(
         headerTransparent: true,
         headerTitle: signInLabel,
         headerTitleStyle: {
-          color: 'white'
-        }
+          color: 'white',
+        },
       },
     },
     EmailVerificationPage: {
@@ -201,8 +208,8 @@ const AuthStack = createStackNavigator(
         headerTransparent: true,
         headerTitle: confirmEmailLabel,
         headerTitleStyle: {
-          color: 'white'
-        }
+          color: 'white',
+        },
       },
     },
     ForgotPassword: {
@@ -211,8 +218,8 @@ const AuthStack = createStackNavigator(
         headerTransparent: true,
         headerTitle: forgotPasswordLabel,
         headerTitleStyle: {
-          color: 'white'
-        }
+          color: 'white',
+        },
       },
     },
   },
@@ -256,7 +263,7 @@ const Tabs = createBottomTabNavigator(
       navigationOptions: {
         headerTitle: leaderboardLabel,
         headerTitleStyle: {
-          color: 'white'
+          color: 'white',
         },
         tabBarLabel: (() => {
           leaderboardLabel
