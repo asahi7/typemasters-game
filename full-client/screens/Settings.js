@@ -99,6 +99,7 @@ export class Settings extends React.Component {
                 {
                   width: 150,
                   height: 50,
+                  color: "white"
                 },
                 styles.column,
               ]}
@@ -124,7 +125,7 @@ export class Settings extends React.Component {
             <Picker
               selectedValue={val}
               prompt={i18n.t('settings.selectTypingLanguage')}
-              style={[{width: 150, height: 50}, styles.column]}
+              style={[{width: 150, height: 50, color: "white"}, styles.column]}
               onValueChange={this.textLanguageSelected}
             >
               {this.state.supportedLangs.map((lang, index) => {

@@ -4,7 +4,7 @@ let FONTS = {
   HEADER_FONT: 30,
   TABLE_HEADER_FONT: 15,
   NORMAL_TEXT_FONT: 16,
-  TABLE_FONT: 13
+  TABLE_FONT: 12
 };
 
 if (PixelRatio.get() <= 2) {

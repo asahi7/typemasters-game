@@ -188,163 +188,163 @@ export class Leaderboard extends React.Component {
         }
         throw error
       })
-    }}
-
-    render()
-    {
-      if (this.state.loading) return <Loading/>
-      return (
-        <View style={globalStyles.container}>
-          <View style={globalStyles.inside_container}>
-            <ScrollView style={globalStyles.scrollView}>
-              {this.state.authenticated && (
-                <View>
-                  <Text style={globalStyles.tableHeader}>
-                    {i18n.t('main.yourGamesCount')}:{' '}
-                    {this.state.data.gamesPlayedCntUser}
-                  </Text>
-                </View>
-              )}
-              <View>
-                <Text style={globalStyles.tableHeader}>
-                  {i18n.t('main.totalGamesCount')}:{' '}
-                  {this.state.data.gamesPlayedCnt}
-                </Text>
-              </View>
-              {/* TODO(aibek): fill out last played games from API */}
-              {!_.isEmpty(this.state.data.lastGames) && (
-                <View style={{marginTop: 20}}>
-                  <Text style={globalStyles.tableHeader}>
-                    {i18n.t('main.lastGames')}
-                  </Text>
-                  {this.state.data.lastGames.map((result, i) => {
-                    return (
-                      <View style={globalStyles.row} key={i}>
-                        <Text style={globalStyles.column}>
-                          {result.user.nickname
-                            ? result.user.nickname
-                            : 'noname'}
-                        </Text>
-                        <Text style={globalStyles.column}>
-                          {result.user.country
-                            ? result.user.country
-                            : 'not specified'}
-                        </Text>
-                        <Text style={globalStyles.column}>{result.cpm}</Text>
-                        <Text style={globalStyles.column}>
-                          {moment(result.race.date).fromNow()}
-                        </Text>
-                      </View>
-                    )
-                  })}
-                </View>
-              )}
-              {!_.isEmpty(this.state.data.bestCpmTodayResults) && (
-                <View style={{marginTop: 30}}>
-                  <Text style={globalStyles.tableHeader}>
-                    {i18n.t('leaderboard.bestTodayByCpm')}
-                  </Text>
-                  {this.state.data.bestCpmTodayResults.map((result, i) => {
-                    return (
-                      <View style={globalStyles.row} key={i}>
-                        <Text style={globalStyles.column}>
-                          {result.user.nickname
-                            ? result.user.nickname
-                            : 'noname'}
-                        </Text>
-                        <Text style={globalStyles.column}>
-                          {result.user.country
-                            ? result.user.country
-                            : 'not specified'}
-                        </Text>
-                        <Text style={globalStyles.column}>{result.cpm}</Text>
-                      </View>
-                    )
-                  })}
-                </View>
-              )}
-              {!_.isEmpty(this.state.data.bestAccTodayResults) && (
-                <View style={{marginTop: 30}}>
-                  <Text style={globalStyles.tableHeader}>
-                    {i18n.t('leaderboard.bestTodayByAcc')}
-                  </Text>
-                  {this.state.data.bestAccTodayResults.map((result, i) => {
-                    return (
-                      <View style={globalStyles.row} key={i}>
-                        <Text style={globalStyles.column}>
-                          {result.user.nickname
-                            ? result.user.nickname
-                            : 'noname'}
-                        </Text>
-                        <Text style={globalStyles.column}>
-                          {result.user.country
-                            ? result.user.country
-                            : 'not specified'}
-                        </Text>
-                        <Text
-                          style={globalStyles.column}>{result.accuracy}</Text>
-                      </View>
-                    )
-                  })}
-                </View>
-              )}
-              {!_.isEmpty(this.state.data.bestAvgResults) && (
-                <View style={{marginTop: 30}}>
-                  <Text style={globalStyles.tableHeader}>
-                    {i18n.t('leaderboard.bestTodayByAvgCpm')}
-                  </Text>
-                  {this.state.data.bestAvgResults.map((result, i) => {
-                    return (
-                      <View style={globalStyles.row} key={i}>
-                        <Text style={globalStyles.column}>
-                          {result.user.nickname
-                            ? result.user.nickname
-                            : 'noname'}
-                        </Text>
-                        <Text style={globalStyles.column}>
-                          {result.user.country
-                            ? result.user.country
-                            : 'not specified'}
-                        </Text>
-                        <Text style={globalStyles.column}>
-                          {Math.round(result.avg)}
-                        </Text>
-                      </View>
-                    )
-                  })}
-                </View>
-              )}
-              {!_.isEmpty(this.state.data.bestResults) && (
-                <View style={{marginTop: 30}}>
-                  <Text style={globalStyles.tableHeader}>
-                    {i18n.t('leaderboard.bestByCpm')}
-                  </Text>
-                  {this.state.data.bestResults.map((result, i) => {
-                    return (
-                      <View style={globalStyles.row} key={i}>
-                        <Text style={globalStyles.column}>
-                          {result.user.nickname
-                            ? result.user.nickname
-                            : 'noname'}
-                        </Text>
-                        <Text style={globalStyles.column}>
-                          {result.user.country
-                            ? result.user.country
-                            : 'not specified'}
-                        </Text>
-                        <Text style={globalStyles.column}>{result.cpm}</Text>
-                        <Text style={globalStyles.column}>
-                          {moment(result.race.date).
-                            format('HH:mm, D MMMM, YYYY')}
-                        </Text>
-                      </View>
-                    )
-                  })}
-                </View>
-              )}
-            </ScrollView>
-          </View>
-        </View>
-      )
     }
   }
+
+  render () {
+    if (this.state.loading) return <Loading/>
+    return (
+      <View style={globalStyles.container}>
+        <View style={globalStyles.inside_container}>
+          <ScrollView style={globalStyles.scrollView}>
+            {this.state.authenticated && (
+              <View>
+                <Text style={globalStyles.tableHeader}>
+                  {i18n.t('main.yourGamesCount')}:{' '}
+                  {this.state.data.gamesPlayedCntUser}
+                </Text>
+              </View>
+            )}
+            <View>
+              <Text style={globalStyles.tableHeader}>
+                {i18n.t('main.totalGamesCount')}:{' '}
+                {this.state.data.gamesPlayedCnt}
+              </Text>
+            </View>
+            {/* TODO(aibek): fill out last played games from API */}
+            {!_.isEmpty(this.state.data.lastGames) && (
+              <View style={{marginTop: 20}}>
+                <Text style={globalStyles.tableHeader}>
+                  {i18n.t('main.lastGames')}
+                </Text>
+                {this.state.data.lastGames.map((result, i) => {
+                  return (
+                    <View style={globalStyles.row} key={i}>
+                      <Text style={globalStyles.column}>
+                        {result.user.nickname
+                          ? result.user.nickname
+                          : 'noname'}
+                      </Text>
+                      <Text style={globalStyles.column}>
+                        {result.user.country
+                          ? result.user.country
+                          : 'not specified'}
+                      </Text>
+                      <Text style={globalStyles.column}>{result.cpm}</Text>
+                      <Text style={globalStyles.column}>
+                        {moment(result.race.date).fromNow()}
+                      </Text>
+                    </View>
+                  )
+                })}
+              </View>
+            )}
+            {!_.isEmpty(this.state.data.bestCpmTodayResults) && (
+              <View style={{marginTop: 30}}>
+                <Text style={globalStyles.tableHeader}>
+                  {i18n.t('leaderboard.bestTodayByCpm')}
+                </Text>
+                {this.state.data.bestCpmTodayResults.map((result, i) => {
+                  return (
+                    <View style={globalStyles.row} key={i}>
+                      <Text style={globalStyles.column}>
+                        {result.user.nickname
+                          ? result.user.nickname
+                          : 'noname'}
+                      </Text>
+                      <Text style={globalStyles.column}>
+                        {result.user.country
+                          ? result.user.country
+                          : 'not specified'}
+                      </Text>
+                      <Text style={globalStyles.column}>{result.cpm}</Text>
+                    </View>
+                  )
+                })}
+              </View>
+            )}
+            {!_.isEmpty(this.state.data.bestAccTodayResults) && (
+              <View style={{marginTop: 30}}>
+                <Text style={globalStyles.tableHeader}>
+                  {i18n.t('leaderboard.bestTodayByAcc')}
+                </Text>
+                {this.state.data.bestAccTodayResults.map((result, i) => {
+                  return (
+                    <View style={globalStyles.row} key={i}>
+                      <Text style={globalStyles.column}>
+                        {result.user.nickname
+                          ? result.user.nickname
+                          : 'noname'}
+                      </Text>
+                      <Text style={globalStyles.column}>
+                        {result.user.country
+                          ? result.user.country
+                          : 'not specified'}
+                      </Text>
+                      <Text
+                        style={globalStyles.column}>{result.accuracy}</Text>
+                    </View>
+                  )
+                })}
+              </View>
+            )}
+            {!_.isEmpty(this.state.data.bestAvgResults) && (
+              <View style={{marginTop: 30}}>
+                <Text style={globalStyles.tableHeader}>
+                  {i18n.t('leaderboard.bestTodayByAvgCpm')}
+                </Text>
+                {this.state.data.bestAvgResults.map((result, i) => {
+                  return (
+                    <View style={globalStyles.row} key={i}>
+                      <Text style={globalStyles.column}>
+                        {result.user.nickname
+                          ? result.user.nickname
+                          : 'noname'}
+                      </Text>
+                      <Text style={globalStyles.column}>
+                        {result.user.country
+                          ? result.user.country
+                          : 'not specified'}
+                      </Text>
+                      <Text style={globalStyles.column}>
+                        {Math.round(result.avg)}
+                      </Text>
+                    </View>
+                  )
+                })}
+              </View>
+            )}
+            {!_.isEmpty(this.state.data.bestResults) && (
+              <View style={{marginTop: 30}}>
+                <Text style={globalStyles.tableHeader}>
+                  {i18n.t('leaderboard.bestByCpm')}
+                </Text>
+                {this.state.data.bestResults.map((result, i) => {
+                  return (
+                    <View style={globalStyles.row} key={i}>
+                      <Text style={globalStyles.column}>
+                        {result.user.nickname
+                          ? result.user.nickname
+                          : 'noname'}
+                      </Text>
+                      <Text style={globalStyles.column}>
+                        {result.user.country
+                          ? result.user.country
+                          : 'not specified'}
+                      </Text>
+                      <Text style={globalStyles.column}>{result.cpm}</Text>
+                      <Text style={globalStyles.column}>
+                        {moment(result.race.date).
+                          format('HH:mm, D MMMM, YYYY')}
+                      </Text>
+                    </View>
+                  )
+                })}
+              </View>
+            )}
+          </ScrollView>
+        </View>
+      </View>
+    )
+  }
+}
