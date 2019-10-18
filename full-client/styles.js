@@ -2,7 +2,7 @@ import { StyleSheet, PixelRatio } from "react-native";
 
 let FONTS = {
   HEADER_FONT: 30,
-  TABLE_HEADER_FONT: 20,
+  TABLE_HEADER_FONT: 15,
   NORMAL_TEXT_FONT: 16,
   TABLE_FONT: 13
 };
@@ -62,7 +62,18 @@ const globalStyles = StyleSheet.create({
     fontFamily:"monospace",
     letterSpacing: 1,
     textAlign: "center",
-    fontWeight: "500"
+    fontWeight: "500",
+    paddingLeft: 5,
+    paddingRight: 5,
+    paddingTop: 5,
+    paddingBottom: 5
+  },
+  smallText: {
+    fontSize: 12,
+    color: "#71B6D5",
+    fontWeight: "bold",
+    fontFamily:"monospace",
+    textAlign: "center",
   },
   normalText: {
     fontSize: FONTS.NORMAL_TEXT_FONT,
@@ -77,17 +88,24 @@ const globalStyles = StyleSheet.create({
   },
   row: {
     flex: 0.1,
-    borderWidth: 1,
     marginTop: 1,
     flexDirection: "row",
     alignSelf: "stretch",
     alignItems: "center",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
+    paddingLeft:12,
+    paddingRight:12,
+    paddingTop:5,
+    paddingBottom:5,
+    fontFamily:"monospace",
+    fontSize: 10
   },
   column: {
     marginLeft: 10,
     marginRight: 10,
     color: "#FFFFFF",
+    fontFamily:"monospace",
+    fontWeight: "bold",
     fontSize: FONTS.TABLE_FONT
   },
   loadingContainer: {
@@ -119,11 +137,6 @@ const globalStyles = StyleSheet.create({
     color: "#FFFFFF",
     fontFamily:"monospace",
     fontSize: 20,
-  },
-  smallText: {
-    color: "#FFFFFF",
-    fontFamily:"monospace",
-    fontSize: 10,
   },
   smallButtonContainer: {
     marginTop: 5,
