@@ -9,8 +9,6 @@ export default class About extends React.Component {
   render () {
     return (
       <View style={globalStyles.container}>
-        <ImageBackground source={require('./img/bkg_2.png')}
-                         style={globalStyles.backgroundImage}>
           <View style={globalStyles.inside_container}>
             <ScrollView>
               <View style={{marginTop: 10}}>
@@ -63,7 +61,6 @@ export default class About extends React.Component {
               </View>
             </ScrollView>
           </View>
-        </ImageBackground>
       </View>
     )
   }

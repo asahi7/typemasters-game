@@ -21,7 +21,7 @@ const globalStyles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     alignItems: "stretch",
-    backgroundColor: "#71B6D5"
+    backgroundColor: "#5E81C6"
   },
   inside_container: {
     flex: 1,
@@ -51,6 +51,7 @@ const globalStyles = StyleSheet.create({
   header: {
     fontSize: FONTS.HEADER_FONT,
     color: "#FFFFFF",
+    fontFamily:"monospace",
     letterSpacing: 1,
     textAlign: "center",
     fontWeight: "700"
@@ -61,7 +62,7 @@ const globalStyles = StyleSheet.create({
     fontFamily:"monospace",
     letterSpacing: 1,
     textAlign: "center",
-    fontWeight: "700"
+    fontWeight: "500"
   },
   normalText: {
     fontSize: FONTS.NORMAL_TEXT_FONT,
@@ -123,6 +124,51 @@ const globalStyles = StyleSheet.create({
     color: "#FFFFFF",
     fontFamily:"monospace",
     fontSize: 10,
+  },
+  smallButtonContainer: {
+    marginTop: 5,
+    flexWrap: 'wrap',
+    flexDirection:'row',
+    alignItems: "center",
+    justifyContent: "center",
+    paddingLeft:5,
+    paddingRight:5,
+    paddingTop:5,
+    paddingBottom:5
+  },
+  smallButton: {
+    color: "#FFFFFF",
+    fontFamily:"monospace",
+    fontSize: 15,
+    paddingLeft:12,
+    paddingRight:12,
+    paddingTop:5,
+    paddingBottom:5,
+    borderColor: '#FFFFFF',
+    borderWidth: 1,
+    borderRadius: 30
+  },
+  textHeader: {
+    color: "#FFFFFF",
+    fontFamily:"monospace",
+    fontSize: 10,
+  },
+  containerWithInlineButtons: {
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    alignSelf: 'center',
+    flexDirection: 'row'
+  },
+  commonInformationTextInput: {
+    height: 40,
+    width: '100%',
+    borderColor: '#71B6D5',
+    borderWidth: 2,
+    color: '#FFFFFF',
+    borderRadius: 40,
+    marginTop: 8,
+    paddingLeft: 2,
+    paddingRight: 2,
   },
 });
 

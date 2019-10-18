@@ -3,7 +3,6 @@ import {
   View,
   Text,
   Image,
-  ImageBackground,
   TouchableOpacity,
   StyleSheet,
   ScrollView,
@@ -171,8 +170,6 @@ export class Main extends React.Component {
     if (this.state.loading) return <Loading/>
     return (
       <View style={globalStyles.container}>
-        <ImageBackground source={require('./img/bkg.png')}
-                         style={globalStyles.backgroundImage}>
           <View style={globalStyles.inside_container}>
             <StatusBar barStyle="dark-content"/>
             <View style={{marginTop: 70}}/>
@@ -247,7 +244,6 @@ export class Main extends React.Component {
               </ScrollView>
             )}
           </View>
-        </ImageBackground>
       </View>
     )
   }

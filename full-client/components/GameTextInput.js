@@ -127,7 +127,6 @@ export default class GameTextInput extends React.Component {
               this.lastInputBackspace = true;
             }
           }}
-          placeholder={i18n.t("game.startTypingHere")}
           onChangeText={this.handleUserInput}
           ref={input => {
             this._textInput = input;
@@ -143,18 +142,25 @@ const styles = StyleSheet.create({
     flex: 0.1,
     flexDirection: "row",
     alignItems: "stretch",
-    margin: 10
+    margin: 10,
+    color: "#FFFFFF",
+    borderRadius: 40
   },
   textInputStyle: {
     flex: 1,
     padding: 5,
     height: 40,
-    borderWidth: 2
+    borderWidth: 2,
+    fontFamily:"monospace"
   },
   correctTextInput: {
-    borderColor: "#4ce300"
+    borderColor: "#4ce300",
+    borderRadius: 40,
+    color: "#FFFFFF"
   },
   incorrectTextInput: {
-    borderColor: "#ff0000"
+    borderColor: "#ff0000",
+    borderRadius: 40,
+    color: "#FFFFFF"
   }
 });

@@ -1,11 +1,19 @@
 import React from 'react'
-import { StyleSheet, Text, TextInput, Button, View } from 'react-native'
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  Button,
+  View,
+  TouchableOpacity,
+} from 'react-native'
 import firebase from 'firebase'
 import Commons from '../Commons'
 import globalStyles from '../styles'
 import DropdownAlert from 'react-native-dropdownalert'
 import i18n from 'i18n-js'
 import ConnectionContext from '../context/ConnnectionContext'
+import Hr from '../components/Hr'
 
 export default React.forwardRef((props, ref) => (
   <ConnectionContext.Consumer>
@@ -57,7 +65,7 @@ export class SignUp extends React.Component {
           <TextInput
             placeholder={i18n.t('common.email')}
             autoCapitalize="none"
-            style={styles.textInput}
+            style={globalStyles.commonInformationTextInput}
             onChangeText={email => this.setState({email})}
             value={this.state.email}
           />
@@ -65,19 +73,28 @@ export class SignUp extends React.Component {
             secureTextEntry
             placeholder={i18n.t('common.password')}
             autoCapitalize="none"
-            style={styles.textInput}
+            style={globalStyles.commonInformationTextInput}
             onChangeText={password => this.setState({password})}
             value={this.state.password}
           />
-          <View style={globalStyles.normalButton}>
-            <Button title={i18n.t('signUp.signUp')}
-                    onPress={this.handleSignUp}/>
-          </View>
-          <View style={globalStyles.normalButton}>
-            <Button
-              onPress={() => this.props.navigation.navigate('SignIn')}
-              title={i18n.t('signUp.haveAccount')}
-            />
+          <Hr/>
+          <View style={globalStyles.containerWithInlineButtons}>
+            <View style={globalStyles.smallButtonContainer}>
+              <TouchableOpacity
+                onPress={this.handleSignUp}
+              >
+                <Text style={globalStyles.smallButton}>{i18n.t(
+                  'signUp.signUp')}</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={globalStyles.smallButtonContainer}>
+              <TouchableOpacity
+                onPress={() => this.props.navigation.navigate('SignIn')}
+              >
+                <Text style={globalStyles.smallButton}>{i18n.t(
+                  'signUp.haveAccount')}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
           <DropdownAlert
             ref={ref => {
@@ -89,15 +106,3 @@ export class SignUp extends React.Component {
     )
   }
 }
-
-const styles = StyleSheet.create({
-  textInput: {
-    height: 40,
-    width: '90%',
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginTop: 8,
-    paddingLeft: 2,
-    paddingRight: 2,
-  },
-})

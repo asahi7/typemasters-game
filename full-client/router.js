@@ -1,156 +1,177 @@
-import React from "react";
+import React from 'react'
 import {
   createStackNavigator,
   createSwitchNavigator,
-  createAppContainer
-} from "react-navigation";
-import { createBottomTabNavigator } from "react-navigation-tabs";
-import Commons from "./Commons";
-import { Icon } from "react-native-elements";
-import Main from "./screens/Main";
-import Game from "./screens/Game";
-import Leaderboard from "./screens/Leaderboard";
-import SignIn from "./screens/SignIn";
-import SignUp from "./screens/SignUp";
-import PersonalPage from "./screens/PersonalPage";
-import Settings from "./screens/Settings";
-import About from "./screens/About";
-import AuthLoading from "./screens/AuthLoading";
-import PersonalCharts from "./screens/PersonalCharts";
-import EmailVerificationPage from "./screens/EmailVerificationPage";
-import ForgotPassword from "./screens/ForgotPassword";
-import i18n from "i18n-js";
-import { Button, Text, TouchableOpacity, View } from "react-native";
-import { en, ru } from "./i18n";
-import { gameStyles } from "./styles";
-import * as Localization from "expo-localization";
+  createAppContainer,
+} from 'react-navigation'
+import { createBottomTabNavigator } from 'react-navigation-tabs'
+import Commons from './Commons'
+import { Icon } from 'react-native-elements'
+import Main from './screens/Main'
+import Game from './screens/Game'
+import Leaderboard from './screens/Leaderboard'
+import SignIn from './screens/SignIn'
+import SignUp from './screens/SignUp'
+import PersonalPage from './screens/PersonalPage'
+import Settings from './screens/Settings'
+import About from './screens/About'
+import AuthLoading from './screens/AuthLoading'
+import PersonalCharts from './screens/PersonalCharts'
+import EmailVerificationPage from './screens/EmailVerificationPage'
+import ForgotPassword from './screens/ForgotPassword'
+import i18n from 'i18n-js'
+import {
+  Button,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native'
+import { en, ru } from './i18n'
+import { gameStyles } from './styles'
+import * as Localization from 'expo-localization'
 
-i18n.fallbacks = true;
-i18n.translations = { en, ru, kk: ru };
-i18n.locale = Localization.locale;
+i18n.fallbacks = true
+i18n.translations = {en, ru, kk: ru}
+i18n.locale = Localization.locale
 
-const mainLabel = i18n.t("navigation.main");
-const leaderboardLabel = i18n.t("navigation.leaderboard");
-const personalPageLabel = i18n.t("navigation.personalPage");
-const settingsLabel = i18n.t("navigation.settings");
-const aboutLabel = i18n.t("navigation.about");
-const gameLabel = i18n.t("navigation.game");
-const personalChartsLabel = i18n.t("navigation.personalCharts");
-const signInLabel = i18n.t("navigation.signIn");
-const signUpLabel = i18n.t("navigation.signUp");
-const forgotPasswordLabel = i18n.t("navigation.forgotPassword");
-const confirmEmailLabel = i18n.t("navigation.confirmEmail");
+const mainLabel = i18n.t('navigation.main')
+const leaderboardLabel = i18n.t('navigation.leaderboard')
+const personalPageLabel = i18n.t('navigation.personalPage')
+const settingsLabel = i18n.t('navigation.settings')
+const aboutLabel = i18n.t('navigation.about')
+const gameLabel = i18n.t('navigation.game')
+const personalChartsLabel = i18n.t('navigation.personalCharts')
+const signInLabel = i18n.t('navigation.signIn')
+const signUpLabel = i18n.t('navigation.signUp')
+const forgotPasswordLabel = i18n.t('navigation.forgotPassword')
+const confirmEmailLabel = i18n.t('navigation.confirmEmail')
 
 const MainStack = createStackNavigator(
   {
     Main: {
       screen: Main,
       navigationOptions: {
-        headerTransparent: true
-      }
+        headerTransparent: true,
+      },
     },
     Game: {
       screen: Game,
-      navigationOptions: ({ navigation }) => {
+      navigationOptions: ({navigation}) => {
         return {
           headerTransparent: true,
           headerRight: (
-            <View style={{ marginRight: 10 }}>
-              {navigation.getParam("gamePlaying") === true ? (
-                <Button
-                  onPress={() => navigation.getParam("playButtonPressed")()}
-                  title={i18n.t("game.stop")}
-                />
+            <View style={{marginRight: 10}}>
+              {navigation.getParam('gamePlaying') === true ? (
+                <View style={{marginTop: 10, alignItems: 'center'}}>
+                  <TouchableOpacity
+                    onPress={() => navigation.getParam('playButtonPressed')()}
+                  >
+                    <Image source={require('./screens/img/stop_sm_btn.webp')}/>
+                  </TouchableOpacity>
+                </View>
+
               ) : (
-                <Button
-                  onPress={() => navigation.getParam("playButtonPressed")()}
-                  title={i18n.t("game.play")}
-                />
+                <View style={{marginTop: 10, alignItems: 'center'}}>
+                  <TouchableOpacity
+                    onPress={() => navigation.getParam('playButtonPressed')()}
+                  >
+                    <Image source={require('./screens/img/play_sm_btn.webp')}/>
+                  </TouchableOpacity>
+                </View>
               )}
             </View>
-          )
-        };
-      }
-    }
+          ),
+        }
+      },
+    },
   },
-  { initialRouteName: "Main" }
-);
+  {initialRouteName: 'Main'},
+)
 
 const LeaderboardStack = createStackNavigator(
   {
     Leaderboard: {
       screen: Leaderboard,
       navigationOptions: {
-        headerTransparent: true
-      }
-    }
+        headerTransparent: true,
+      },
+    },
   },
-  { initialRouteName: "Leaderboard" }
-);
+  {initialRouteName: 'Leaderboard'},
+)
 
 const SettingsStack = createStackNavigator(
   {
     Settings: {
       screen: Settings,
-      navigationOptions: ({ navigation }) => {
+      navigationOptions: ({navigation}) => {
         return {
           headerTransparent: true,
           headerRight: (
-            <View style={{ marginRight: 10 }}>
-              <Button
-                onPress={() => navigation.getParam("saveSettings")()}
-                title={i18n.t("settings.save")}
-              />
+            <View style={{marginTop: 10, marginRight: 20, alignItems: 'center'}}>
+              <TouchableOpacity
+                onPress={() => navigation.getParam('saveSettings')()}
+              >
+                <Image source={require('./screens/img/save_sm_btn.webp')}/>
+              </TouchableOpacity>
             </View>
-          )
-        };
-      }
-    }
+          ),
+        }
+      },
+    },
   },
   {
-    initialRouteName: "Settings"
-  }
-);
+    initialRouteName: 'Settings',
+  },
+)
 
 const AboutStack = createStackNavigator(
   {
     About: {
       screen: About,
       navigationOptions: {
-        headerTransparent: true
-      }
-    }
+        headerTransparent: true,
+      },
+    },
   },
-  { initialRouteName: "About" }
-);
+  {initialRouteName: 'About'},
+)
 
 const PersonalPageStack = createStackNavigator(
   {
     PersonalPage: {
       screen: PersonalPage,
-      navigationOptions: ({ navigation }) => {
+      navigationOptions: ({navigation}) => {
         return {
           headerTitle: personalPageLabel,
+          headerTitleStyle: {
+            color: 'white'
+          },
           headerRight: (
-            <View style={{ marginRight: 10 }}>
+            <View style={{marginRight: 10}}>
               <Button
-                onPress={() => navigation.getParam("handleSignOut")()}
-                title={i18n.t("personalPage.signOut")}
+                onPress={() => navigation.getParam('handleSignOut')()}
+                title={i18n.t('personalPage.signOut')}
               />
             </View>
-          )
-        };
-      }
+          ),
+        }
+      },
     },
     PersonalCharts: {
       screen: PersonalCharts,
       navigationOptions: {
-        headerTitle: personalChartsLabel
-      }
-    }
+        headerTitle: personalChartsLabel,
+        headerTitleStyle: {
+          color: 'white'
+        }
+      },
+    },
   },
-  { initialRouteName: "PersonalPage" }
-);
+  {initialRouteName: 'PersonalPage'},
+)
 
 const AuthStack = createStackNavigator(
   {
@@ -158,56 +179,68 @@ const AuthStack = createStackNavigator(
       screen: SignUp,
       navigationOptions: {
         headerTransparent: true,
-        headerTitle: signUpLabel
-      }
+        headerTitle: signUpLabel,
+        headerTitleStyle: {
+          color: 'white'
+        }
+      },
     },
     SignIn: {
       screen: SignIn,
       navigationOptions: {
         headerTransparent: true,
-        headerTitle: signInLabel
-      }
+        headerTitle: signInLabel,
+        headerTitleStyle: {
+          color: 'white'
+        }
+      },
     },
     EmailVerificationPage: {
       screen: EmailVerificationPage,
       navigationOptions: {
         headerTransparent: true,
-        headerTitle: confirmEmailLabel
-      }
+        headerTitle: confirmEmailLabel,
+        headerTitleStyle: {
+          color: 'white'
+        }
+      },
     },
     ForgotPassword: {
       screen: ForgotPassword,
       navigationOptions: {
         headerTransparent: true,
-        headerTitle: forgotPasswordLabel
-      }
-    }
+        headerTitle: forgotPasswordLabel,
+        headerTitleStyle: {
+          color: 'white'
+        }
+      },
+    },
   },
-  { initialRouteName: "SignIn" }
-);
+  {initialRouteName: 'SignIn'},
+)
 
 const AuthSwitchNavigator = createSwitchNavigator(
   {
     AuthLoading: {
       screen: AuthLoading,
-      navigationOptions: ({ navigation }) => ({
-        header: null
-      })
+      navigationOptions: ({navigation}) => ({
+        header: null,
+      }),
     },
     PersonalPage: PersonalPageStack,
-    Auth: AuthStack
+    Auth: AuthStack,
   },
-  { initialRouteName: "AuthLoading" }
-);
+  {initialRouteName: 'AuthLoading'},
+)
 
-const tabBarIconSize = 25;
+const tabBarIconSize = 25
 
 const Tabs = createBottomTabNavigator(
   {
     Main: {
       screen: MainStack,
       navigationOptions: {
-        tabBarIcon: ({ tintColor }) => (
+        tabBarIcon: ({tintColor}) => (
           <Icon
             name="md-home"
             type="ionicon"
@@ -215,80 +248,84 @@ const Tabs = createBottomTabNavigator(
             color={tintColor}
           />
         ),
-        header: null
-      }
+        header: null,
+      },
     },
     Leaderboard: {
       screen: LeaderboardStack,
       navigationOptions: {
         headerTitle: leaderboardLabel,
+        headerTitleStyle: {
+          color: 'white'
+        },
         tabBarLabel: (() => {
-          leaderboardLabel;
+          leaderboardLabel
         })(),
-        tabBarIcon: ({ tintColor }) => (
+        tabBarIcon: ({tintColor}) => (
           <Icon
             name="md-stats"
             type="ionicon"
             size={tabBarIconSize}
             color={tintColor}
           />
-        )
-      }
+        ),
+      },
     },
     PersonalPage: {
       screen: AuthSwitchNavigator,
       navigationOptions: {
         tabBarLabel: (() => {
-          personalPageLabel;
+          personalPageLabel
         })(),
-        tabBarIcon: ({ tintColor }) => (
+        tabBarIcon: ({tintColor}) => (
           <Icon
             name="md-body"
             type="ionicon"
             size={tabBarIconSize}
             color={tintColor}
           />
-        )
-      }
+        ),
+      },
     },
     Settings: {
       screen: SettingsStack,
-      navigationOptions: ({ navigation }) => {
+      navigationOptions: ({navigation}) => {
         return {
           tabBarLabel: (() => {
-            settingsLabel;
+            settingsLabel
           })(),
-          tabBarIcon: ({ tintColor }) => (
+          tabBarIcon: ({tintColor}) => (
             <Icon
               name="md-build"
               type="ionicon"
               size={tabBarIconSize}
               color={tintColor}
             />
-          )
-        };
-      }
+          ),
+        }
+      },
     },
     About: {
       screen: AboutStack,
       navigationOptions: {
         tabBarLabel: (() => {
-          aboutLabel;
+          aboutLabel
         })(),
-        tabBarIcon: ({ tintColor }) => (
+        tabBarIcon: ({tintColor}) => (
           <Icon
             name="md-information-circle"
             type="ionicon"
             size={tabBarIconSize}
             color={tintColor}
           />
-        )
-      }
-    }
+        ),
+      },
+    },
   },
-  { initialRouteName: "Main",
+  {
+    initialRouteName: 'Main',
     tabBarOptions: {
-      activeTintColor: '#7C4DFF',
+      activeTintColor: '#53A4D0',
       inactiveTintColor: '#FFFFFF',
 
       tabStyle: {
@@ -297,19 +334,19 @@ const Tabs = createBottomTabNavigator(
         justifyContent: 'center',
       },
       style: {
-        backgroundColor: '#53A4D0'
+        backgroundColor: '#5E81C6',
       },
     },
-  }
-);
+  },
+)
 
 const RootStack = createStackNavigator({
   Tabs: {
     screen: Tabs,
     navigationOptions: {
-      header: null
-    }
-  }
-});
+      header: null,
+    },
+  },
+})
 
-export default createAppContainer(RootStack);
+export default createAppContainer(RootStack)
