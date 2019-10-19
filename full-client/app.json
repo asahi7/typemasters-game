@@ -1,4 +1,6 @@
 {
+  "name": "Typemasters",
+  "displayName": "Typemasters",
   "expo": {
     "name": "Typemasters-Client",
     "description": "Client for typemasters project with React Native.",
