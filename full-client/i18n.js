@@ -25,7 +25,7 @@ export const en = {
     country: "Country",
     signInToSave: "*Sign in to save your progress.",
     password: "Password",
-    signIn: "Sign in",
+    signIn: "Sign In",
     cantInternet: "No internet connection. Please try later"
   },
   main: {
@@ -123,7 +123,7 @@ export const en = {
     text:
       "An email verification link has been sent to your email, please click on it in order to verify your email and finish the registration.\nAfter that you can sign in again",
     sendLink: "Send a new link?",
-    signOut: "Sign out"
+    signOut: "Sign Out"
   },
   forgotPassword: {
     linkSent: "The link was successfully sent",
@@ -169,8 +169,8 @@ export const en = {
     forgotPassword: "Forgot password?"
   },
   signUp: {
-    signUp: "Sign up",
-    haveAccount: "Sign in"
+    signUp: "Sign Up",
+    haveAccount: "Sign In"
   }
 };
 
