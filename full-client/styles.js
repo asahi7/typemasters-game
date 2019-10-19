@@ -30,7 +30,7 @@ const globalStyles = StyleSheet.create({
     paddingLeft: 30,
     paddingRight: 30,
     flexDirection: "column",
-    alignItems: "stretch",
+    alignItems: "stretch"
   },
   scrollView: {
     flex: 1,
@@ -51,7 +51,7 @@ const globalStyles = StyleSheet.create({
   header: {
     fontSize: FONTS.HEADER_FONT,
     color: "#FFFFFF",
-    fontFamily:"monospace",
+    fontFamily: "monospace",
     letterSpacing: 1,
     textAlign: "center",
     fontWeight: "700"
@@ -59,7 +59,7 @@ const globalStyles = StyleSheet.create({
   tableHeader: {
     fontSize: FONTS.TABLE_HEADER_FONT,
     color: "#FFFFFF",
-    fontFamily:"monospace",
+    fontFamily: "monospace",
     letterSpacing: 1,
     textAlign: "center",
     fontWeight: "500",
@@ -72,13 +72,13 @@ const globalStyles = StyleSheet.create({
     fontSize: 12,
     color: "#71B6D5",
     fontWeight: "bold",
-    fontFamily:"monospace",
-    textAlign: "center",
+    fontFamily: "monospace",
+    textAlign: "center"
   },
   normalText: {
     fontSize: FONTS.NORMAL_TEXT_FONT,
     color: "#FFFFFF",
-    fontFamily:"monospace",
+    fontFamily: "monospace",
     fontWeight: "bold",
     textAlign: "center",
     paddingLeft: 5,
@@ -93,18 +93,18 @@ const globalStyles = StyleSheet.create({
     alignSelf: "stretch",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingLeft:12,
-    paddingRight:12,
-    paddingTop:5,
-    paddingBottom:5,
-    fontFamily:"monospace",
+    paddingLeft: 12,
+    paddingRight: 12,
+    paddingTop: 5,
+    paddingBottom: 5,
+    fontFamily: "monospace",
     fontSize: 10
   },
   column: {
     marginLeft: 10,
     marginRight: 10,
     color: "#FFFFFF",
-    fontFamily:"monospace",
+    fontFamily: "monospace",
     fontWeight: "bold",
     fontSize: FONTS.TABLE_FONT
   },
@@ -123,66 +123,66 @@ const globalStyles = StyleSheet.create({
   },
   backgroundImage: {
     flex: 1,
-    alignSelf: 'stretch',
-    width: '100%',
-    height: '100%'
+    alignSelf: "stretch",
+    width: "100%",
+    height: "100%"
   },
   raceTextView: {
     flex: 3,
-    flexDirection: 'column',
+    flexDirection: "column",
     padding: 10,
-    paddingBottom: 30,
+    paddingBottom: 30
   },
   bigText: {
     color: "#FFFFFF",
-    fontFamily:"monospace",
-    fontSize: 20,
+    fontFamily: "monospace",
+    fontSize: 20
   },
   smallButtonContainer: {
     marginTop: 5,
-    flexWrap: 'wrap',
-    flexDirection:'row',
+    flexWrap: "wrap",
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingLeft:5,
-    paddingRight:5,
-    paddingTop:5,
-    paddingBottom:5
+    paddingLeft: 5,
+    paddingRight: 5,
+    paddingTop: 5,
+    paddingBottom: 5
   },
   smallButton: {
     color: "#FFFFFF",
-    fontFamily:"monospace",
+    fontFamily: "monospace",
     fontSize: 15,
-    paddingLeft:12,
-    paddingRight:12,
-    paddingTop:5,
-    paddingBottom:5,
-    borderColor: '#FFFFFF',
+    paddingLeft: 12,
+    paddingRight: 12,
+    paddingTop: 5,
+    paddingBottom: 5,
+    borderColor: "#FFFFFF",
     borderWidth: 1,
     borderRadius: 30
   },
   textHeader: {
     color: "#FFFFFF",
-    fontFamily:"monospace",
-    fontSize: 10,
+    fontFamily: "monospace",
+    fontSize: 10
   },
   containerWithInlineButtons: {
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    alignSelf: 'center',
-    flexDirection: 'row'
+    flexWrap: "wrap",
+    alignItems: "center",
+    alignSelf: "center",
+    flexDirection: "row"
   },
   commonInformationTextInput: {
     height: 40,
-    width: '100%',
-    borderColor: '#71B6D5',
+    width: "100%",
+    borderColor: "#71B6D5",
     borderWidth: 2,
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     borderRadius: 40,
     marginTop: 8,
     paddingLeft: 2,
-    paddingRight: 2,
-  },
+    paddingRight: 2
+  }
 });
 
 export { globalStyles as default, globalStyles, FONTS };

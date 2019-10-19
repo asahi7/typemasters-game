@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     padding: 5,
     height: 40,
     borderWidth: 2,
-    fontFamily:"monospace"
+    fontFamily: "monospace"
   },
   correctTextInput: {
     borderColor: "#4ce300",

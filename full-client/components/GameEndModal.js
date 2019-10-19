@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
   modalHeader: {
     fontSize: 20,
     color: "#FFFFFF",
-    fontFamily:"monospace"
+    fontFamily: "monospace"
   },
   gameStatusBar: {
     flex: 0.1,

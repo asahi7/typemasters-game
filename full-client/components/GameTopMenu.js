@@ -54,6 +54,6 @@ const styles = StyleSheet.create({
   gameStatusBarItemText: {
     fontSize: FONTS.TABLE_FONT,
     color: "#FFFFFF",
-    fontFamily:"monospace"
+    fontFamily: "monospace"
   }
 });
