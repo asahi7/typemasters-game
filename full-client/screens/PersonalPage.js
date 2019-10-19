@@ -323,11 +323,7 @@ export class PersonalPage extends React.Component {
                   renderItem={renderItem}
                 />
               </View>
-              <View style={{ marginTop: 10 }}>
-                <Text style={[globalStyles.normalText, { color: "white" }]}>
-                  {i18n.t("personalPage.dataMayNotUpdate")}
-                </Text>
-              </View>
+              <View style={{ marginTop: 10 }} />
               <View style={globalStyles.smallButtonContainer}>
                 <TouchableOpacity
                   onPress={() =>

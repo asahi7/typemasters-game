@@ -193,8 +193,8 @@ const globalStyles = StyleSheet.create({
     color: "#FFFFFF",
     borderRadius: 40,
     marginTop: 8,
-    paddingLeft: 2,
-    paddingRight: 2
+    paddingLeft: 20,
+    paddingRight: 20
   }
 });
 

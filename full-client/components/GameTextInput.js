@@ -144,7 +144,9 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
     margin: 10,
     color: "#FFFFFF",
-    borderRadius: 40
+    borderRadius: 40,
+    paddingLeft: 20,
+    paddingRight: 20
   },
   textInputStyle: {
     flex: 1,
@@ -156,11 +158,15 @@ const styles = StyleSheet.create({
   correctTextInput: {
     borderColor: "#4ce300",
     borderRadius: 40,
-    color: "#FFFFFF"
+    color: "#FFFFFF",
+    paddingLeft: 20,
+    paddingRight: 20
   },
   incorrectTextInput: {
     borderColor: "#ff0000",
     borderRadius: 40,
-    color: "#FFFFFF"
+    color: "#FFFFFF",
+    paddingLeft: 20,
+    paddingRight: 20
   }
 });
