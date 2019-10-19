@@ -200,7 +200,7 @@ export class Leaderboard extends React.Component {
     if (this.state.loading) return <Loading />;
     return (
       <View style={globalStyles.container}>
-        <View style={globalStyles.inside_container}>
+        <View style={globalStyles.insideContainerNoPadding}>
           <ScrollView style={globalStyles.scrollView}>
             {this.state.authenticated && (
               <View>
@@ -328,7 +328,7 @@ export class Leaderboard extends React.Component {
                       </Text>
                       <Text style={globalStyles.column}>{result.cpm}</Text>
                       <Text style={globalStyles.column}>
-                        {moment(result.race.date).format("HH:mm, D MMMM, YYYY")}
+                        {moment(result.race.date).format("D MMMM")}
                       </Text>
                     </View>
                   );

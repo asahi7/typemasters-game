@@ -32,12 +32,21 @@ const globalStyles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "stretch"
   },
+  insideContainerNoPadding: {
+    flex: 1,
+    marginTop: 100,
+    marginBottom: 50,
+    paddingLeft: 10,
+    paddingRight: 10,
+    flexDirection: "column",
+    alignItems: "stretch"
+  },
   scrollView: {
     flex: 1,
     marginTop: 10,
     marginBottom: 10,
-    paddingLeft: 10,
-    paddingRight: 10
+    paddingLeft: 5,
+    paddingRight: 5
   },
   gameView: {
     flex: 1,
