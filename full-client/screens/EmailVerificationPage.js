@@ -1,11 +1,12 @@
 import React from "react";
-import { Text, Button, View } from "react-native";
+import { Text, Button, View, TouchableOpacity } from "react-native";
 import firebase from "firebase";
 import Commons from "../Commons";
 import globalStyles from "../styles";
 import Loading from "./Loading";
 import i18n from "i18n-js";
 import Sentry from "sentry-expo";
+import Hr from "../components/Hr";
 
 // TODO(aibek): add offline mode
 export default class EmailVerificationPage extends React.Component {
@@ -75,28 +76,26 @@ export default class EmailVerificationPage extends React.Component {
           <Text style={globalStyles.normalText}>
             {i18n.t("emailVerification.text")}
           </Text>
-          <View style={globalStyles.normalButton}>
-            <Button
-              style={globalStyles.normalButton}
-              onPress={() => this.props.navigation.navigate("SignIn")}
-              title={i18n.t("common.signIn")}
-              color={Commons.buttonColor}
-            />
+          <Hr />
+          <View style={globalStyles.containerWithInlineButtons}>
+            <View style={globalStyles.smallButtonContainer}>
+              <TouchableOpacity
+                onPress={() => this.props.navigation.navigate("SignIn")}
+              >
+                <Text style={globalStyles.smallButton}>
+                  {i18n.t("common.signIn")}
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View style={globalStyles.smallButtonContainer}>
+              <TouchableOpacity onPress={this.sendNewLink}>
+                <Text style={globalStyles.smallButton}>
+                  {i18n.t("emailVerification.sendLink")}
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
-          <View style={globalStyles.normalButton}>
-            <Button
-              onPress={this.sendNewLink}
-              title={i18n.t("emailVerification.sendLink")}
-              color={Commons.buttonColor}
-            />
-          </View>
-          <View style={globalStyles.normalButton}>
-            <Button
-              onPress={this.handleSignOut}
-              title={i18n.t("emailVerification.signOut")}
-              color={Commons.buttonColor}
-            />
-          </View>
+          <Hr />
         </View>
       </View>
     );
