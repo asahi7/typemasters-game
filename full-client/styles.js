@@ -45,8 +45,8 @@ const globalStyles = StyleSheet.create({
     flex: 1,
     marginTop: 10,
     marginBottom: 10,
-    paddingLeft: 5,
-    paddingRight: 5
+    paddingLeft: 10,
+    paddingRight: 10
   },
   gameView: {
     flex: 1,
