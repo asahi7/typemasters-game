@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  Text,
   StyleSheet,
   AsyncStorage,
   Picker,
@@ -14,16 +13,12 @@ import {
 import WebAPI from "../WebAPI";
 import Loading from "./Loading";
 import firebase from "firebase";
-import Commons from "../Commons";
-import { globalStyles, FONTS } from "../styles";
+import { globalStyles } from "../styles";
 import DropdownAlert from "react-native-dropdownalert";
 import i18n from "i18n-js";
 import countryList from "../consts/countryList";
 import ConnectionContext from "../context/ConnnectionContext";
 import TypingLanguageContext from "../context/TypingLanguageContext";
-import { Icon, Header } from "react-native-elements";
-import moment from "moment";
-import _ from "lodash";
 import { prepareFlatListElements, renderItem } from "../utils/utils";
 
 export default React.forwardRef((props, ref) => (
@@ -72,6 +67,7 @@ export class Settings extends React.Component {
         key: i18n.t("settings.changeYourNickname"),
         accessorObject: () => this.state,
         valuePath: "userData.nickname",
+        defaultValue: "",
         executeIf: () => this.state.authenticated,
         wrapIntoElement: val => {
           // TODO(aibek): make textinput more visible
@@ -196,6 +192,7 @@ export class Settings extends React.Component {
       prevState.supportedLangs !== this.state.supportedLangs
     ) {
       const listElements = prepareFlatListElements(this.elementMapper);
+      console.log(listElements.map(el => el.key));
       this.setState({
         listElements
       });

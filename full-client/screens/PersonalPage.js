@@ -2,7 +2,6 @@ import React from "react";
 import {
   View,
   Text,
-  Button,
   FlatList,
   AsyncStorage,
   ScrollView,
@@ -11,8 +10,6 @@ import {
 import firebase from "firebase";
 import WebAPI from "../WebAPI";
 import Loading from "./Loading";
-import Commons from "../Commons";
-import _ from "lodash";
 import globalStyles from "../styles";
 import moment from "moment";
 import DropdownAlert from "react-native-dropdownalert";

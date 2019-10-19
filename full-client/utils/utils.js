@@ -14,9 +14,10 @@ const prepareFlatListElements = elementMapper => {
       elementMapper[key].valuePath,
       null
     );
+    console.log(key, value);
     if (value === undefined || value === null) {
       const defaultValue = elementMapper[key].defaultValue;
-      if (defaultValue) {
+      if (defaultValue !== null && defaultValue !== undefined) {
         if (typeof defaultValue === "function") {
           value = defaultValue();
         } else {
