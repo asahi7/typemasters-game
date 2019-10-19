@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  StyleSheet,
   Text,
   ScrollView,
   BackHandler,
@@ -12,7 +11,6 @@ import io from "socket.io-client";
 import { AdMobBanner } from "expo-ads-admob";
 import _ from "lodash";
 import Config from "../config/Config";
-import Commons from "../Commons";
 import globalStyles from "../styles";
 import GameTextInput from "../components/GameTextInput";
 import GameEndModal from "../components/GameEndModal";

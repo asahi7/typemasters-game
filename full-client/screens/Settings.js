@@ -192,7 +192,6 @@ export class Settings extends React.Component {
       prevState.supportedLangs !== this.state.supportedLangs
     ) {
       const listElements = prepareFlatListElements(this.elementMapper);
-      console.log(listElements.map(el => el.key));
       this.setState({
         listElements
       });
