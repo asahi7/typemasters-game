@@ -32,6 +32,15 @@ const globalStyles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "stretch"
   },
+  insideContainerNoPadding: {
+    flex: 1,
+    marginTop: 100,
+    marginBottom: 50,
+    paddingLeft: 10,
+    paddingRight: 10,
+    flexDirection: "column",
+    alignItems: "stretch"
+  },
   scrollView: {
     flex: 1,
     marginTop: 10,
@@ -193,8 +202,8 @@ const globalStyles = StyleSheet.create({
     color: "#FFFFFF",
     borderRadius: 40,
     marginTop: 8,
-    paddingLeft: 2,
-    paddingRight: 2
+    paddingLeft: 20,
+    paddingRight: 20
   }
 });
 

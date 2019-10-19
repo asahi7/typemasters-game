@@ -396,9 +396,13 @@ export class Settings extends React.Component {
 
 const styles = StyleSheet.create({
   textInput: {
-    width: 100,
-    paddingLeft: 2,
-    paddingRight: 2
+    width: "40%",
+    borderColor: "#FFFFFF",
+    borderWidth: 1,
+    color: "#FFFFFF",
+    borderRadius: 40,
+    paddingLeft: 5,
+    paddingRight: 5
   },
   column: {
     marginLeft: 10,
