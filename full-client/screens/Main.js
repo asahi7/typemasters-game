@@ -3,6 +3,7 @@ import {
   View,
   Text,
   Image,
+  ImageBackground,
   TouchableOpacity,
   StyleSheet,
   ScrollView,
@@ -176,34 +177,35 @@ export class Main extends React.Component {
     if (this.state.loading) return <Loading />;
     return (
       <View style={globalStyles.container}>
-        <View style={globalStyles.inside_container}>
-          <StatusBar barStyle="dark-content" />
-          <View style={{ marginTop: 70 }} />
-          {!this.state.data && (
-            <View>
-              <Text style={globalStyles.tableHeader}>
-                {i18n.t("common.noData")}
-              </Text>
-            </View>
-          )}
-          {this.state.data && (
-            <ScrollView style={globalStyles.scrollView}>
-              {/* TODO(aibek): add link to settings for language */}
-              <View style={{ marginTop: 10, alignItems: "center" }}>
-                <Image source={require("./img/bkg_txt.png")} />
+        <ImageBackground
+          source={require("./img/bkg.png")}
+          style={globalStyles.backgroundImage}
+        >
+          <View style={globalStyles.inside_container}>
+            <StatusBar barStyle="dark-content" />
+            <View style={{ marginTop: 70 }} />
+            {!this.state.data && (
+              <View>
+                <Text style={globalStyles.tableHeader}>
+                  {i18n.t("common.noData")}
+                </Text>
               </View>
-              <View style={{ marginTop: 200 }} />
-              <View style={{ marginTop: 10, alignItems: "center" }}>
-                <TouchableOpacity onPress={this.handlePlayPressed}>
-                  <Image
-                    source={require("./img/play_btn.png")}
-                    style={styles.button}
-                  />
-                </TouchableOpacity>
-              </View>
-            </ScrollView>
-          )}
-        </View>
+            )}
+            {this.state.data && (
+              <ScrollView style={globalStyles.scrollView}>
+                {/* TODO(aibek): add link to settings for language */}
+                <View style={{ marginTop: 260 }} />
+                <View style={globalStyles.smallButtonContainer}>
+                  <TouchableOpacity onPress={this.handlePlayPressed}>
+                    <Text style={globalStyles.bigButton}>
+                      {i18n.t("main.playButton")}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </ScrollView>
+            )}
+          </View>
+        </ImageBackground>
       </View>
     );
   }
