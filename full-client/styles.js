@@ -161,6 +161,19 @@ const globalStyles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 30
   },
+  bigButton: {
+    color: "#FFFFFF",
+    fontFamily: "monospace",
+    fontSize: 25,
+    paddingLeft: 35,
+    paddingRight: 35,
+    paddingTop: 5,
+    paddingBottom: 3,
+    fontWeight: "bold",
+    borderColor: "#FFFFFF",
+    borderWidth: 2,
+    borderRadius: 15
+  },
   textHeader: {
     color: "#FFFFFF",
     fontFamily: "monospace",
