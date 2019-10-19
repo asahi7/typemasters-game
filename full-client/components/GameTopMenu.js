@@ -49,9 +49,11 @@ const styles = StyleSheet.create({
     width: 2,
     marginLeft: 5,
     marginRight: 5,
-    backgroundColor: "#E8E8E8"
+    backgroundColor: "#71B6D5"
   },
   gameStatusBarItemText: {
-    fontSize: FONTS.TABLE_FONT
+    fontSize: FONTS.TABLE_FONT,
+    color: "#FFFFFF",
+    fontFamily: "monospace"
   }
 });

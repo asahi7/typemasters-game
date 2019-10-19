@@ -521,57 +521,47 @@ export class Game extends React.Component {
     );
     return (
       <View style={globalStyles.container}>
-        <View style={globalStyles.gameView}>
-          <GameEndModal
-            admobBanner={admobBanner}
-            headerText={this.state.modalText}
-            position={this.state.position}
-            numOfPlayers={this.state.numOfPlayers}
-            cpm={this.state.cpm}
-            text={this.state.modalNormalText}
-            accuracy={this.state.accuracy}
-            authenticated={this.state.authenticated}
-            visible={this.state.modalVisible}
-            closeModalHandler={() => {
-              this.setModalVisible(false);
-            }}
-          />
-          <GameTopMenu
-            position={this.state.position}
-            numOfPlayers={this.state.numOfPlayers}
-            timeLeft={Math.round(this.state.timeLeft)}
-            cpm={this.state.cpm}
-            accuracy={this.state.accuracy ? this.state.accuracy : 100}
-          />
-          <GameTextInput
-            textArray={this.state.textArray}
-            language={this.props.typingLanguage}
-            handler={this.gameInputHandler}
-            refresh={this.state.gamePlaying}
-            accuracyHandler={this.accuracyHandler}
-          />
-          <ScrollView style={styles.raceTextView}>
-            <Text style={styles.raceText}>{this.state.text}</Text>
-          </ScrollView>
-          <DropdownAlert
-            ref={ref => {
-              this.dropdown = ref;
-            }}
-          />
+        <View style={globalStyles.inside_container}>
+          <View style={globalStyles.gameView}>
+            <GameEndModal
+              admobBanner={admobBanner}
+              headerText={this.state.modalText}
+              position={this.state.position}
+              numOfPlayers={this.state.numOfPlayers}
+              cpm={this.state.cpm}
+              text={this.state.modalNormalText}
+              accuracy={this.state.accuracy}
+              authenticated={this.state.authenticated}
+              visible={this.state.modalVisible}
+              closeModalHandler={() => {
+                this.setModalVisible(false);
+              }}
+            />
+            <GameTopMenu
+              position={this.state.position}
+              numOfPlayers={this.state.numOfPlayers}
+              timeLeft={Math.round(this.state.timeLeft)}
+              cpm={this.state.cpm}
+              accuracy={this.state.accuracy ? this.state.accuracy : 100}
+            />
+            <GameTextInput
+              textArray={this.state.textArray}
+              language={this.props.typingLanguage}
+              handler={this.gameInputHandler}
+              refresh={this.state.gamePlaying}
+              accuracyHandler={this.accuracyHandler}
+            />
+            <ScrollView style={globalStyles.raceTextView}>
+              <Text style={globalStyles.bigText}>{this.state.text}</Text>
+            </ScrollView>
+            <DropdownAlert
+              ref={ref => {
+                this.dropdown = ref;
+              }}
+            />
+          </View>
         </View>
       </View>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  raceTextView: {
-    flex: 3,
-    flexDirection: "column",
-    padding: 10,
-    paddingBottom: 30
-  },
-  raceText: {
-    fontSize: 20
-  }
-});

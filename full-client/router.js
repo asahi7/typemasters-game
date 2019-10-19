@@ -20,10 +20,18 @@ import PersonalCharts from "./screens/PersonalCharts";
 import EmailVerificationPage from "./screens/EmailVerificationPage";
 import ForgotPassword from "./screens/ForgotPassword";
 import i18n from "i18n-js";
-import { Button, Text, TouchableOpacity, View } from "react-native";
+import {
+  Button,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View
+} from "react-native";
 import { en, ru } from "./i18n";
 import { gameStyles } from "./styles";
 import * as Localization from "expo-localization";
+import globalStyles from "./styles";
 
 i18n.fallbacks = true;
 i18n.translations = { en, ru, kk: ru };
@@ -46,26 +54,36 @@ const MainStack = createStackNavigator(
     Main: {
       screen: Main,
       navigationOptions: {
-        headerTitle: mainLabel
+        headerTransparent: true
       }
     },
     Game: {
       screen: Game,
       navigationOptions: ({ navigation }) => {
         return {
-          headerTitle: gameLabel,
+          headerTransparent: true,
           headerRight: (
             <View style={{ marginRight: 10 }}>
               {navigation.getParam("gamePlaying") === true ? (
-                <Button
-                  onPress={() => navigation.getParam("playButtonPressed")()}
-                  title={i18n.t("game.stop")}
-                />
+                <View style={globalStyles.smallButtonContainer}>
+                  <TouchableOpacity
+                    onPress={() => navigation.getParam("playButtonPressed")()}
+                  >
+                    <Text style={globalStyles.smallButton}>
+                      {i18n.t("game.stop")}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               ) : (
-                <Button
-                  onPress={() => navigation.getParam("playButtonPressed")()}
-                  title={i18n.t("game.play")}
-                />
+                <View style={globalStyles.smallButtonContainer}>
+                  <TouchableOpacity
+                    onPress={() => navigation.getParam("playButtonPressed")()}
+                  >
+                    <Text style={globalStyles.smallButton}>
+                      {i18n.t("game.play")}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               )}
             </View>
           )
@@ -81,7 +99,7 @@ const LeaderboardStack = createStackNavigator(
     Leaderboard: {
       screen: Leaderboard,
       navigationOptions: {
-        headerTitle: leaderboardLabel
+        headerTransparent: true
       }
     }
   },
@@ -94,13 +112,16 @@ const SettingsStack = createStackNavigator(
       screen: Settings,
       navigationOptions: ({ navigation }) => {
         return {
-          headerTitle: settingsLabel,
+          headerTransparent: true,
           headerRight: (
-            <View style={{ marginRight: 10 }}>
-              <Button
+            <View style={globalStyles.smallButtonContainer}>
+              <TouchableOpacity
                 onPress={() => navigation.getParam("saveSettings")()}
-                title={i18n.t("settings.save")}
-              />
+              >
+                <Text style={globalStyles.smallButton}>
+                  {i18n.t("settings.save")}
+                </Text>
+              </TouchableOpacity>
             </View>
           )
         };
@@ -117,7 +138,7 @@ const AboutStack = createStackNavigator(
     About: {
       screen: About,
       navigationOptions: {
-        headerTitle: aboutLabel
+        headerTransparent: true
       }
     }
   },
@@ -130,13 +151,19 @@ const PersonalPageStack = createStackNavigator(
       screen: PersonalPage,
       navigationOptions: ({ navigation }) => {
         return {
-          headerTitle: personalPageLabel,
+          headerTransparent: true,
+          headerTitleStyle: {
+            color: "white"
+          },
           headerRight: (
-            <View style={{ marginRight: 10 }}>
-              <Button
+            <View style={globalStyles.smallButtonContainer}>
+              <TouchableOpacity
                 onPress={() => navigation.getParam("handleSignOut")()}
-                title={i18n.t("personalPage.signOut")}
-              />
+              >
+                <Text style={globalStyles.smallButton}>
+                  {i18n.t("personalPage.signOut")}
+                </Text>
+              </TouchableOpacity>
             </View>
           )
         };
@@ -145,7 +172,10 @@ const PersonalPageStack = createStackNavigator(
     PersonalCharts: {
       screen: PersonalCharts,
       navigationOptions: {
-        headerTitle: personalChartsLabel
+        headerTransparent: true,
+        headerTitleStyle: {
+          color: "white"
+        }
       }
     }
   },
@@ -157,25 +187,41 @@ const AuthStack = createStackNavigator(
     SignUp: {
       screen: SignUp,
       navigationOptions: {
-        headerTitle: signUpLabel
+        headerTransparent: true,
+        headerTitle: signUpLabel,
+        headerTitleStyle: {
+          color: "white"
+        }
       }
     },
     SignIn: {
       screen: SignIn,
       navigationOptions: {
-        headerTitle: signInLabel
+        headerTransparent: true,
+        headerTitle: signInLabel,
+        headerTitleStyle: {
+          color: "white"
+        }
       }
     },
     EmailVerificationPage: {
       screen: EmailVerificationPage,
       navigationOptions: {
-        headerTitle: confirmEmailLabel
+        headerTransparent: true,
+        headerTitle: confirmEmailLabel,
+        headerTitleStyle: {
+          color: "white"
+        }
       }
     },
     ForgotPassword: {
       screen: ForgotPassword,
       navigationOptions: {
-        headerTitle: forgotPasswordLabel
+        headerTransparent: true,
+        headerTitle: forgotPasswordLabel,
+        headerTitleStyle: {
+          color: "white"
+        }
       }
     }
   },
@@ -218,6 +264,9 @@ const Tabs = createBottomTabNavigator(
       screen: LeaderboardStack,
       navigationOptions: {
         headerTitle: leaderboardLabel,
+        headerTitleStyle: {
+          color: "white"
+        },
         tabBarLabel: (() => {
           leaderboardLabel;
         })(),
@@ -282,7 +331,22 @@ const Tabs = createBottomTabNavigator(
       }
     }
   },
-  { initialRouteName: "Main" }
+  {
+    initialRouteName: "Main",
+    tabBarOptions: {
+      activeTintColor: "#53A4D0",
+      inactiveTintColor: "#FFFFFF",
+
+      tabStyle: {
+        height: 48,
+        alignItems: "center",
+        justifyContent: "center"
+      },
+      style: {
+        backgroundColor: "#5E81C6"
+      }
+    }
+  }
 );
 
 const RootStack = createStackNavigator({

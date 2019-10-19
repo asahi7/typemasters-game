@@ -7,8 +7,10 @@ export default class Loading extends React.Component {
   render() {
     return (
       <View style={globalStyles.loadingContainer}>
-        <ActivityIndicator size="large" />
-        <Text>{i18n.t("loading.loading")}</Text>
+        <View style={globalStyles.inside_container}>
+          <ActivityIndicator size="large" />
+          <Text>{i18n.t("loading.loading")}</Text>
+        </View>
       </View>
     );
   }

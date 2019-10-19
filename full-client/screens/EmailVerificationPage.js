@@ -71,30 +71,32 @@ export default class EmailVerificationPage extends React.Component {
     if (this.state.loading) return <Loading />;
     return (
       <View style={globalStyles.container}>
-        <Text style={globalStyles.normalText}>
-          {i18n.t("emailVerification.text")}
-        </Text>
-        <View style={globalStyles.normalButton}>
-          <Button
-            style={globalStyles.normalButton}
-            onPress={() => this.props.navigation.navigate("SignIn")}
-            title={i18n.t("common.signIn")}
-            color={Commons.buttonColor}
-          />
-        </View>
-        <View style={globalStyles.normalButton}>
-          <Button
-            onPress={this.sendNewLink}
-            title={i18n.t("emailVerification.sendLink")}
-            color={Commons.buttonColor}
-          />
-        </View>
-        <View style={globalStyles.normalButton}>
-          <Button
-            onPress={this.handleSignOut}
-            title={i18n.t("emailVerification.signOut")}
-            color={Commons.buttonColor}
-          />
+        <View style={globalStyles.inside_container}>
+          <Text style={globalStyles.normalText}>
+            {i18n.t("emailVerification.text")}
+          </Text>
+          <View style={globalStyles.normalButton}>
+            <Button
+              style={globalStyles.normalButton}
+              onPress={() => this.props.navigation.navigate("SignIn")}
+              title={i18n.t("common.signIn")}
+              color={Commons.buttonColor}
+            />
+          </View>
+          <View style={globalStyles.normalButton}>
+            <Button
+              onPress={this.sendNewLink}
+              title={i18n.t("emailVerification.sendLink")}
+              color={Commons.buttonColor}
+            />
+          </View>
+          <View style={globalStyles.normalButton}>
+            <Button
+              onPress={this.handleSignOut}
+              title={i18n.t("emailVerification.signOut")}
+              color={Commons.buttonColor}
+            />
+          </View>
         </View>
       </View>
     );

@@ -98,7 +98,8 @@ export class Settings extends React.Component {
               style={[
                 {
                   width: 150,
-                  height: 50
+                  height: 50,
+                  color: "white"
                 },
                 styles.column
               ]}
@@ -124,7 +125,10 @@ export class Settings extends React.Component {
             <Picker
               selectedValue={val}
               prompt={i18n.t("settings.selectTypingLanguage")}
-              style={[{ width: 150, height: 50 }, styles.column]}
+              style={[
+                { width: 150, height: 50, color: "white" },
+                styles.column
+              ]}
               onValueChange={this.textLanguageSelected}
             >
               {this.state.supportedLangs.map((lang, index) => {
@@ -376,17 +380,19 @@ export class Settings extends React.Component {
     if (this.state.loading) return <Loading />;
     return (
       <View style={globalStyles.container}>
-        <ScrollView
-          style={globalStyles.scrollView}
-          keyboardShouldPersistTaps={"always"}
-        >
-          <FlatList data={this.state.listElements} renderItem={renderItem} />
-        </ScrollView>
-        <DropdownAlert
-          ref={ref => {
-            this.dropdown = ref;
-          }}
-        />
+        <View style={globalStyles.inside_container}>
+          <ScrollView
+            style={globalStyles.scrollView}
+            keyboardShouldPersistTaps={"always"}
+          >
+            <FlatList data={this.state.listElements} renderItem={renderItem} />
+          </ScrollView>
+          <DropdownAlert
+            ref={ref => {
+              this.dropdown = ref;
+            }}
+          />
+        </View>
       </View>
     );
   }

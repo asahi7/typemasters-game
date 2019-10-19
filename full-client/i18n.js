@@ -165,12 +165,12 @@ export const en = {
     last100DaysAcc: "Last 100 Days Accuracy"
   },
   signIn: {
-    dontHaveAccount: "Don't have an account? Sign Up",
+    dontHaveAccount: "Sign Up",
     forgotPassword: "Forgot password?"
   },
   signUp: {
     signUp: "Sign up",
-    haveAccount: "Already have an account? Sign in"
+    haveAccount: "Sign in"
   }
 };
 
@@ -338,11 +338,11 @@ export const ru = {
     last100DaysAcc: "Точность за последние 100 дней"
   },
   signIn: {
-    dontHaveAccount: "Нету аккаунта? Зарегистрироваться",
+    dontHaveAccount: "Зарегистрироваться",
     forgotPassword: "Забыли пароль?"
   },
   signUp: {
     signUp: "Зарегистрироваться",
-    haveAccount: "Уже есть аккаунт? Войти"
+    haveAccount: "Войти"
   }
 };

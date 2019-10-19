@@ -69,17 +69,21 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#00000080"
+    backgroundColor: "#71B6D5"
   },
   modalStyle: {
-    backgroundColor: "#fff",
+    backgroundColor: "#71B6D5",
     padding: 20,
     width: 320,
     height: 500,
     alignItems: "center",
     justifyContent: "center"
   },
-  modalHeader: { color: "red", fontSize: 20 },
+  modalHeader: {
+    fontSize: 20,
+    color: "#FFFFFF",
+    fontFamily: "monospace"
+  },
   gameStatusBar: {
     flex: 0.1,
     flexDirection: "row",
@@ -90,9 +94,9 @@ const styles = StyleSheet.create({
     paddingLeft: 3,
     paddingRight: 3,
     borderRightWidth: 1,
-    borderRightColor: "#7f1717",
+    borderRightColor: "transparent",
     borderLeftWidth: 1,
-    borderLeftColor: "#7f1717",
+    borderLeftColor: "transparent",
     alignItems: "center",
     justifyContent: "center"
   }

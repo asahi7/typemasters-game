@@ -1,5 +1,13 @@
 import React from "react";
-import { StyleSheet, Text, TextInput, Button, View } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  Button,
+  View,
+  TouchableOpacity,
+  Image
+} from "react-native";
 import firebase from "firebase";
 import WebAPI from "../WebAPI";
 import Commons from "../Commons";
@@ -8,6 +16,7 @@ import DropdownAlert from "react-native-dropdownalert";
 import i18n from "i18n-js";
 import Sentry from "sentry-expo";
 import ConnectionContext from "../context/ConnnectionContext";
+import Hr from "../components/Hr";
 
 export default React.forwardRef((props, ref) => (
   <ConnectionContext.Consumer>
@@ -73,57 +82,61 @@ export class SignIn extends React.Component {
   render() {
     return (
       <View style={globalStyles.container}>
-        {this.state.errorMessage && (
-          <Text style={{ color: "red" }}>{this.state.errorMessage}</Text>
-        )}
-        <TextInput
-          style={styles.textInput}
-          autoCapitalize="none"
-          placeholder={i18n.t("common.email")}
-          onChangeText={email => this.setState({ email })}
-          value={this.state.email}
-        />
-        <TextInput
-          secureTextEntry
-          style={styles.textInput}
-          autoCapitalize="none"
-          placeholder={i18n.t("common.password")}
-          onChangeText={password => this.setState({ password })}
-          value={this.state.password}
-        />
-        <View style={globalStyles.normalButton}>
-          <Button onPress={this.handleSignIn} title={i18n.t("common.signIn")} />
-        </View>
-        <View style={globalStyles.normalButton}>
-          <Button
-            onPress={() => this.props.navigation.navigate("SignUp")}
-            title={i18n.t("signIn.dontHaveAccount")}
+        <View style={globalStyles.inside_container}>
+          {this.state.errorMessage && (
+            <Text style={{ color: "red" }}>{this.state.errorMessage}</Text>
+          )}
+          <TextInput
+            style={globalStyles.commonInformationTextInput}
+            autoCapitalize="none"
+            placeholder={i18n.t("common.email")}
+            onChangeText={email => this.setState({ email })}
+            value={this.state.email}
+          />
+          <TextInput
+            secureTextEntry
+            style={globalStyles.commonInformationTextInput}
+            autoCapitalize="none"
+            placeholder={i18n.t("common.password")}
+            onChangeText={password => this.setState({ password })}
+            value={this.state.password}
+          />
+          <Hr />
+          <View style={globalStyles.containerWithInlineButtons}>
+            <View style={globalStyles.smallButtonContainer}>
+              <TouchableOpacity onPress={this.handleSignIn}>
+                <Text style={globalStyles.smallButton}>
+                  {i18n.t("common.signIn")}
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View style={globalStyles.smallButtonContainer}>
+              <TouchableOpacity
+                onPress={() => this.props.navigation.navigate("SignUp")}
+              >
+                <Text style={globalStyles.smallButton}>
+                  {i18n.t("signIn.dontHaveAccount")}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          <Hr />
+          <View style={globalStyles.smallButtonContainer}>
+            <TouchableOpacity
+              onPress={() => this.props.navigation.navigate("ForgotPassword")}
+            >
+              <Text style={globalStyles.smallButton}>
+                {i18n.t("signIn.forgotPassword")}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <DropdownAlert
+            ref={ref => {
+              this.dropdown = ref;
+            }}
           />
         </View>
-        <View style={globalStyles.normalButton}>
-          <Button
-            onPress={() => this.props.navigation.navigate("ForgotPassword")}
-            title={i18n.t("signIn.forgotPassword")}
-          />
-        </View>
-        <DropdownAlert
-          ref={ref => {
-            this.dropdown = ref;
-          }}
-        />
       </View>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  textInput: {
-    height: 40,
-    width: "90%",
-    borderColor: "gray",
-    borderWidth: 1,
-    marginTop: 8,
-    paddingLeft: 2,
-    paddingRight: 2
-  }
-});

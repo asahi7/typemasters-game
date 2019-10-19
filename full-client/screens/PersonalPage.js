@@ -5,7 +5,8 @@ import {
   Button,
   FlatList,
   AsyncStorage,
-  ScrollView
+  ScrollView,
+  TouchableOpacity
 } from "react-native";
 import firebase from "firebase";
 import WebAPI from "../WebAPI";
@@ -306,42 +307,49 @@ export class PersonalPage extends React.Component {
     if (this.state.loading) return <Loading />;
     return (
       <View style={globalStyles.container}>
-        {!this.state.userData && (
-          <View>
-            <Text style={globalStyles.tableHeader}>
-              {i18n.t("common.noData")}
-            </Text>
-          </View>
-        )}
-        {this.state.userData && (
-          <ScrollView style={globalStyles.scrollView}>
-            <View style={{ marginTop: 10 }}>
+        <View style={globalStyles.inside_container}>
+          {!this.state.userData && (
+            <View>
               <Text style={globalStyles.tableHeader}>
-                {i18n.t("personalPage.general")}:
-              </Text>
-              <FlatList
-                data={this.state.listElements}
-                renderItem={renderItem}
-              />
-            </View>
-            <View style={{ marginTop: 10 }}>
-              <Text style={[globalStyles.normalText, { color: "red" }]}>
-                {i18n.t("personalPage.dataMayNotUpdate")}
+                {i18n.t("common.noData")}
               </Text>
             </View>
-            <View style={globalStyles.normalButton}>
-              <Button
-                onPress={() => this.props.navigation.navigate("PersonalCharts")}
-                title={i18n.t("personalPage.showCharts")}
-              />
-            </View>
-          </ScrollView>
-        )}
-        <DropdownAlert
-          ref={ref => {
-            this.dropdown = ref;
-          }}
-        />
+          )}
+          {this.state.userData && (
+            <ScrollView style={globalStyles.scrollView}>
+              <View style={{ marginTop: 10 }}>
+                <Text style={globalStyles.tableHeader}>
+                  {i18n.t("personalPage.general")}:
+                </Text>
+                <FlatList
+                  data={this.state.listElements}
+                  renderItem={renderItem}
+                />
+              </View>
+              <View style={{ marginTop: 10 }}>
+                <Text style={[globalStyles.normalText, { color: "white" }]}>
+                  {i18n.t("personalPage.dataMayNotUpdate")}
+                </Text>
+              </View>
+              <View style={globalStyles.smallButtonContainer}>
+                <TouchableOpacity
+                  onPress={() =>
+                    this.props.navigation.navigate("PersonalCharts")
+                  }
+                >
+                  <Text style={globalStyles.smallButton}>
+                    {i18n.t("personalPage.showCharts")}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          )}
+          <DropdownAlert
+            ref={ref => {
+              this.dropdown = ref;
+            }}
+          />
+        </View>
       </View>
     );
   }
